@@ -1,2 +1,2 @@
-# darwinII
-The second generation of our fully self built electric car
+# Lupus II
+The second generation of our entirely self built electric car.
