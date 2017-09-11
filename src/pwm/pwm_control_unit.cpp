@@ -12,7 +12,7 @@ PwmControlUnit::PwmControlUnit(
 {
   if(!pwmDriver)
   {
-    throw std::invalid_argument("pwm_drver must not be null");
+    throw std::invalid_argument("pwm_driver must not be null");
   }
   this->pwmDriver = pwmDriver;
   this->channel = channel;
