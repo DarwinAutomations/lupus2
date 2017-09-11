@@ -2,6 +2,7 @@
 #include "pwm_control_unit.h"
 #include "steering_unit.h"
 #include "propulsion_unit.h"
+#include "lupus.h"
 #include <chrono>
 #include <thread>
 
@@ -54,39 +55,33 @@ int main()
   auto propulsionUnitBackRight =
     new navigation::PropulsionUnit(cuPropulsionBackRight);
 
+  auto lupus = new construction::Lupus(
+    steeringUnitLeft,
+    steeringUnitRight,
+    propulsionUnitFrontLeft,
+    propulsionUnitFrontRight,
+    propulsionUnitBackLeft,
+    propulsionUnitBackRight
+  );
+
   for(int i = 0; i < 16; i++) {
-    steeringUnitLeft->setDirection(-1);
-    steeringUnitRight->setDirection(-1);
-    propulsionUnitFrontLeft->setPower(0.1);
-    propulsionUnitFrontRight->setPower(0.1);
-    propulsionUnitBackLeft->setPower(0.1);
-    propulsionUnitBackRight->setPower(0.1);
+    lupus->setDirection(1);
+    lupus->setPower(0.1);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    steeringUnitLeft->setDirection(0);
-    steeringUnitRight->setDirection(0);
-    propulsionUnitFrontLeft->setPower(0);
-    propulsionUnitFrontRight->setPower(0);
-    propulsionUnitBackLeft->setPower(0);
-    propulsionUnitBackRight->setPower(0);
+    lupus->setDirection(0);
+    lupus->setPower(0.1);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    steeringUnitLeft->setDirection(1);
-    steeringUnitRight->setDirection(1);
-    propulsionUnitFrontLeft->setPower(-0.1);
-    propulsionUnitFrontRight->setPower(-0.1);
-    propulsionUnitBackLeft->setPower(-0.1);
-    propulsionUnitBackRight->setPower(-0.1);
+    lupus->setDirection(-1);
+    lupus->setPower(-0.1);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    steeringUnitLeft->setDirection(0);
-    steeringUnitRight->setDirection(0);
-    propulsionUnitFrontLeft->setPower(0);
-    propulsionUnitFrontRight->setPower(0);
-    propulsionUnitBackLeft->setPower(0);
-    propulsionUnitBackRight->setPower(0);
+    lupus->setDirection(0);
+    lupus->setPower(0);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   }
+  delete lupus;
 
   delete cuPropulsionFrontLeft;
   delete propulsionUnitFrontLeft;
