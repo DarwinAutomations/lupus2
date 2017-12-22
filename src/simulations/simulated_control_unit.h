@@ -1,8 +1,7 @@
-#ifndef PWM_CONTROL_UNIT_H
-#define PWM_CONTROL_UNIT_H
+#ifndef SIMULATIONS_CONTROL_UNIT_H
+#define SIMULATIONS_CONTROL_UNIT_H
 
 #include "control_unit.h"
-#include "pwm_driver.h"
 
 namespace lupus::simulations
 {
@@ -16,6 +15,7 @@ public:
   SimulatedControlUnit () = default;
   virtual ~SimulatedControlUnit () = default;
   void setPower(float power) override;
+  float getPower() override;
 };
 
 } // namespace lupus::simulations

@@ -23,4 +23,9 @@ void PropulsionUnit::setPower(float power)
   this->controlUnit->setPower(power);
 }
 
+float PropulsionUnit::getPower()
+{
+  return this->controlUnit->getPower();
+}
+
 } // namespace lupus::navigation

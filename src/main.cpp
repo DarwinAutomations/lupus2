@@ -1,10 +1,11 @@
-#include "pwm_driver.h"
-#include "pwm_control_unit.h"
+#include <iostream>
+#include <chrono>
+#include <thread>
+
+#include "simulated_control_unit.h"
 #include "steering_unit.h"
 #include "propulsion_unit.h"
 #include "lupus.h"
-#include <chrono>
-#include <thread>
 
 using namespace lupus;
 
@@ -12,34 +13,34 @@ int main()
 {
   // navigation units:
   // navigation unit left:
-  auto controlUnitLeft = new pwm::SimulatedControlUnit();
+  auto controlUnitLeft = new simulations::SimulatedControlUnit();
   auto steeringUnitLeft =
     new navigation::SteeringUnit(controlUnitLeft);
 
   // navigation unit right:
-  auto controlUnitRight = new pwm::SimulatedControlUnit();
+  auto controlUnitRight = new simulations::SimulatedControlUnit();
   auto steeringUnitRight =
     new navigation::SteeringUnit(controlUnitRight);
 
 
   // propulsion units:
   // propulsion unit front left:
-  auto cuPropulsionFrontLeft = new pwm::SimulatedControlUnit();
+  auto cuPropulsionFrontLeft = new simulations::SimulatedControlUnit();
   auto propulsionUnitFrontLeft =
     new navigation::PropulsionUnit(cuPropulsionFrontLeft);
 
   // propulsion unit front right:
-  auto cuPropulsionFrontRight = new pwm::SimulatedControlUnit();
+  auto cuPropulsionFrontRight = new simulations::SimulatedControlUnit();
   auto propulsionUnitFrontRight =
     new navigation::PropulsionUnit(cuPropulsionFrontRight);
 
   // propulsion unit back left:
-  auto cuPropulsionBackLeft = new pwm::SimulatedControlUnit();
+  auto cuPropulsionBackLeft = new simulations::SimulatedControlUnit();
   auto propulsionUnitBackLeft =
     new navigation::PropulsionUnit(cuPropulsionBackLeft);
 
   // propulsion unit back right:
-  auto cuPropulsionBackRight = new pwm::SimulatedControlUnit();
+  auto cuPropulsionBackRight = new simulations::SimulatedControlUnit();
   auto propulsionUnitBackRight =
     new navigation::PropulsionUnit(cuPropulsionBackRight);
 
@@ -55,18 +56,26 @@ int main()
   for(int i = 0; i < 16; i++) {
     lupus->setDirection(1);
     lupus->setPower(0.1);
+    std::cout << "direction: " << lupus->getDirection() << std::endl;
+    std::cout << "power: " << lupus->getPower() << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     lupus->setDirection(0);
     lupus->setPower(0.1);
+    std::cout << "direction: " << lupus->getDirection() << std::endl;
+    std::cout << "power: " << lupus->getPower() << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     lupus->setDirection(-1);
     lupus->setPower(-0.1);
+    std::cout << "direction: " << lupus->getDirection() << std::endl;
+    std::cout << "power: " << lupus->getPower() << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     lupus->setDirection(0);
     lupus->setPower(0);
+    std::cout << "direction: " << lupus->getDirection() << std::endl;
+    std::cout << "power: " << lupus->getPower() << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   }
   delete lupus;
@@ -84,8 +93,6 @@ int main()
   delete controlUnitLeft;
   delete steeringUnitRight;
   delete controlUnitRight;
-
-  delete pwmDriver;
 
   return 0;
 }

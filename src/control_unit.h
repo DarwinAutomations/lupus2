@@ -8,6 +8,7 @@ class IControlUnit {
   public:
     virtual ~IControlUnit() = default;
     virtual void setPower(float power) = 0;
+    virtual float getPower() = 0;
 };
 
 } // namespace lupus

@@ -15,6 +15,7 @@ class SteeringUnit
     SteeringUnit (IControlUnit* controlUnit);
     virtual ~SteeringUnit () = default;
     void setDirection(float direction);
+    float getDirection();
 };
 
 } // namespace lupus::navigation

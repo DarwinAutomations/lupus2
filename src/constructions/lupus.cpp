@@ -44,6 +44,11 @@ void Lupus::setDirection(float direction)
   this->steeringRight->setDirection(power);
 }
 
+float Lupus::getDirection()
+{
+  return this->steeringLeft->getDirection();
+}
+
 void Lupus::setPower(float power)
 {
   if(power > 1 || power < -1)
@@ -55,6 +60,11 @@ void Lupus::setPower(float power)
   this->propulsionFrontRight->setPower(pwr);
   this->propulsionBackLeft->setPower(pwr);
   this->propulsionBackRight->setPower(pwr);
+}
+
+float Lupus::getPower()
+{
+  return this->propulsionFrontLeft->getPower();
 }
 
 } // namespace lupus::navigation

@@ -29,7 +29,9 @@ class Lupus
     virtual ~Lupus () = default;
 
     void setPower(float power);
+    float getPower();
     void setDirection(float direction);
+    float getDirection();
 };
 
 } // namespace lupus::navigation

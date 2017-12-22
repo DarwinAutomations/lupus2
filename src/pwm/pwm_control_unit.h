@@ -7,12 +7,14 @@
 namespace lupus::pwm
 {
 
-class PwmControlUnit : public lupus::IControlUnit{
+class PwmControlUnit : public lupus::IControlUnit
+{
   private:
     PwmDriver* pwmDriver;
     int channel;
     float min;
     float max;
+    float value;
 
   public:
     PwmControlUnit (
@@ -22,6 +24,7 @@ class PwmControlUnit : public lupus::IControlUnit{
       int max);
     virtual ~PwmControlUnit () = default;
     void setPower(float power) override;
+    float getPower() override;
 };
 
 } // namespace lupus::pwm

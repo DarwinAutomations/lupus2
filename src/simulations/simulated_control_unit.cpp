@@ -1,15 +1,20 @@
 #include <stdexcept>
-#include "pwm_control_unit.h"
+#include "simulated_control_unit.h"
 
-namespace lupus::pwm
+namespace lupus::simulations
 {
-void SimulatedControlUnit::setPower(float power)
-{
-  if (power > 1 || power < 0)
+  void SimulatedControlUnit::setPower(float power)
   {
-    throw std::invalid_argument("power not in range 0, 1");
+    if (power > 1 || power < 0)
+    {
+      throw std::invalid_argument("power not in range 0, 1");
+    }
+    this->value = power;
   }
-  value = power;
-}
 
-} // namespace lupus::pwm
+  float SimulatedControlUnit::getPower()
+  {
+    return this->value;
+  }
+
+} // namespace lupus::simulations

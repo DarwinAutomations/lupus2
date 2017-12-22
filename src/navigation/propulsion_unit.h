@@ -15,6 +15,7 @@ class PropulsionUnit
     PropulsionUnit (IControlUnit* controlUnit);
     virtual ~PropulsionUnit () = default;
     void setPower(float power);
+    float getPower();
 };
 
 } // namespace lupus::navigation
