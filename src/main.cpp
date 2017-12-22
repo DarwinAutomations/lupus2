@@ -6,52 +6,40 @@
 #include <chrono>
 #include <thread>
 
-const int address   = 0x40;
-const int frequency = 60;
-
 using namespace lupus;
 
 int main()
 {
-  auto pwmDriver = new pwm::PwmDriver(address);
-  pwmDriver->setPwmFrequency(frequency);
-
   // navigation units:
   // navigation unit left:
-  auto controlUnitLeft =
-    new pwm::PwmControlUnit(pwmDriver, 0, 220, 565);
+  auto controlUnitLeft = new pwm::SimulatedControlUnit();
   auto steeringUnitLeft =
     new navigation::SteeringUnit(controlUnitLeft);
 
   // navigation unit right:
-  auto controlUnitRight =
-    new pwm::PwmControlUnit(pwmDriver, 1, 220, 565);
+  auto controlUnitRight = new pwm::SimulatedControlUnit();
   auto steeringUnitRight =
     new navigation::SteeringUnit(controlUnitRight);
 
 
   // propulsion units:
   // propulsion unit front left:
-  auto cuPropulsionFrontLeft =
-    new pwm::PwmControlUnit(pwmDriver, 4, 240, 460);
+  auto cuPropulsionFrontLeft = new pwm::SimulatedControlUnit();
   auto propulsionUnitFrontLeft =
     new navigation::PropulsionUnit(cuPropulsionFrontLeft);
 
   // propulsion unit front right:
-  auto cuPropulsionFrontRight =
-    new pwm::PwmControlUnit(pwmDriver, 5, 240, 460);
+  auto cuPropulsionFrontRight = new pwm::SimulatedControlUnit();
   auto propulsionUnitFrontRight =
     new navigation::PropulsionUnit(cuPropulsionFrontRight);
 
   // propulsion unit back left:
-  auto cuPropulsionBackLeft =
-    new pwm::PwmControlUnit(pwmDriver, 6, 240, 460);
+  auto cuPropulsionBackLeft = new pwm::SimulatedControlUnit();
   auto propulsionUnitBackLeft =
     new navigation::PropulsionUnit(cuPropulsionBackLeft);
 
   // propulsion unit back right:
-  auto cuPropulsionBackRight =
-    new pwm::PwmControlUnit(pwmDriver, 7, 240, 460);
+  auto cuPropulsionBackRight = new pwm::SimulatedControlUnit();
   auto propulsionUnitBackRight =
     new navigation::PropulsionUnit(cuPropulsionBackRight);
 
