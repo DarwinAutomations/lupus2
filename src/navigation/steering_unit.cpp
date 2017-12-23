@@ -25,7 +25,7 @@ void SteeringUnit::setDirection(float direction)
 
 float SteeringUnit::getDirection()
 {
-  return this->controlUnit->getPower();
+  return this->controlUnit->getPower() * 2 -1;
 }
 
 } // namespace lupus::navigation

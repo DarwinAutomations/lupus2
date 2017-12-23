@@ -39,9 +39,8 @@ void Lupus::setDirection(float direction)
   {
     throw std::invalid_argument("direction not in range -1, +1");
   }
-  float power = (direction + 1) / 2;
-  this->steeringLeft->setDirection(power);
-  this->steeringRight->setDirection(power);
+  this->steeringLeft->setDirection(direction);
+  this->steeringRight->setDirection(direction);
 }
 
 float Lupus::getDirection()
@@ -55,11 +54,10 @@ void Lupus::setPower(float power)
   {
     throw std::invalid_argument("power not in range -1, +1");
   }
-  float pwr = (power + 1) / 2;
-  this->propulsionFrontLeft->setPower(pwr);
-  this->propulsionFrontRight->setPower(pwr);
-  this->propulsionBackLeft->setPower(pwr);
-  this->propulsionBackRight->setPower(pwr);
+  this->propulsionFrontLeft->setPower(power);
+  this->propulsionFrontRight->setPower(power);
+  this->propulsionBackLeft->setPower(power);
+  this->propulsionBackRight->setPower(power);
 }
 
 float Lupus::getPower()
