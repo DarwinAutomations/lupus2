@@ -14,6 +14,7 @@ namespace lupus::pwm
     {
       throw std::invalid_argument("pwm_driver must not be null");
     }
+
     this->pwmDriver = pwmDriver;
     this->channel = channel;
     this->min = min;

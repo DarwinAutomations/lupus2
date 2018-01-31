@@ -9,12 +9,31 @@
 #include "simulated_control_unit.h"
 #include "steering_unit.h"
 #include "propulsion_unit.h"
+#include "profile.h"
+#include "granny_profile.h"
+#include "acceleration_service.h"
 #include "lupus.h"
 
 using namespace lupus;
 
-void output_loop(bool*, construction::Lupus*);
-void input_loop(bool*, construction::Lupus*);
+void input_loop(
+  bool* isActive,
+  float* input_power,
+  float* input_direction,
+  bool* input_isbreaking);
+void engine_loop(
+  bool* isActive,
+  construction::Lupus* construction,
+  profiles::IProfile* profile,
+  float* input_power,
+  float* input_direction,
+  bool* input_isbreaking);
+void output_loop(
+  bool* isActive,
+  construction::Lupus* construction,
+  float* input_power,
+  float* input_direction,
+  bool* input_isbreaking);
 
 int main()
 {
@@ -51,7 +70,7 @@ int main()
   auto propulsionUnitBackRight =
     new navigation::PropulsionUnit(cuPropulsionBackRight);
 
-  auto lupus = new construction::Lupus(
+  auto construction = new construction::Lupus(
     steeringUnitLeft,
     steeringUnitRight,
     propulsionUnitFrontLeft,
@@ -60,19 +79,42 @@ int main()
     propulsionUnitBackRight
   );
 
+  // ensure power and direction are nutral before starting
+  construction->setPower(0);
+  construction->setDirection(0);
+
+  auto profile = new profiles::GrannyProfile();
 
   // start input and output thread
   bool isActive = true;
-  auto input_thread = std::thread(input_loop, &isActive, lupus);
-  auto output_thread = std::thread(output_loop, &isActive, lupus);
+  float input_power = 0;
+  float input_direction = 0;
+  bool input_isbreaking = false;
+
+  auto engine_thread = std::thread(
+    engine_loop, &isActive,
+    construction, profile,
+    &input_power, &input_direction,
+    &input_isbreaking);
+  auto input_thread = std::thread(
+    input_loop, &isActive,
+    &input_power, &input_direction,
+    &input_isbreaking);
+  auto output_thread = std::thread(
+    output_loop, &isActive,
+    construction, &input_power,
+    &input_direction, &input_isbreaking);
 
   // wait for user input and exit
 	getchar();
 	isActive = false;
   input_thread.join();
 	output_thread.join();
+  engine_thread.join();
 
-  delete lupus;
+
+  delete profile;
+  delete construction;
 
   delete cuPropulsionFrontLeft;
   delete propulsionUnitFrontLeft;
@@ -91,7 +133,11 @@ int main()
   return 0;
 }
 
-void input_loop(bool* isActive, construction::Lupus *lupus)
+void input_loop(
+  bool* isActive,
+  float* input_power,
+  float* input_direction,
+  bool* input_isbreaking)
 {
   js_event* event = new js_event();
 	int fd = open("/dev/input/js0", O_RDONLY | O_NONBLOCK);
@@ -108,32 +154,70 @@ void input_loop(bool* isActive, construction::Lupus *lupus)
         switch (event->number)
         {
           case 0:
-            lupus->setDirection(event->value / magic_value);
+            *input_direction = event->value / magic_value;
             break;
           case 5:
-            lupus->setPower(event->value / (magic_value*2) + 0.5f);
+            *input_power = event->value / (magic_value*2) + 0.5f;
             break;
         }
       }
-      else if (event->type & JS_EVENT_BUTTON)
+      if (event->type & JS_EVENT_BUTTON)
       {
-        switch (event->number)
-        {
+        switch (event->number) {
           case 5:
-            lupus->setPower(-0.2f);
-            break;
+            *input_isbreaking = event->value == 1;
         }
       }
     }
   }
 }
 
-void output_loop(bool* isActive, construction::Lupus *lupus)
+void engine_loop(
+  bool* isActive,
+  construction::Lupus* construction,
+  profiles::IProfile* profile,
+  float *input_power,
+  float *input_direction,
+  bool* input_isbreaking)
+{
+  auto service = new navigation::AccelerationService(
+    construction, profile);
+
+  float deltatime = 0.0f; // passed time in seconds
+  auto lasttime = std::chrono::steady_clock::now();
+  while(*isActive)
+  {
+    auto currenttime = std::chrono::steady_clock::now();
+    deltatime = std::chrono::duration_cast<std::chrono::milliseconds>(currenttime - lasttime).count();
+    lasttime = currenttime;
+
+    service->setAcceleration(*input_power, deltatime);
+    construction->setDirection(*input_direction);
+    if (*input_isbreaking) {
+      service->decelerate(deltatime);
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  }
+
+  delete service;
+}
+
+void output_loop(
+  bool* isActive,
+  construction::Lupus* construction,
+  float *input_power,
+  float *input_direction,
+  bool *input_isbreaking)
 {
   while (*isActive)
   {
-    std::cout << "Power: " << lupus->getPower() << std::endl;
-    std::cout << "Direction: " << lupus->getDirection() << std::endl;
+    std::cout << "Is breaking: " << *input_isbreaking << std::endl;
+    std::cout << "Input power: " << *input_power << std::endl;
+    std::cout << "Input direction: " << *input_direction << std::endl;
+    std::cout << "Power: " << construction->getPower() << std::endl;
+    std::cout << "Direction: " << construction->getDirection() << std::endl;
+    std::cout << std::endl;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   }

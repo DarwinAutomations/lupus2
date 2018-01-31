@@ -4,7 +4,8 @@
 namespace lupus
 {
 
-class IControlUnit {
+class IControlUnit
+{
   public:
     virtual ~IControlUnit() = default;
     virtual void setPower(float power) = 0;

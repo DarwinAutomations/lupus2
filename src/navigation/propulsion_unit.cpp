@@ -1,4 +1,5 @@
 #include <stdexcept>
+
 #include "propulsion_unit.h"
 
 namespace lupus::navigation
@@ -17,7 +18,7 @@ void PropulsionUnit::setPower(float power)
 {
   if(power > 1 || power < -1)
   {
-    throw std::invalid_argument("direction not in range -1, +1");
+    throw std::invalid_argument("power not in range -1, +1");
   }
   power = (power + 1) / 2;
   this->controlUnit->setPower(power);
