@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=$(IS) -Wall
-CLIBS=-lpthread
+CLIBS=-lpthread -lpigpio
 
 CORE=\
 src/main.cpp\
@@ -9,6 +9,8 @@ src/navigation/propulsion_unit.cpp\
 src/navigation/steering_unit.cpp\
 src/navigation/acceleration_service.cpp\
 src/profiles/granny_profile.cpp\
+src/sensors/ultrasonic_sensor.cpp\
+src/sensors/ultrasonic_service.cpp\
 
 IS=\
 -Isrc\
@@ -17,6 +19,7 @@ IS=\
 -Isrc/pwm\
 -Isrc/simulations\
 -Isrc/profiles\
+-Isrc/sensors\
 
 
 

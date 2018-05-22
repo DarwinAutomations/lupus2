@@ -9,10 +9,14 @@
 #include "simulated_control_unit.h"
 #include "steering_unit.h"
 #include "propulsion_unit.h"
+#include "ultrasonic_sensor.h"
+#include "ultrasonic_service.h"
 #include "profile.h"
 #include "granny_profile.h"
 #include "acceleration_service.h"
 #include "lupus.h"
+
+#define ULTRASONIC_TRIGGER 24
 
 using namespace lupus;
 
@@ -70,13 +74,79 @@ int main()
   auto propulsionUnitBackRight =
     new navigation::PropulsionUnit(cuPropulsionBackRight);
 
+  // sensors:
+  // ultrasonic:
+
+  // ultrasonic service;
+  auto ultrasonicService = new sensors::UltrasonicService(60);
+
+
+  // ultrasnoic sensor front left:
+  auto ultrasonicSensorFrontLeft = new sensors::UltrasonicSensor(
+      ultrasonicService, 
+      4000, 10, 0.2617993878 /* PI / 12 */,
+      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 1);
+
+  // ultrasnoic sensor front center left:
+  auto ultrasonicSensorFrontCenterLeft = new sensors::UltrasonicSensor(
+      ultrasonicService, 
+      4000, 10, 0.2617993878 /* PI / 12 */, 
+      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 2);
+
+  // ultrasnoic sensor front center right:
+  auto ultrasonicSensorFrontCenterRight = new sensors::UltrasonicSensor(
+      ultrasonicService, 
+      4000, 10, 0.2617993878 /* PI / 12 */, 
+      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 3);
+
+  // ultrasnoic sensor front right:
+  auto ultrasonicSensorFrontRight = new sensors::UltrasonicSensor(
+      ultrasonicService, 
+      4000, 10, 0.2617993878 /* PI / 12 */, 
+      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 4);
+
+  // ultrasnoic sensor back left:
+  auto ultrasonicSensorBackLeft = new sensors::UltrasonicSensor(
+      ultrasonicService, 
+      4000, 10, 0.2617993878 /* PI / 12 */,
+      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 1);
+
+  // ultrasnoic sensor back center left:
+  auto ultrasonicSensorBackCenterLeft = new sensors::UltrasonicSensor(
+      ultrasonicService, 
+      4000, 10, 0.2617993878 /* PI / 12 */, 
+      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 2);
+
+  // ultrasnoic sensor back center right:
+  auto ultrasonicSensorBackCenterRight = new sensors::UltrasonicSensor(
+      ultrasonicService, 
+      4000, 10, 0.2617993878 /* PI / 12 */, 
+      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 3);
+
+  // ultrasnoic sensor back right:
+  auto ultrasonicSensorBackRight = new sensors::UltrasonicSensor(
+      ultrasonicService, 
+      4000, 10, 0.2617993878 /* PI / 12 */, 
+      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 4);
+
+  // consutruction:
   auto construction = new construction::Lupus(
     steeringUnitLeft,
     steeringUnitRight,
+
     propulsionUnitFrontLeft,
     propulsionUnitFrontRight,
     propulsionUnitBackLeft,
-    propulsionUnitBackRight
+    propulsionUnitBackRight,
+
+    ultrasonicSensorFrontLeft,
+    ultrasonicSensorFrontCenterLeft,
+    ultrasonicSensorFrontCenterRight,
+    ultrasonicSensorFrontRight,
+    ultrasonicSensorBackLeft,
+    ultrasonicSensorBackCenterLeft,
+    ultrasonicSensorBackCenterRight,
+    ultrasonicSensorBackRight
   );
 
   // ensure power and direction are nutral before starting
@@ -140,7 +210,7 @@ void input_loop(
   bool* input_isbreaking)
 {
   js_event* event = new js_event();
-	int fd = open("/dev/input/js0", O_RDONLY | O_NONBLOCK);
+  int fd = open("/dev/input/js0", O_RDONLY | O_NONBLOCK);
   float magic_value = 32767.0f;
 
   while(*isActive)
@@ -149,6 +219,7 @@ void input_loop(
     if (bytes > 0)
     {
       event->type &= ~JS_EVENT_INIT;
+
       if (event->type & JS_EVENT_AXIS)
       {
         switch (event->number)
@@ -156,7 +227,7 @@ void input_loop(
           case 0:
             *input_direction = event->value / magic_value;
             break;
-          case 5:
+          case 13:
             *input_power = event->value / (magic_value*2) + 0.5f;
             break;
         }
@@ -164,7 +235,7 @@ void input_loop(
       if (event->type & JS_EVENT_BUTTON)
       {
         switch (event->number) {
-          case 5:
+          case 11:
             *input_isbreaking = event->value == 1;
         }
       }
