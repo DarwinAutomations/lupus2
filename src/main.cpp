@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <linux/joystick.h>
 #include <thread>
+#include <pigpio.h>
+#include <cstdlib>
 
 #include "simulated_control_unit.h"
 #include "steering_unit.h"
@@ -16,7 +18,7 @@
 #include "acceleration_service.h"
 #include "lupus.h"
 
-#define ULTRASONIC_TRIGGER 24
+#define ULTRASONIC_TRIGGER 18
 
 using namespace lupus;
 
@@ -37,10 +39,31 @@ void output_loop(
   construction::Lupus* construction,
   float* input_power,
   float* input_direction,
-  bool* input_isbreaking);
+  bool* input_isbreaking,
+  sensors::IDistanceSensor* fl,
+  sensors::IDistanceSensor* fcl,
+  sensors::IDistanceSensor* fcr,
+  sensors::IDistanceSensor* fr);
 
 int main()
 {
+  // pigpio initialise
+  if(gpioInitialise() < 0)
+  {
+    puts("gpio init failed");
+    return 0;
+  }
+  gpioSetMode(19, PI_INPUT);
+  gpioSetMode(13, PI_INPUT);
+  gpioSetMode(6, PI_INPUT);
+  gpioSetMode(5, PI_INPUT);
+
+  gpioSetMode(18, PI_OUTPUT);
+  gpioSetMode(18, PI_OUTPUT);
+  gpioSetMode(16, PI_OUTPUT);
+  gpioSetMode(12, PI_OUTPUT);
+
+
   // navigation units:
   // navigation unit left:
   auto controlUnitLeft = new simulations::SimulatedControlUnit();
@@ -76,34 +99,32 @@ int main()
 
   // sensors:
   // ultrasonic:
-
   // ultrasonic service;
-  auto ultrasonicService = new sensors::UltrasonicService(60);
-
+  auto ultrasonicService = new sensors::UltrasonicService(1);
 
   // ultrasnoic sensor front left:
   auto ultrasonicSensorFrontLeft = new sensors::UltrasonicSensor(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */,
-      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 1);
+      ULTRASONIC_TRIGGER, 19);
 
   // ultrasnoic sensor front center left:
   auto ultrasonicSensorFrontCenterLeft = new sensors::UltrasonicSensor(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */, 
-      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 2);
+      ULTRASONIC_TRIGGER, 13);
 
   // ultrasnoic sensor front center right:
   auto ultrasonicSensorFrontCenterRight = new sensors::UltrasonicSensor(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */, 
-      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 3);
+      16, 6);
 
   // ultrasnoic sensor front right:
   auto ultrasonicSensorFrontRight = new sensors::UltrasonicSensor(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */, 
-      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 4);
+      12, 5);
 
   // ultrasnoic sensor back left:
   auto ultrasonicSensorBackLeft = new sensors::UltrasonicSensor(
@@ -128,6 +149,7 @@ int main()
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */, 
       ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 4);
+
 
   // consutruction:
   auto construction = new construction::Lupus(
@@ -160,7 +182,6 @@ int main()
   float input_power = 0;
   float input_direction = 0;
   bool input_isbreaking = false;
-
   auto engine_thread = std::thread(
     engine_loop, &isActive,
     construction, profile,
@@ -173,18 +194,32 @@ int main()
   auto output_thread = std::thread(
     output_loop, &isActive,
     construction, &input_power,
-    &input_direction, &input_isbreaking);
+    &input_direction, &input_isbreaking,
+    ultrasonicSensorFrontLeft,
+    ultrasonicSensorFrontCenterLeft,
+    ultrasonicSensorFrontCenterRight,
+    ultrasonicSensorFrontRight);
 
   // wait for user input and exit
-	getchar();
-	isActive = false;
+  getchar();
+  isActive = false;
   input_thread.join();
-	output_thread.join();
+  output_thread.join();
   engine_thread.join();
-
 
   delete profile;
   delete construction;
+
+  delete ultrasonicSensorFrontLeft;
+  delete ultrasonicSensorFrontLeft;
+  delete ultrasonicSensorFrontCenterRight;
+  delete ultrasonicSensorFrontCenterRight;
+  delete ultrasonicSensorBackLeft;
+  delete ultrasonicSensorBackCenterLeft;
+  delete ultrasonicSensorBackCenterRight;
+  delete ultrasonicSensorBackRight;
+
+  delete ultrasonicService;
 
   delete cuPropulsionFrontLeft;
   delete propulsionUnitFrontLeft;
@@ -199,6 +234,8 @@ int main()
   delete controlUnitLeft;
   delete steeringUnitRight;
   delete controlUnitRight;
+
+  gpioTerminate();
 
   return 0;
 }
@@ -279,17 +316,33 @@ void output_loop(
   construction::Lupus* construction,
   float *input_power,
   float *input_direction,
-  bool *input_isbreaking)
+  bool *input_isbreaking,
+  sensors::IDistanceSensor* fl,
+  sensors::IDistanceSensor* fcl,
+  sensors::IDistanceSensor* fcr,
+  sensors::IDistanceSensor* fr)
 {
   while (*isActive)
   {
+    int fld = fl->getDistance();
+    int fcld = fcl->getDistance();
+    int fcrd = fcr->getDistance();
+    int frd = fr->getDistance();
+
+    //std::system("clear");
     std::cout << "Is breaking: " << *input_isbreaking << std::endl;
     std::cout << "Input power: " << *input_power << std::endl;
     std::cout << "Input direction: " << *input_direction << std::endl;
     std::cout << "Power: " << construction->getPower() << std::endl;
     std::cout << "Direction: " << construction->getDirection() << std::endl;
+    
+    std::cout << "Front Left: " << fld << "mm" << std::endl;
+    std::cout << "Front Center Left: " << fcld << "mm" << std::endl;
+    std::cout << "Front Center Right: " << fcrd << "mm" << std::endl;
+    std::cout << "Front Right: " << frd << "mm" << std::endl;
+    
     std::cout << std::endl;
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
