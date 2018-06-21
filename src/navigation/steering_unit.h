@@ -1,6 +1,7 @@
 #ifndef STEERING_UNIT_H
 #define STEERING_UNIT_H
 
+#include <memory>
 #include "control_unit.h"
 
 namespace lupus::navigation
@@ -9,10 +10,10 @@ namespace lupus::navigation
 class SteeringUnit
 {
   private:
-    IControlUnit* controlUnit;
+    std::shared_ptr<IControlUnit> controlUnit;
 
   public:
-    SteeringUnit (IControlUnit* controlUnit);
+    SteeringUnit(std::shared_ptr<IControlUnit> controlUnit);
     virtual ~SteeringUnit () = default;
     void setDirection(float direction);
     float getDirection();

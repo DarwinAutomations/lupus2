@@ -6,7 +6,7 @@
 namespace lupus::navigation
 {
 AccelerationService::AccelerationService (
-  construction::Lupus* construction,
+  constructions::IConstruction* construction,
   profiles::IProfile* profile)
 {
   if(!construction)
@@ -21,7 +21,7 @@ AccelerationService::AccelerationService (
   this->profile = profile;
 }
 
-void AccelerationService::setConstruction(construction::Lupus* construction)
+void AccelerationService::setConstruction(constructions::IConstruction* construction)
 {
   if(!construction)
   {

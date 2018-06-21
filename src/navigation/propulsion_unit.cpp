@@ -1,17 +1,18 @@
 #include <stdexcept>
+#include <memory>
 
 #include "propulsion_unit.h"
 
 namespace lupus::navigation
 {
 
-PropulsionUnit::PropulsionUnit(IControlUnit* controlUnit)
+PropulsionUnit::PropulsionUnit(std::shared_ptr<IControlUnit> controlUnit)
 {
   if(!controlUnit)
   {
     throw std::invalid_argument("control_unit must not be null");
   }
-  this->controlUnit = controlUnit;
+  this->controlUnit = std::move(controlUnit);
 }
 
 void PropulsionUnit::setPower(float power)

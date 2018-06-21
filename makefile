@@ -1,10 +1,11 @@
 CC=g++
-CFLAGS=$(IS) -Wall
+CFLAGS=$(IS) -Wall -g
 CLIBS=-lpthread -lpigpio
 
 CORE=\
 src/main.cpp\
-src/constructions/lupus.cpp\
+src/constructions/local_construction_factory.cpp\
+src/constructions/local_construction.cpp\
 src/navigation/propulsion_unit.cpp\
 src/navigation/steering_unit.cpp\
 src/navigation/acceleration_service.cpp\

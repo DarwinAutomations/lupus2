@@ -92,7 +92,6 @@ int UltrasonicService::measure(
     gpioWrite(trigger, 0);
   }
 
-  
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - *startTime).count();
   while(!gpioRead(echo) && duration < 30000)

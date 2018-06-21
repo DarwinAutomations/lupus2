@@ -1,16 +1,17 @@
+#include <memory>
 #include <stdexcept>
 #include "steering_unit.h"
 
 namespace lupus::navigation
 {
 
-SteeringUnit::SteeringUnit(IControlUnit* controlUnit)
+SteeringUnit::SteeringUnit(std::shared_ptr<IControlUnit> controlUnit)
 {
   if(!controlUnit)
   {
     throw std::invalid_argument("control_unit must not be null");
   }
-  this->controlUnit = controlUnit;
+  this->controlUnit = std::move(controlUnit);
 }
 
 void SteeringUnit::setDirection(float direction)
