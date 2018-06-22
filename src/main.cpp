@@ -72,7 +72,6 @@ int main()
   construction->setPower(0);
   construction->setDirection(0);
 
-
   // start input and output thread
   bool isActive = true;
   float input_power = 0;
