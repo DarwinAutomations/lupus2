@@ -45,56 +45,91 @@ LocalConstruction::LocalConstruction(
 
 }
 
-void LocalConstruction::setDirection(float direction)
-{
-  if(direction > 1 || direction < -1)
-  {
-    throw std::invalid_argument("direction not in range -1, +1");
-  }
-  this->steeringLeft->setDirection(direction);
-  this->steeringRight->setDirection(direction);
-}
 
-float LocalConstruction::getDirection()
-{
-  return this->steeringLeft->getDirection();
-}
-
-void LocalConstruction::setPower(float power)
+void LocalConstruction::setPropulsionFrontLeftPower(float power)
 {
   if(power > 1 || power < -1)
   {
     throw std::invalid_argument("power not in range -1, +1");
   }
   this->propulsionFrontLeft->setPower(power);
+}
+
+void LocalConstruction::setPropulsionFrontRightPower(float power)
+{
+  if(power > 1 || power < -1)
+  {
+    throw std::invalid_argument("power not in range -1, +1");
+  }
   this->propulsionFrontRight->setPower(power);
+}
+
+void LocalConstruction::setPropulsionBackLeftPower(float power)
+{
+  if(power > 1 || power < -1)
+  {
+    throw std::invalid_argument("power not in range -1, +1");
+  }
   this->propulsionBackLeft->setPower(power);
+}
+
+void LocalConstruction::setPropulsionBackRightPower(float power)
+{
+  if(power > 1 || power < -1)
+  {
+    throw std::invalid_argument("power not in range -1, +1");
+  }
   this->propulsionBackRight->setPower(power);
 }
 
-float LocalConstruction::getPower()
+
+float LocalConstruction::getPropulsionFrontLeftPower()
 {
   return this->propulsionFrontLeft->getPower();
 }
 
-
-/*
-void LocalConstruction::getSurroundings(int resolution, int *result)
+float LocalConstruction::getPropulsionFrontRightPower()
 {
-  for(int i = 0; i < resolution; i++)
-  {
-    result[i] = sensors::IDistanceSensor::DistanceUnknown;
-  }
+  return this->propulsionFrontRight->getPower();
 }
 
-void LocalConstruction::getSerroundingsSector(float sectorStart, float sectorStop, int resolution, int *result)
+float LocalConstruction::getPropulsionBackLeftPower()
 {
-  for(int i = 0; i < resolution; i++)
-  {
-    result[i] = sensors::IDistanceSensor::DistanceUnknown;
-  }
+  return this->propulsionBackLeft->getPower();
 }
-*/
 
+float LocalConstruction::getPropulsionBackRightPower()
+{
+  return this->propulsionBackRight->getPower();
+}
+
+
+void LocalConstruction::setSteeringLeftDirection(float direction)
+{
+  if(direction > 1 || direction < -1)
+  {
+    throw std::invalid_argument("direction not in range -1, +1");
+  }
+  this->steeringLeft->setDirection(direction);
+}
+
+void LocalConstruction::setSteeringRightDirection(float direction)
+{
+  if(direction > 1 || direction < -1)
+  {
+    throw std::invalid_argument("direction not in range -1, +1");
+  }
+  this->steeringRight->setDirection(direction);
+}
+
+float LocalConstruction::getSteeringLeftDirection()
+{
+  return this->steeringLeft->getDirection();
+}
+
+float LocalConstruction::getSteeringRightDirection()
+{
+  return this->steeringRight->getDirection();
+}
 
 } // namespace lupus::constructions

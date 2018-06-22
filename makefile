@@ -8,6 +8,7 @@ LDLIBS = -lpthread -lpigpio
 IS=\
 -Isrc\
 -Isrc/constructions\
+-Isrc/controllers\
 -Isrc/navigation\
 -Isrc/pwm\
 -Isrc/simulations\
@@ -18,6 +19,7 @@ CORE=\
 src/main.cpp\
 src/constructions/local_construction_factory.cpp\
 src/constructions/local_construction.cpp\
+src/controllers/raw_controller.cpp\
 src/navigation/propulsion_unit.cpp\
 src/navigation/steering_unit.cpp\
 src/navigation/acceleration_service.cpp\

@@ -51,11 +51,19 @@ class LocalConstruction: public IConstruction
       std::shared_ptr<sensors::IDistanceSensor> distanceBackRight
     );
     virtual ~LocalConstruction () = default;
-
-    void setPower(float power);
-    float getPower();
-    void setDirection(float direction);
-    float getDirection();
+ 
+    void setPropulsionFrontLeftPower(float power);
+    void setPropulsionFrontRightPower(float power);
+    void setPropulsionBackLeftPower(float power);
+    void setPropulsionBackRightPower(float power);
+    float getPropulsionFrontLeftPower();
+    float getPropulsionFrontRightPower();
+    float getPropulsionBackLeftPower();
+    float getPropulsionBackRightPower();
+    void setSteeringLeftDirection(float direction);
+    void setSteeringRightDirection(float direction);
+    float getSteeringLeftDirection();
+    float getSteeringRightDirection();
 };
 
 } // namespace lupus::constructions

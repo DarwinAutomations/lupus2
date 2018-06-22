@@ -11,12 +11,20 @@ class IConstruction
   public:
     virtual ~IConstruction () = default;
 
-    virtual void setPower(float power) = 0;
-    virtual float getPower() = 0;
-    virtual void setDirection(float direction) = 0;
-    virtual float getDirection() = 0;
+    virtual void setPropulsionFrontLeftPower(float power) = 0;
+    virtual void setPropulsionFrontRightPower(float power) = 0;
+    virtual void setPropulsionBackLeftPower(float power) = 0;
+    virtual void setPropulsionBackRightPower(float power) = 0;
+    virtual float getPropulsionFrontLeftPower() = 0;
+    virtual float getPropulsionFrontRightPower() = 0;
+    virtual float getPropulsionBackLeftPower() = 0;
+    virtual float getPropulsionBackRightPower() = 0;
+    virtual void setSteeringLeftDirection(float direction) = 0;
+    virtual void setSteeringRightDirection(float direction) = 0;
+    virtual float getSteeringLeftDirection() = 0;
+    virtual float getSteeringRightDirection() = 0;
 };
 
 } // namespace lupus::constructions
 
-#endif /* CONSTRUCTIONS_CONSTURCTION_H */
+#endif /* CONSTRUCTIONS_CONSTRUCTION_H */

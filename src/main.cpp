@@ -18,6 +18,8 @@
 #include "acceleration_service.h"
 #include "local_construction.h"
 #include "local_construction_factory.h"
+#include "controller.h"
+#include "raw_controller.h"
 
 #define ULTRASONIC_TRIGGER 18
 
@@ -32,6 +34,7 @@ void input_loop(
 void engine_loop(
   bool* isActive,
   constructions::IConstruction* construction,
+  controllers::IController* controller,
   profiles::IProfile* profile,
   float* input_power,
   float* input_direction,
@@ -39,7 +42,7 @@ void engine_loop(
 
 void output_loop(
   bool* isActive,
-  constructions::IConstruction* construction,
+  controllers::IController* controller,
   float* input_power,
   float* input_direction,
   bool* input_isbreaking);
@@ -63,14 +66,13 @@ int main()
   gpioSetMode(12, PI_OUTPUT);
 
   auto profile = new profiles::GrannyProfile();
-
   auto ultrasonicService = new sensors::UltrasonicService(1);
-
-  auto construction = dynamic_cast<constructions::IConstruction*>(constructions::LocalConstructionFactory::create(ultrasonicService));
+  auto construction = dynamic_cast<constructions::IConstruction*> (constructions::LocalConstructionFactory::create(ultrasonicService));
+  auto controller = dynamic_cast<controllers::IController*> (new controllers::RawController(std::shared_ptr<constructions::IConstruction>(construction)));
 
   // ensure power and direction are nutral before starting
-  construction->setPower(0);
-  construction->setDirection(0);
+  controller->setPower(0);
+  controller->setDirection(0);
 
   // start input and output thread
   bool isActive = true;
@@ -80,7 +82,7 @@ int main()
 
   auto engine_thread = std::thread(
     engine_loop, &isActive,
-    construction, profile,
+    construction, controller, profile,
     &input_power, &input_direction,
     &input_isbreaking);
 
@@ -91,7 +93,7 @@ int main()
 
   auto output_thread = std::thread(
     output_loop, &isActive,
-    construction, &input_power,
+    controller, &input_power,
     &input_direction, &input_isbreaking);
 
   // wait for user input and exit
@@ -153,6 +155,7 @@ void input_loop(
 void engine_loop(
   bool* isActive,
   constructions::IConstruction* construction,
+  controllers::IController* controller,
   profiles::IProfile* profile,
   float *input_power,
   float *input_direction,
@@ -170,7 +173,7 @@ void engine_loop(
     lasttime = currenttime;
 
     service->setAcceleration(*input_power, deltatime);
-    construction->setDirection(*input_direction);
+    controller->setDirection(*input_direction);
     if (*input_isbreaking) {
       service->decelerate(deltatime);
     }
@@ -183,7 +186,7 @@ void engine_loop(
 
 void output_loop(
   bool* isActive,
-  constructions::IConstruction* construction,
+  controllers::IController* controller,
   float *input_power,
   float *input_direction,
   bool *input_isbreaking)
@@ -194,8 +197,8 @@ void output_loop(
     std::cout << "Is breaking: " << *input_isbreaking << std::endl;
     std::cout << "Input power: " << *input_power << std::endl;
     std::cout << "Input direction: " << *input_direction << std::endl;
-    std::cout << "Power: " << construction->getPower() << std::endl;
-    std::cout << "Direction: " << construction->getDirection() << std::endl;
+    std::cout << "Power: " << controller->getPower() << std::endl;
+    std::cout << "Direction: " << controller->getDirection() << std::endl;
     std::cout << std::endl;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
