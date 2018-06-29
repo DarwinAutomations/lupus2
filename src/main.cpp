@@ -15,114 +15,73 @@
 #include "ultrasonic_service.h"
 #include "profile.h"
 #include "granny_profile.h"
-#include "acceleration_service.h"
+#include "propulsion_service.h"
 #include "local_construction.h"
 #include "local_construction_factory.h"
 #include "controller.h"
-#include "raw_controller.h"
+#include "intelligent_controller.h"
+#include "gpio_driver.h"
 
 #define ULTRASONIC_TRIGGER 18
 
 using namespace lupus;
 
 void input_loop(
-  bool* isActive,
-  float* input_power,
-  float* input_direction,
-  bool* input_isbreaking);
-
-void engine_loop(
-  bool* isActive,
-  constructions::IConstruction* construction,
-  controllers::IController* controller,
-  profiles::IProfile* profile,
-  float* input_power,
-  float* input_direction,
-  bool* input_isbreaking);
+  bool& isActive,
+  std::shared_ptr<controllers::IController> controller);
 
 void output_loop(
-  bool* isActive,
-  controllers::IController* controller,
-  float* input_power,
-  float* input_direction,
-  bool* input_isbreaking);
+  bool& isActive,
+  std::shared_ptr<controllers::IController> controller);
 
 int main()
 {
-  // pigpio initialise
-  if(gpioInitialise() < 0)
-  {
-    puts("gpio init failed");
-    return 0;
-  }
-  gpioSetMode(19, PI_INPUT);
-  gpioSetMode(13, PI_INPUT);
-  gpioSetMode(6, PI_INPUT);
-  gpioSetMode(5, PI_INPUT);
+  auto gpioDriver = std::make_shared<gpio::GpioDriver>();
+  auto ultrasonicService = std::make_shared<sensors::UltrasonicService>(gpioDriver, 1);
 
-  gpioSetMode(18, PI_OUTPUT);
-  gpioSetMode(18, PI_OUTPUT);
-  gpioSetMode(16, PI_OUTPUT);
-  gpioSetMode(12, PI_OUTPUT);
+  auto construction =
+      constructions::LocalConstructionFactory::create(ultrasonicService);
+  
+  auto profile = std::make_shared<profiles::GrannyProfile>();
+  auto propulsionService = 
+    std::make_shared<navigation::PropulsionService>(construction, profile);
 
-  auto profile = new profiles::GrannyProfile();
-  auto ultrasonicService = new sensors::UltrasonicService(1);
-  auto construction = dynamic_cast<constructions::IConstruction*> (constructions::LocalConstructionFactory::create(ultrasonicService));
-  auto controller = dynamic_cast<controllers::IController*> (new controllers::RawController(std::shared_ptr<constructions::IConstruction>(construction)));
-
-  // ensure power and direction are nutral before starting
-  controller->setPower(0);
-  controller->setDirection(0);
+  auto controller = 
+    std::make_shared<controllers::IntelligentController>(
+      construction,
+      propulsionService);
 
   // start input and output thread
   bool isActive = true;
-  float input_power = 0;
-  float input_direction = 0;
-  bool input_isbreaking = false;
-
-  auto engine_thread = std::thread(
-    engine_loop, &isActive,
-    construction, controller, profile,
-    &input_power, &input_direction,
-    &input_isbreaking);
 
   auto input_thread = std::thread(
-    input_loop, &isActive,
-    &input_power, &input_direction,
-    &input_isbreaking);
+    input_loop, 
+    std::ref(isActive),
+    controller);
 
   auto output_thread = std::thread(
-    output_loop, &isActive,
-    controller, &input_power,
-    &input_direction, &input_isbreaking);
+    output_loop, 
+    std::ref(isActive),
+    controller); 
 
   // wait for user input and exit
   getchar();
   isActive = false;
   input_thread.join();
   output_thread.join();
-  engine_thread.join();
-
-  delete profile;
-  delete construction;
-  delete ultrasonicService;
-
-  gpioTerminate();
 
   return 0;
 }
 
 void input_loop(
-  bool* isActive,
-  float* input_power,
-  float* input_direction,
-  bool* input_isbreaking)
+  bool& isActive,
+  std::shared_ptr<controllers::IController> controller)
 {
   js_event* event = new js_event();
   int fd = open("/dev/input/js0", O_RDONLY | O_NONBLOCK);
   float magic_value = 32767.0f;
 
-  while(*isActive)
+  while(isActive)
   {
     int bytes = read(fd, event, sizeof(js_event));
     if (bytes > 0)
@@ -134,10 +93,10 @@ void input_loop(
         switch (event->number)
         {
           case 0:
-            *input_direction = event->value / magic_value;
+            controller->setDirection(event->value / magic_value);
             break;
           case 13:
-            *input_power = event->value / (magic_value*2) + 0.5f;
+            controller->setAcceleration(event->value / (magic_value*2) + 0.5f);
             break;
         }
       }
@@ -145,59 +104,23 @@ void input_loop(
       {
         switch (event->number) {
           case 11:
-            *input_isbreaking = event->value == 1;
+            if(event->value == 1)
+	      controller->decelerate();
+	    else
+	      controller->setAcceleration(0);
         }
       }
     }
   }
 }
 
-void engine_loop(
-  bool* isActive,
-  constructions::IConstruction* construction,
-  controllers::IController* controller,
-  profiles::IProfile* profile,
-  float *input_power,
-  float *input_direction,
-  bool* input_isbreaking)
-{
-  auto service = new navigation::AccelerationService(
-    construction, profile);
-
-  float deltatime = 0.0f; // passed time in seconds
-  auto lasttime = std::chrono::steady_clock::now();
-  while(*isActive)
-  {
-    auto currenttime = std::chrono::steady_clock::now();
-    deltatime = std::chrono::duration_cast<std::chrono::milliseconds>(currenttime - lasttime).count();
-    lasttime = currenttime;
-
-    service->setAcceleration(*input_power, deltatime);
-    controller->setDirection(*input_direction);
-    if (*input_isbreaking) {
-      service->decelerate(deltatime);
-    }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-  }
-
-  delete service;
-}
-
 void output_loop(
-  bool* isActive,
-  controllers::IController* controller,
-  float *input_power,
-  float *input_direction,
-  bool *input_isbreaking)
+  bool& isActive,
+  std::shared_ptr<controllers::IController> controller)
 {
-  while (*isActive)
+  while (isActive)
   {
     //std::system("clear");
-    std::cout << "Is breaking: " << *input_isbreaking << std::endl;
-    std::cout << "Input power: " << *input_power << std::endl;
-    std::cout << "Input direction: " << *input_direction << std::endl;
-    std::cout << "Power: " << controller->getPower() << std::endl;
     std::cout << "Direction: " << controller->getDirection() << std::endl;
     std::cout << std::endl;
 

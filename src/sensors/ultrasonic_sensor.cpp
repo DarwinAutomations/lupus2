@@ -4,14 +4,14 @@
 namespace lupus::sensors
 {
 
-UltrasonicSensor::UltrasonicSensor(UltrasonicService* service, int range, int accuracy, float angle, int trigger, int echo)
+UltrasonicSensor::UltrasonicSensor(std::shared_ptr<UltrasonicService> service, int range, int accuracy, float angle, int trigger, int echo)
 {
   if(!service)
   {
     throw std::invalid_argument("ultrasonic_service must not be null");
   }
 
-  this->service = service;
+  this->service = std::move(service);
   this->range = range;
   this->accuracy = accuracy;
   this->angle = angle;

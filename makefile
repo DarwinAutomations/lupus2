@@ -14,18 +14,21 @@ IS=\
 -Isrc/simulations\
 -Isrc/profiles\
 -Isrc/sensors\
+-Isrc/gpio\
 
 CORE=\
 src/main.cpp\
 src/constructions/local_construction_factory.cpp\
 src/constructions/local_construction.cpp\
 src/controllers/raw_controller.cpp\
+src/controllers/intelligent_controller.cpp\
 src/navigation/propulsion_unit.cpp\
 src/navigation/steering_unit.cpp\
-src/navigation/acceleration_service.cpp\
+src/navigation/propulsion_service.cpp\
 src/profiles/granny_profile.cpp\
 src/sensors/ultrasonic_sensor.cpp\
 src/sensors/ultrasonic_service.cpp\
+src/gpio/gpio_driver.cpp\
 
 SRCS=$(CORE)\
 src/pwm/pwm_control_unit.cpp\

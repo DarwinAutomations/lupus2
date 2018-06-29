@@ -1,8 +1,10 @@
 #ifndef ULTRASONIC_SENSOR_H
 #define ULTRASONIC_SENSOR_H
 
-#include <distance_sensor.h>
-#include <ultrasonic_service.h>
+#include <memory>
+
+#include "distance_sensor.h"
+#include "ultrasonic_service.h"
 
 
 namespace lupus::sensors
@@ -11,7 +13,7 @@ namespace lupus::sensors
 class UltrasonicSensor : public IDistanceSensor
 {
   private:
-    UltrasonicService* service;
+    std::shared_ptr<UltrasonicService> service;
     int id;
     
     int range;
@@ -19,7 +21,7 @@ class UltrasonicSensor : public IDistanceSensor
     float angle;
 
   public:
-    UltrasonicSensor(UltrasonicService* service, int range, int accuracy, float angle, int trigger, int echo);
+    UltrasonicSensor(std::shared_ptr<UltrasonicService> service, int range, int accuracy, float angle, int trigger, int echo);
     virtual ~UltrasonicSensor();
     int getDistance();
     int getAccuracy() override;

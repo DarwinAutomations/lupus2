@@ -10,8 +10,8 @@ namespace lupus::constructions
 class LocalConstructionFactory
 {
   public:
-    static LocalConstruction* create(
-      sensors::UltrasonicService* ultrasonicService 
+    static std::shared_ptr<LocalConstruction> create(
+      std::shared_ptr<sensors::UltrasonicService> ultrasonicService 
       /* pins etc */ );
 };
 

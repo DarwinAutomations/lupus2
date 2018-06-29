@@ -14,8 +14,8 @@
 namespace lupus::constructions
 {
 
-LocalConstruction* LocalConstructionFactory::create(
-    sensors::UltrasonicService* ultrasonicService)
+std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
+    std::shared_ptr<sensors::UltrasonicService> ultrasonicService)
 {
   // navigation units:
   // navigation unit left:
@@ -106,7 +106,7 @@ LocalConstruction* LocalConstructionFactory::create(
 
 
   // consutruction:
-  auto construction = new constructions::LocalConstruction(
+  auto construction = std::make_shared<constructions::LocalConstruction>(
     steeringUnitLeft,
     steeringUnitRight,
 

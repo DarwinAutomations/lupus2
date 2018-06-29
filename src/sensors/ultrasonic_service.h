@@ -5,6 +5,9 @@
 #include <mutex>
 #include <map>
 #include <tuple>
+#include <memory>
+
+#include "gpio_driver.h"
 
 namespace lupus::sensors
 {
@@ -12,6 +15,7 @@ namespace lupus::sensors
 class UltrasonicService
 {
   private:
+    std::shared_ptr<gpio::GpioDriver> gpio;
     std::mutex registryMutex;
     std::mutex dataMutex;
     std::thread measuringThread;
@@ -22,12 +26,14 @@ class UltrasonicService
     void measuringLoop(int frequency);
 
   public:
-    UltrasonicService (int frequency);
+    UltrasonicService (std::shared_ptr<gpio::GpioDriver> gpio, int frequency);
     virtual ~UltrasonicService ();
     int registerSensor(int trigger, int echo);
     void deregisterSensor(int id);
     int getDistance(int id);
-    static int measure(int trigger, int echo,
+    static int measure(
+        std::shared_ptr<gpio::GpioDriver> gpio,
+        int trigger, int echo,
         std::chrono::time_point<std::chrono::system_clock>* startTime = NULL);
 
 
