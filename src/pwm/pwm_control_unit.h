@@ -1,6 +1,8 @@
 #ifndef PWM_CONTROL_UNIT_H
 #define PWM_CONTROL_UNIT_H
 
+#include <memory>
+
 #include "control_unit.h"
 #include "pwm_driver.h"
 
@@ -10,7 +12,7 @@ namespace lupus::pwm
 class PwmControlUnit : public lupus::IControlUnit
 {
   private:
-    PwmDriver* pwmDriver;
+    std::shared_ptr<PwmDriver> pwmDriver;
     int channel;
     float min;
     float max;
@@ -18,7 +20,7 @@ class PwmControlUnit : public lupus::IControlUnit
 
   public:
     PwmControlUnit (
-      PwmDriver* pwmDriver,
+      std::shared_ptr<PwmDriver> pwmDriver,
       int channel,
       int min,
       int max);

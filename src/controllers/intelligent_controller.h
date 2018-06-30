@@ -1,5 +1,5 @@
-#ifndef CONTROLLERS_RAW_CONTROLLER_H
-#define CONTROLLERS_RAW_CONTROLLER_H
+#ifndef CONTROLLERS_INTELLIGENT_CONTROLLER_H
+#define CONTROLLERS_INTELLIGENT_CONTROLLER_H
 
 #include <memory>
 #include <thread>
@@ -27,7 +27,7 @@ class IntelligentController : public IController
     IntelligentController(
       std::shared_ptr<constructions::IConstruction> construction,
       std::shared_ptr<navigation::PropulsionService> propulsionService);
-    virtual ~IntelligentController ();
+    ~IntelligentController ();
 
     void setAcceleration(float accleration);
     void decelerate();
@@ -38,4 +38,4 @@ class IntelligentController : public IController
 
 } // namespace lupus::controllers
 
-#endif /* CONTROLLERS_RAW_CONTROLLER_H */
+#endif /* CONTROLLERS_INTELLIGENT_CONTROLLER_H */

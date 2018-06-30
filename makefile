@@ -18,24 +18,24 @@ IS=\
 
 CORE=\
 src/main.cpp\
-src/constructions/local_construction_factory.cpp\
 src/constructions/local_construction.cpp\
-src/controllers/raw_controller.cpp\
 src/controllers/intelligent_controller.cpp\
 src/navigation/propulsion_unit.cpp\
 src/navigation/steering_unit.cpp\
 src/navigation/propulsion_service.cpp\
 src/profiles/granny_profile.cpp\
-src/sensors/ultrasonic_sensor.cpp\
-src/sensors/ultrasonic_service.cpp\
-src/gpio/gpio_driver.cpp\
 
 SRCS=$(CORE)\
-src/pwm/pwm_control_unit.cpp\
 src/pwm/pwm_driver.cpp\
+src/gpio/gpio_driver.cpp\
+src/pwm/pwm_control_unit.cpp\
+src/sensors/ultrasonic_sensor.cpp\
+src/sensors/ultrasonic_service.cpp\
+src/constructions/local_construction_factory.cpp\
 
 SRCSSIM=$(CORE)\
-src/simulations/simulated_control_unit.cpp
+src/simulations/simulated_control_unit.cpp\
+src/constructions/simulated_consturction_factory.cpp\
 
 OBJS=$(subst .cpp,.o, $(SRCS))
 OBJSSIM=$(subst .cpp,.o, $(SRCSSIM))

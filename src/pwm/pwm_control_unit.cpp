@@ -5,7 +5,7 @@ namespace lupus::pwm
 {
 
   PwmControlUnit::PwmControlUnit(
-    PwmDriver* pwmDriver,
+    std::shared_ptr<PwmDriver> pwmDriver,
     int channel,
     int min,
     int max)
@@ -15,7 +15,7 @@ namespace lupus::pwm
       throw std::invalid_argument("pwm_driver must not be null");
     }
 
-    this->pwmDriver = pwmDriver;
+    this->pwmDriver = std::move(pwmDriver);
     this->channel = channel;
     this->min = min;
     this->max = max;
@@ -27,7 +27,8 @@ namespace lupus::pwm
     {
       throw std::invalid_argument("power not in range 0, 1");
     }
-    int off = (min - max) * power + max;
+
+    int off = min + (max - min) * power;
     pwmDriver->setPwm(this->channel, 0, off);
     this->value = power;
   }

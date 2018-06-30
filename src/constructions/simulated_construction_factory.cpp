@@ -1,8 +1,8 @@
 #include <stdexcept>
 
 #include "local_construction.h"
-#include "local_construction_factory.h"
-#include "pwm_control_unit.h"
+#include "simulated_construction_factory.h"
+#include "simulated_control_unit.h"
 #include "steering_unit.h"
 #include "propulsion_unit.h"
 #include "distance_sensor.h"
@@ -14,47 +14,46 @@
 namespace lupus::constructions
 {
 
-std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
-    std::shared_ptr<pwm::PwmDriver> pwmDriver,
+std::shared_ptr<LocalConstruction> SimulatedConstructionFactory::create(
     std::shared_ptr<sensors::UltrasonicService> ultrasonicService)
 {
   // navigation units:
   // navigation unit left:
   auto controlUnitLeft 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 14, 220, 565);
+    = std::make_shared<simulations::SimulatedControlUnit>();
   auto steeringUnitLeft 
     = std::make_shared<navigation::SteeringUnit>(controlUnitLeft);
 
   // navigation unit right:
   auto controlUnitRight 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 15, 565, 220);
+    = std::make_shared<simulations::SimulatedControlUnit>();
   auto steeringUnitRight 
-    = std::make_shared<navigation::SteeringUnit>(controlUnitRight);
+    = std::make_shared<navigation::SteeringUnit>(controlUnitLeft);
 
   // propulsion units:
   // propulsion unit front left:
   auto cuPropulsionFrontLeft 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 0, 240, 460);
+    = std::make_shared<simulations::SimulatedControlUnit>();
   auto propulsionUnitFrontLeft 
-    = std::make_shared<navigation::PropulsionUnit>(cuPropulsionFrontLeft);
+    = std::make_shared<navigation::PropulsionUnit>(controlUnitLeft);
 
   // propulsion unit front right:
   auto cuPropulsionFrontRight 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 1, 240, 460);
+    = std::make_shared<simulations::SimulatedControlUnit>();
   auto propulsionUnitFrontRight 
-    = std::make_shared<navigation::PropulsionUnit>(cuPropulsionFrontRight);
+    = std::make_shared<navigation::PropulsionUnit>(controlUnitLeft);
 
   // propulsion unit back left:
   auto cuPropulsionBackLeft 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 2, 240, 460);
+    = std::make_shared<simulations::SimulatedControlUnit>();
   auto propulsionUnitBackLeft 
-    = std::make_shared<navigation::PropulsionUnit>(cuPropulsionBackLeft);
+    = std::make_shared<navigation::PropulsionUnit>(controlUnitLeft);
 
   // propulsion unit back right:
   auto cuPropulsionBackRight 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 3, 240, 460);
+    = std::make_shared<simulations::SimulatedControlUnit>();
   auto propulsionUnitBackRight 
-    = std::make_shared<navigation::PropulsionUnit>(cuPropulsionBackRight);
+    = std::make_shared<navigation::PropulsionUnit>(controlUnitLeft);
 
   // sensors:
   // ultrasnoic sensor front left:

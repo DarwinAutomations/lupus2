@@ -32,16 +32,28 @@ void input_loop(
 
 void output_loop(
   bool& isActive,
-  std::shared_ptr<controllers::IController> controller);
+  std::shared_ptr<controllers::IController> controller,
+  std::shared_ptr<constructions::IConstruction> construciton);
 
 int main()
 {
+  const int i2cAddress = 0x40;
+  const int frequency = 60;
+
   auto gpioDriver = std::make_shared<gpio::GpioDriver>();
+  auto pwmDriver = std::make_shared<pwm::PwmDriver>(i2cAddress);
+  pwmDriver->setPwmFrequency(frequency);
+
   auto ultrasonicService = std::make_shared<sensors::UltrasonicService>(gpioDriver, 1);
 
   auto construction =
-      constructions::LocalConstructionFactory::create(ultrasonicService);
-  
+      constructions::LocalConstructionFactory::create(pwmDriver, ultrasonicService);
+
+  construction->setPropulsionFrontLeftPower(0);
+  construction->setPropulsionFrontRightPower(0);
+  construction->setPropulsionBackLeftPower(0);
+  construction->setPropulsionBackRightPower(0);
+
   auto profile = std::make_shared<profiles::GrannyProfile>();
   auto propulsionService = 
     std::make_shared<navigation::PropulsionService>(construction, profile);
@@ -62,10 +74,11 @@ int main()
   auto output_thread = std::thread(
     output_loop, 
     std::ref(isActive),
-    controller); 
+    controller,
+    construction); 
 
   // wait for user input and exit
-  getchar();
+  while(getchar() != 'q');
   isActive = false;
   input_thread.join();
   output_thread.join();
@@ -95,7 +108,7 @@ void input_loop(
           case 0:
             controller->setDirection(event->value / magic_value);
             break;
-          case 13:
+          case 5:
             controller->setAcceleration(event->value / (magic_value*2) + 0.5f);
             break;
         }
@@ -103,7 +116,13 @@ void input_loop(
       if (event->type & JS_EVENT_BUTTON)
       {
         switch (event->number) {
-          case 11:
+          case 4:
+            if(event->value == 1)
+      	      controller->setAcceleration(-0.5);
+            else
+	      controller->setAcceleration(0);
+	    break;
+          case 5:
             if(event->value == 1)
 	      controller->decelerate();
 	    else
@@ -116,12 +135,14 @@ void input_loop(
 
 void output_loop(
   bool& isActive,
-  std::shared_ptr<controllers::IController> controller)
+  std::shared_ptr<controllers::IController> controller,
+  std::shared_ptr<constructions::IConstruction> construction)
 {
   while (isActive)
   {
-    //std::system("clear");
+    std::system("clear");
     std::cout << "Direction: " << controller->getDirection() << std::endl;
+    std::cout << "Power: " << construction->getPropulsionFrontLeftPower() << std::endl;
     std::cout << std::endl;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

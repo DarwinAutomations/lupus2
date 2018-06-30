@@ -3,6 +3,7 @@
 
 #include "local_construction.h"
 #include "ultrasonic_service.h"
+#include "pwm_driver.h"
 
 namespace lupus::constructions
 {
@@ -11,6 +12,7 @@ class LocalConstructionFactory
 {
   public:
     static std::shared_ptr<LocalConstruction> create(
+      std::shared_ptr<pwm::PwmDriver> pwmDriver,
       std::shared_ptr<sensors::UltrasonicService> ultrasonicService 
       /* pins etc */ );
 };
