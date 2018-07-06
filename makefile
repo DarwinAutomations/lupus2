@@ -27,8 +27,9 @@ src/profiles/granny_profile.cpp\
 
 SRCS=$(CORE)\
 src/pwm/pwm_driver.cpp\
-src/gpio/gpio_driver.cpp\
 src/pwm/pwm_control_unit.cpp\
+src/gpio/gpio_driver.cpp\
+src/sensors/hall_sensor.cpp\
 src/sensors/ultrasonic_sensor.cpp\
 src/sensors/ultrasonic_service.cpp\
 src/constructions/local_construction_factory.cpp\
