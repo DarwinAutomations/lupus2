@@ -16,6 +16,7 @@ namespace lupus::constructions
 
 std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
     std::shared_ptr<pwm::PwmDriver> pwmDriver,
+    std::shared_ptr<gpio::GpioDriver> gpioDriver,
     std::shared_ptr<sensors::UltrasonicService> ultrasonicService)
 {
   // navigation units:
@@ -33,28 +34,40 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
 
   // propulsion units:
   // propulsion unit front left:
-  auto cuPropulsionFrontLeft 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 0, 240, 460);
-  auto propulsionUnitFrontLeft 
-    = std::make_shared<navigation::PropulsionUnit>(cuPropulsionFrontLeft);
+  auto cuPropulsionFrontLeft = std::make_shared<pwm::PwmControlUnit>(
+      pwmDriver, 0, 240, 460);
+  auto hallSensorFrontLeft = std::make_shared<sensors::HallSensor>(
+      gpioDriver, 0);
+  auto propulsionUnitFrontLeft = std::make_shared<navigation::PropulsionUnit>(
+      cuPropulsionFrontLeft,
+      hallSensorFrontLeft);
 
   // propulsion unit front right:
-  auto cuPropulsionFrontRight 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 1, 240, 460);
-  auto propulsionUnitFrontRight 
-    = std::make_shared<navigation::PropulsionUnit>(cuPropulsionFrontRight);
+  auto cuPropulsionFrontRight = std::make_shared<pwm::PwmControlUnit>(
+      pwmDriver, 1, 240, 460);
+  auto hallSensorFrontRight = std::make_shared<sensors::HallSensor>(
+      gpioDriver, 0);
+  auto propulsionUnitFrontRight = std::make_shared<navigation::PropulsionUnit>(
+      cuPropulsionFrontRight,
+      hallSensorFrontRight);
 
   // propulsion unit back left:
-  auto cuPropulsionBackLeft 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 2, 240, 460);
-  auto propulsionUnitBackLeft 
-    = std::make_shared<navigation::PropulsionUnit>(cuPropulsionBackLeft);
+  auto cuPropulsionBackLeft = std::make_shared<pwm::PwmControlUnit>(
+      pwmDriver, 2, 240, 460);
+  auto hallSensorBackLeft = std::make_shared<sensors::HallSensor>(
+      gpioDriver, 0);
+  auto propulsionUnitBackLeft = std::make_shared<navigation::PropulsionUnit>(
+      cuPropulsionBackLeft,
+      hallSensorBackLeft);
 
   // propulsion unit back right:
-  auto cuPropulsionBackRight 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 3, 240, 460);
-  auto propulsionUnitBackRight 
-    = std::make_shared<navigation::PropulsionUnit>(cuPropulsionBackRight);
+  auto cuPropulsionBackRight = std::make_shared<pwm::PwmControlUnit>(
+      pwmDriver, 3, 240, 460);
+  auto hallSensorBackRight = std::make_shared<sensors::HallSensor>(
+      gpioDriver, 0);
+  auto propulsionUnitBackRight = std::make_shared<navigation::PropulsionUnit>(
+      cuPropulsionBackRight,
+      hallSensorBackRight);
 
   // sensors:
   // ultrasnoic sensor front left:

@@ -13,6 +13,7 @@ class LocalConstructionFactory
   public:
     static std::shared_ptr<LocalConstruction> create(
       std::shared_ptr<pwm::PwmDriver> pwmDriver,
+      std::shared_ptr<gpio::GpioDriver> gpioDriver,
       std::shared_ptr<sensors::UltrasonicService> ultrasonicService 
       /* pins etc */ );
 };

@@ -44,10 +44,13 @@ int main()
   auto pwmDriver = std::make_shared<pwm::PwmDriver>(i2cAddress);
   pwmDriver->setPwmFrequency(frequency);
 
-  auto ultrasonicService = std::make_shared<sensors::UltrasonicService>(gpioDriver, 1);
+  auto ultrasonicService = std::make_shared<sensors::UltrasonicService>(
+      gpioDriver, 1);
 
-  auto construction =
-      constructions::LocalConstructionFactory::create(pwmDriver, ultrasonicService);
+  auto construction = constructions::LocalConstructionFactory::create(
+      pwmDriver,
+      gpioDriver,
+      ultrasonicService);
 
   construction->setPropulsionFrontLeftPower(0);
   construction->setPropulsionFrontRightPower(0);
