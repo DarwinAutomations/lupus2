@@ -103,6 +103,25 @@ float LocalConstruction::getPropulsionBackRightPower()
   return this->propulsionBackRight->getPower();
 }
 
+float LocalConstruction::getRpsFrontLeft()
+{
+  return this->propulsionFrontLeft->getRps();
+}
+
+float LocalConstruction::getRpsFrontRight()
+{
+  return this->propulsionFrontRight->getRps();
+}
+
+float LocalConstruction::getRpsBackLeft()
+{
+  return this->propulsionBackLeft->getRps();
+}
+
+float LocalConstruction::getRpsBackRight()
+{
+  return this->propulsionBackRight->getRps();
+}
 
 void LocalConstruction::setSteeringLeftDirection(float direction)
 {

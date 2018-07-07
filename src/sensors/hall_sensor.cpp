@@ -37,7 +37,7 @@ float HallSensor::getLatestPeriodTime()
   return periods[2];
 }
 
-float HallSensor::getNormalisedRps()
+float HallSensor::getNormalisedPeriodTime()
 {
   std::lock_guard<std::mutex> guard(mutex);
 
@@ -54,17 +54,15 @@ float HallSensor::getNormalisedRps()
 
 void HallSensor::callback(int pin, int level, uint32_t tick)
 {
-  if(level == 0)
+  if(level != 1)
     return;
 
   std::lock_guard<std::mutex> guard(mutex);
   std::rotate(periods.begin(), periods.begin() + 1, periods.end());
 
-  uint32_t period;
-  if(lastTick <= tick)
-    period = tick - lastTick;
-  else
-    period = tick - lastTick + std::numeric_limits<uint32_t>::max();
+  if(lastTick > tick)
+    tick += std::numeric_limits<uint32_t>::max();
+  auto period = tick - lastTick;
 
   periods[2] = period;
   lastTick = tick;

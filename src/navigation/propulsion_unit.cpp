@@ -41,7 +41,7 @@ float PropulsionUnit::getPower()
 
 float PropulsionUnit::getRps()
 {
-  return this->hallSensor->getNormalisedRps();
+  return 1000000 / this->hallSensor->getNormalisedPeriodTime();
 }
 
 } // namespace lupus::navigation

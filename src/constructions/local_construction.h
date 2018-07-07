@@ -60,6 +60,11 @@ class LocalConstruction: public IConstruction
     float getPropulsionFrontRightPower();
     float getPropulsionBackLeftPower();
     float getPropulsionBackRightPower();
+    float getRpsFrontLeft();
+    float getRpsFrontRight();
+    float getRpsBackLeft();
+    float getRpsBackRight();
+
     void setSteeringLeftDirection(float direction);
     void setSteeringRightDirection(float direction);
     float getSteeringLeftDirection();

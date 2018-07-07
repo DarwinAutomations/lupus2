@@ -19,6 +19,11 @@ class IConstruction
     virtual float getPropulsionFrontRightPower() = 0;
     virtual float getPropulsionBackLeftPower() = 0;
     virtual float getPropulsionBackRightPower() = 0;
+    virtual float getRpsFrontLeft() = 0;
+    virtual float getRpsFrontRight() = 0;
+    virtual float getRpsBackLeft() = 0;
+    virtual float getRpsBackRight() = 0;
+
     virtual void setSteeringLeftDirection(float direction) = 0;
     virtual void setSteeringRightDirection(float direction) = 0;
     virtual float getSteeringLeftDirection() = 0;

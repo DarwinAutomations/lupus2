@@ -22,13 +22,13 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
   // navigation units:
   // navigation unit left:
   auto controlUnitLeft 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 14, 220, 565);
+    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 4, 220, 565);
   auto steeringUnitLeft 
     = std::make_shared<navigation::SteeringUnit>(controlUnitLeft);
 
   // navigation unit right:
   auto controlUnitRight 
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 15, 565, 220);
+    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 5, 565, 220);
   auto steeringUnitRight 
     = std::make_shared<navigation::SteeringUnit>(controlUnitRight);
 
@@ -37,7 +37,7 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
   auto cuPropulsionFrontLeft = std::make_shared<pwm::PwmControlUnit>(
       pwmDriver, 0, 240, 460);
   auto hallSensorFrontLeft = std::make_shared<sensors::HallSensor>(
-      gpioDriver, 0);
+      gpioDriver, 12);
   auto propulsionUnitFrontLeft = std::make_shared<navigation::PropulsionUnit>(
       cuPropulsionFrontLeft,
       hallSensorFrontLeft);
@@ -46,7 +46,7 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
   auto cuPropulsionFrontRight = std::make_shared<pwm::PwmControlUnit>(
       pwmDriver, 1, 240, 460);
   auto hallSensorFrontRight = std::make_shared<sensors::HallSensor>(
-      gpioDriver, 0);
+      gpioDriver, 16);
   auto propulsionUnitFrontRight = std::make_shared<navigation::PropulsionUnit>(
       cuPropulsionFrontRight,
       hallSensorFrontRight);
@@ -55,7 +55,7 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
   auto cuPropulsionBackLeft = std::make_shared<pwm::PwmControlUnit>(
       pwmDriver, 2, 240, 460);
   auto hallSensorBackLeft = std::make_shared<sensors::HallSensor>(
-      gpioDriver, 0);
+      gpioDriver, 20);
   auto propulsionUnitBackLeft = std::make_shared<navigation::PropulsionUnit>(
       cuPropulsionBackLeft,
       hallSensorBackLeft);
@@ -64,7 +64,7 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
   auto cuPropulsionBackRight = std::make_shared<pwm::PwmControlUnit>(
       pwmDriver, 3, 240, 460);
   auto hallSensorBackRight = std::make_shared<sensors::HallSensor>(
-      gpioDriver, 0);
+      gpioDriver, 21);
   auto propulsionUnitBackRight = std::make_shared<navigation::PropulsionUnit>(
       cuPropulsionBackRight,
       hallSensorBackRight);
@@ -74,49 +74,49 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
   auto ultrasonicSensorFrontLeft = std::make_shared<sensors::UltrasonicSensor>(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */,
-      ULTRASONIC_TRIGGER, 19);
+      18, 17);
 
   // ultrasnoic sensor front center left:
   auto ultrasonicSensorFrontCenterLeft = std::make_shared<sensors::UltrasonicSensor>(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */, 
-      ULTRASONIC_TRIGGER, 13);
+      23, 27);
 
   // ultrasnoic sensor front center right:
   auto ultrasonicSensorFrontCenterRight = std::make_shared<sensors::UltrasonicSensor>(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */, 
-      16, 6);
+      24, 22);
 
   // ultrasnoic sensor front right:
   auto ultrasonicSensorFrontRight = std::make_shared<sensors::UltrasonicSensor>(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */, 
-      12, 5);
+      25, 5);
 
   // ultrasnoic sensor back left:
   auto ultrasonicSensorBackLeft = std::make_shared<sensors::UltrasonicSensor>(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */,
-      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 1);
+      18, 6);
 
   // ultrasnoic sensor back center left:
   auto ultrasonicSensorBackCenterLeft = std::make_shared<sensors::UltrasonicSensor>(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */, 
-      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 2);
+      23, 13);
 
   // ultrasnoic sensor back center right:
   auto ultrasonicSensorBackCenterRight = std::make_shared<sensors::UltrasonicSensor>(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */, 
-      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 3);
+      24, 19);
 
   // ultrasnoic sensor back right:
   auto ultrasonicSensorBackRight = std::make_shared<sensors::UltrasonicSensor>(
       ultrasonicService, 
       4000, 10, 0.2617993878 /* PI / 12 */, 
-      ULTRASONIC_TRIGGER, ULTRASONIC_TRIGGER + 4);
+      25, 26);
 
 
   // consutruction:

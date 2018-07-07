@@ -145,7 +145,12 @@ void output_loop(
   {
     std::system("clear");
     std::cout << "Direction: " << controller->getDirection() << std::endl;
-    std::cout << "Power: " << construction->getPropulsionFrontLeftPower() << std::endl;
+    std::cout << "Power: " << construction->getPropulsionFrontRightPower() << std::endl;
+    printf("RPS: %3.1f/%3.1f/%3.1f/%3.1f", 
+        construction->getRpsFrontLeft(),
+        construction->getRpsFrontRight(),
+        construction->getRpsBackLeft(),
+        construction->getRpsBackRight());
     std::cout << std::endl;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

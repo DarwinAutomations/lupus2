@@ -45,7 +45,7 @@ GpioDriver::~GpioDriver ()
 
 void GpioDriver::setMode(int pin, GpioPinMode mode)
 {
-  gpioSetMode(19, PI_INPUT);
+  gpioSetMode(pin, mode);
 }
 
 void GpioDriver::write(int pin, bool value)

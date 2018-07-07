@@ -25,7 +25,7 @@ class HallSensor
     HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int pin);
     virtual ~HallSensor();
     float getLatestPeriodTime();
-    float getNormalisedRps();
+    float getNormalisedPeriodTime();
 };
 
 } // namespace lupus::sensors
