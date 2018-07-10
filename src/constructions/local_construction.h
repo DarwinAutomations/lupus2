@@ -5,7 +5,7 @@
 
 #include "construction.h"
 #include "steering_unit.h"
-#include "propulsion_unit.h"
+#include "motor.h"
 #include "distance_sensor.h"
 
 namespace lupus::constructions
@@ -17,10 +17,10 @@ class LocalConstruction: public IConstruction
     std::shared_ptr<navigation::SteeringUnit> steeringLeft;
     std::shared_ptr<navigation::SteeringUnit> steeringRight;
 
-    std::shared_ptr<navigation::PropulsionUnit> propulsionFrontLeft;
-    std::shared_ptr<navigation::PropulsionUnit> propulsionFrontRight;
-    std::shared_ptr<navigation::PropulsionUnit> propulsionBackLeft;
-    std::shared_ptr<navigation::PropulsionUnit> propulsionBackRight;
+    std::shared_ptr<navigation::propulsion::IMotor> motorFrontLeft;
+    std::shared_ptr<navigation::propulsion::IMotor> motorFrontRight;
+    std::shared_ptr<navigation::propulsion::IMotor> motorBackLeft;
+    std::shared_ptr<navigation::propulsion::IMotor> motorBackRight;
 
     std::shared_ptr<sensors::IDistanceSensor> distanceFrontLeft;
     std::shared_ptr<sensors::IDistanceSensor> distanceFrontCenterLeft;
@@ -35,11 +35,11 @@ class LocalConstruction: public IConstruction
     LocalConstruction (
       std::shared_ptr<navigation::SteeringUnit> steeringLeft,
       std::shared_ptr<navigation::SteeringUnit> steeringRight,
-      
-      std::shared_ptr<navigation::PropulsionUnit> propulsionFrontLeft,
-      std::shared_ptr<navigation::PropulsionUnit> propulsionFrontRight,
-      std::shared_ptr<navigation::PropulsionUnit> propulsionBackLeft,
-      std::shared_ptr<navigation::PropulsionUnit> propulsionBackRight,
+
+      std::shared_ptr<navigation::propulsion::IMotor> motorFrontLeft,
+      std::shared_ptr<navigation::propulsion::IMotor> motorFrontRight,
+      std::shared_ptr<navigation::propulsion::IMotor> motorBackLeft,
+      std::shared_ptr<navigation::propulsion::IMotor> motorBackRight,
 
       std::shared_ptr<sensors::IDistanceSensor> distanceFrontLeft,
       std::shared_ptr<sensors::IDistanceSensor> distanceFrontCenterLeft,
@@ -51,7 +51,7 @@ class LocalConstruction: public IConstruction
       std::shared_ptr<sensors::IDistanceSensor> distanceBackRight
     );
     virtual ~LocalConstruction () = default;
- 
+
     void setPropulsionFrontLeftPower(float power);
     void setPropulsionFrontRightPower(float power);
     void setPropulsionBackLeftPower(float power);

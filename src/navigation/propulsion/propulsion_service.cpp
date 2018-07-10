@@ -3,7 +3,7 @@
 
 #include "propulsion_service.h"
 
-namespace lupus::navigation
+namespace lupus::navigation::propulsion
 {
 
 PropulsionService::PropulsionService (
@@ -43,11 +43,11 @@ void PropulsionService::setProfile(std::shared_ptr<profiles::IProfile> profile)
 void PropulsionService::update(float deltatime)
 {
   float power = this->getPower();
-  
+
   if (this->isDecelerating)
-  { 
+  {
     float change = this->MAGIC_MAX_PER_MILLISECOND * deltatime;
-    
+
     if(power > 0)
     {
       change *= -1;
@@ -107,4 +107,4 @@ void PropulsionService::decelerate()
   this->isDecelerating = true;
 }
 
-}
+} // namespace lupus::navigation::propulsion

@@ -2,8 +2,9 @@
 #define CONSTRUCTIONS_LOCAL_CONSTRUCTION_FACTORY_H
 
 #include "local_construction.h"
-#include "ultrasonic_service.h"
 #include "pwm_driver.h"
+#include "gpio_driver.h"
+#include "ultrasonic_service.h"
 
 namespace lupus::constructions
 {

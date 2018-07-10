@@ -11,7 +11,7 @@ namespace lupus::controllers
 
 IntelligentController::IntelligentController(
   std::shared_ptr<constructions::IConstruction> construction,
-  std::shared_ptr<navigation::PropulsionService> propulsionService
+  std::shared_ptr<navigation::propulsion::PropulsionService> propulsionService
 )
 {
   if (!construction)

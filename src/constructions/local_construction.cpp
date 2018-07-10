@@ -8,10 +8,10 @@ LocalConstruction::LocalConstruction(
   std::shared_ptr<navigation::SteeringUnit> steeringLeft,
   std::shared_ptr<navigation::SteeringUnit> steeringRight,
 
-  std::shared_ptr<navigation::PropulsionUnit> propulsionFrontLeft,
-  std::shared_ptr<navigation::PropulsionUnit> propulsionFrontRight,
-  std::shared_ptr<navigation::PropulsionUnit> propulsionBackLeft,
-  std::shared_ptr<navigation::PropulsionUnit> propulsionBackRight,
+  std::shared_ptr<navigation::propulsion::IMotor> motorFrontLeft,
+  std::shared_ptr<navigation::propulsion::IMotor> motorFrontRight,
+  std::shared_ptr<navigation::propulsion::IMotor> motorBackLeft,
+  std::shared_ptr<navigation::propulsion::IMotor> motorBackRight,
 
   std::shared_ptr<sensors::IDistanceSensor> distanceFrontLeft,
   std::shared_ptr<sensors::IDistanceSensor> distanceFrontCenterLeft,
@@ -27,11 +27,11 @@ LocalConstruction::LocalConstruction(
   this->steeringLeft = std::move(steeringLeft);
   this->steeringRight = std::move(steeringRight);
 
-  // propulsion
-  this->propulsionFrontLeft = std::move(propulsionFrontLeft);
-  this->propulsionFrontRight = std::move(propulsionFrontRight);
-  this->propulsionBackLeft = std::move(propulsionBackLeft);
-  this->propulsionBackRight = std::move(propulsionBackRight);
+  // motors
+  this->motorFrontLeft = std::move(motorFrontLeft);
+  this->motorFrontRight = std::move(motorFrontRight);
+  this->motorBackLeft = std::move(motorBackLeft);
+  this->motorBackRight = std::move(motorBackRight);
 
   // sensors
   this->distanceFrontLeft = std::move(distanceFrontLeft);
@@ -42,7 +42,6 @@ LocalConstruction::LocalConstruction(
   this->distanceBackCenterLeft = std::move(distanceBackCenterLeft);
   this->distanceBackCenterRight = std::move(distanceBackCenterRight);
   this->distanceBackRight = std::move(distanceBackRight);
-
 }
 
 
@@ -52,7 +51,7 @@ void LocalConstruction::setPropulsionFrontLeftPower(float power)
   {
     throw std::invalid_argument("power not in range -1, +1");
   }
-  this->propulsionFrontLeft->setPower(power);
+  this->motorFrontLeft->setPower(power);
 }
 
 void LocalConstruction::setPropulsionFrontRightPower(float power)
@@ -61,7 +60,7 @@ void LocalConstruction::setPropulsionFrontRightPower(float power)
   {
     throw std::invalid_argument("power not in range -1, +1");
   }
-  this->propulsionFrontRight->setPower(power);
+  this->motorFrontRight->setPower(power);
 }
 
 void LocalConstruction::setPropulsionBackLeftPower(float power)
@@ -70,7 +69,7 @@ void LocalConstruction::setPropulsionBackLeftPower(float power)
   {
     throw std::invalid_argument("power not in range -1, +1");
   }
-  this->propulsionBackLeft->setPower(power);
+  this->motorBackLeft->setPower(power);
 }
 
 void LocalConstruction::setPropulsionBackRightPower(float power)
@@ -79,48 +78,48 @@ void LocalConstruction::setPropulsionBackRightPower(float power)
   {
     throw std::invalid_argument("power not in range -1, +1");
   }
-  this->propulsionBackRight->setPower(power);
+  this->motorBackRight->setPower(power);
 }
 
 
 float LocalConstruction::getPropulsionFrontLeftPower()
 {
-  return this->propulsionFrontLeft->getPower();
+  return this->motorFrontLeft->getPower();
 }
 
 float LocalConstruction::getPropulsionFrontRightPower()
 {
-  return this->propulsionFrontRight->getPower();
+  return this->motorFrontRight->getPower();
 }
 
 float LocalConstruction::getPropulsionBackLeftPower()
 {
-  return this->propulsionBackLeft->getPower();
+  return this->motorBackLeft->getPower();
 }
 
 float LocalConstruction::getPropulsionBackRightPower()
 {
-  return this->propulsionBackRight->getPower();
+  return this->motorBackRight->getPower();
 }
 
 float LocalConstruction::getRpsFrontLeft()
 {
-  return this->propulsionFrontLeft->getRps();
+  return this->motorFrontLeft->getRps();
 }
 
 float LocalConstruction::getRpsFrontRight()
 {
-  return this->propulsionFrontRight->getRps();
+  return this->motorFrontRight->getRps();
 }
 
 float LocalConstruction::getRpsBackLeft()
 {
-  return this->propulsionBackLeft->getRps();
+  return this->motorBackLeft->getRps();
 }
 
 float LocalConstruction::getRpsBackRight()
 {
-  return this->propulsionBackRight->getRps();
+  return this->motorBackRight->getRps();
 }
 
 void LocalConstruction::setSteeringLeftDirection(float direction)
