@@ -2,16 +2,14 @@
 
 #include "local_construction.h"
 #include "local_construction_factory.h"
-#include "pwm_control_unit.h"
-#include "steering_unit.h"
+#include "servo.h"
+#include "rc_steering.h"
 #include "hall_sensor.h"
 #include "hall_rps_sensor.h"
 #include "propulsion_unit.h"
 #include "rc_motor.h"
 #include "ultrasonic_sensor.h"
 #include "ultrasonic_service.h"
-
-#define ULTRASONIC_TRIGGER 18
 
 namespace lupus::constructions
 {
@@ -23,16 +21,14 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
 {
   // navigation units:
   // navigation unit left:
-  auto controlUnitLeft
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 4, 220, 565);
-  auto steeringUnitLeft
-    = std::make_shared<navigation::SteeringUnit>(controlUnitLeft);
+  auto steeringL = std::make_shared<navigation::RCSteering>(
+    std::make_shared<navigation::Servo>(
+      pwmDriver, 4, 220, 565));
 
   // navigation unit right:
-  auto controlUnitRight
-    = std::make_shared<pwm::PwmControlUnit>(pwmDriver, 5, 565, 220);
-  auto steeringUnitRight
-    = std::make_shared<navigation::SteeringUnit>(controlUnitRight);
+  auto steeringR = std::make_shared<navigation::RCSteering>(
+    std::make_shared<navigation::Servo>(
+      pwmDriver, 5, 220, 565));
 
   // propulsion units:
   // propulsion unit front left:
@@ -119,8 +115,8 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
 
   // consutruction:
   auto construction = std::make_shared<constructions::LocalConstruction>(
-    steeringUnitLeft,
-    steeringUnitRight,
+    steeringL,
+    steeringR,
 
     motorFL, motorFR,
     motorBL, motorBR,

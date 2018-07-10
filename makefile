@@ -21,7 +21,6 @@ CORE=\
 src/main.cpp\
 src/constructions/local_construction.cpp\
 src/controllers/intelligent_controller.cpp\
-src/navigation/steering_unit.cpp\
 src/propulsion/propulsion_service.cpp\
 src/profiles/granny_profile.cpp\
 
@@ -29,6 +28,8 @@ SRCS=$(CORE)\
 src/pwm/pwm_driver.cpp\
 src/pwm/pwm_control_unit.cpp\
 src/gpio/gpio_driver.cpp\
+src/navigation/servo.cpp\
+src/navigation/rc_steering.cpp\
 src/propulsion/propulsion_unit.cpp\
 src/propulsion/rc_motor.cpp\
 src/sensors/hall_rps_sensor.cpp\

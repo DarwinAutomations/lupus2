@@ -5,8 +5,8 @@ namespace lupus::constructions
 {
 
 LocalConstruction::LocalConstruction(
-  std::shared_ptr<navigation::SteeringUnit> steeringLeft,
-  std::shared_ptr<navigation::SteeringUnit> steeringRight,
+  std::shared_ptr<navigation::ISteering> steeringLeft,
+  std::shared_ptr<navigation::ISteering> steeringRight,
 
   std::shared_ptr<propulsion::IMotor> motorFrontLeft,
   std::shared_ptr<propulsion::IMotor> motorFrontRight,

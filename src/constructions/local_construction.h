@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "construction.h"
-#include "steering_unit.h"
+#include "steering.h"
 #include "motor.h"
 #include "distance_sensor.h"
 
@@ -14,8 +14,8 @@ namespace lupus::constructions
 class LocalConstruction: public IConstruction
 {
   private:
-    std::shared_ptr<navigation::SteeringUnit> steeringLeft;
-    std::shared_ptr<navigation::SteeringUnit> steeringRight;
+    std::shared_ptr<navigation::ISteering> steeringLeft;
+    std::shared_ptr<navigation::ISteering> steeringRight;
 
     std::shared_ptr<propulsion::IMotor> motorFrontLeft;
     std::shared_ptr<propulsion::IMotor> motorFrontRight;
@@ -33,8 +33,8 @@ class LocalConstruction: public IConstruction
 
   public:
     LocalConstruction (
-      std::shared_ptr<navigation::SteeringUnit> steeringLeft,
-      std::shared_ptr<navigation::SteeringUnit> steeringRight,
+      std::shared_ptr<navigation::ISteering> steeringLeft,
+      std::shared_ptr<navigation::ISteering> steeringRight,
 
       std::shared_ptr<propulsion::IMotor> motorFrontLeft,
       std::shared_ptr<propulsion::IMotor> motorFrontRight,
