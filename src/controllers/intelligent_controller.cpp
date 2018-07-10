@@ -59,14 +59,15 @@ void IntelligentController::setDirection(float direction)
     throw std::invalid_argument("direction not in range -1, +1");
   }
 
-  this->construction->setSteeringLeftDirection(direction);
-  this->construction->setSteeringRightDirection(direction);
+  this->construction->setDirection(navigation::Steering::Left, direction);
+  this->construction->setDirection(navigation::Steering::Right, direction);
 }
 
 float IntelligentController::getDirection()
 {
-  float direction = this->construction->getSteeringLeftDirection();
-  direction += this->construction->getSteeringRightDirection();
+  float direction = 0;
+  direction += this->construction->getDirection(navigation::Steering::Left);
+  direction += this->construction->getDirection(navigation::Steering::Right);
   direction /= 2;
   return direction;
 }

@@ -3,6 +3,9 @@
 
 #include <memory>
 
+#include "steering.h"
+#include "motor.h"
+
 namespace lupus::constructions
 {
 
@@ -11,23 +14,11 @@ class IConstruction
   public:
     virtual ~IConstruction () = default;
 
-    virtual void setPropulsionFrontLeftPower(float power) = 0;
-    virtual void setPropulsionFrontRightPower(float power) = 0;
-    virtual void setPropulsionBackLeftPower(float power) = 0;
-    virtual void setPropulsionBackRightPower(float power) = 0;
-    virtual float getPropulsionFrontLeftPower() = 0;
-    virtual float getPropulsionFrontRightPower() = 0;
-    virtual float getPropulsionBackLeftPower() = 0;
-    virtual float getPropulsionBackRightPower() = 0;
-    virtual float getRpsFrontLeft() = 0;
-    virtual float getRpsFrontRight() = 0;
-    virtual float getRpsBackLeft() = 0;
-    virtual float getRpsBackRight() = 0;
-
-    virtual void setSteeringLeftDirection(float direction) = 0;
-    virtual void setSteeringRightDirection(float direction) = 0;
-    virtual float getSteeringLeftDirection() = 0;
-    virtual float getSteeringRightDirection() = 0;
+    virtual void setPower(propulsion::Motor motor, float power) = 0;
+    virtual float getPower(propulsion::Motor motor) = 0;
+    virtual float getRps(propulsion::Motor motor) = 0;
+    virtual void setDirection(navigation::Steering steering, float direction) = 0;
+    virtual float getDirection(navigation::Steering steering) = 0;
 };
 
 } // namespace lupus::constructions

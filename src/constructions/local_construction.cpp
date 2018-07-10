@@ -44,110 +44,93 @@ LocalConstruction::LocalConstruction(
   this->distanceBackRight = std::move(distanceBackRight);
 }
 
-
-void LocalConstruction::setPropulsionFrontLeftPower(float power)
+void LocalConstruction::setPower(propulsion::Motor motor, float power)
 {
   if(power > 1 || power < -1)
   {
     throw std::invalid_argument("power not in range -1, +1");
   }
-  this->motorFrontLeft->setPower(power);
-}
-
-void LocalConstruction::setPropulsionFrontRightPower(float power)
-{
-  if(power > 1 || power < -1)
+  switch (motor)
   {
-    throw std::invalid_argument("power not in range -1, +1");
+    case propulsion::Motor::FrontLeft:
+      motorFrontLeft->setPower(power);
+      break;
+    case propulsion::Motor::FrontRight:
+      motorFrontRight->setPower(power);
+      break;
+    case propulsion::Motor::BackLeft:
+      motorBackLeft->setPower(power);
+      break;
+    case propulsion::Motor::BackRight:
+      motorBackRight->setPower(power);
+      break;
   }
-  this->motorFrontRight->setPower(power);
 }
-
-void LocalConstruction::setPropulsionBackLeftPower(float power)
+float LocalConstruction::getPower(propulsion::Motor motor)
 {
-  if(power > 1 || power < -1)
+  switch (motor)
   {
-    throw std::invalid_argument("power not in range -1, +1");
+    case propulsion::Motor::FrontLeft:
+      return motorFrontLeft->getPower();
+    case propulsion::Motor::FrontRight:
+      return motorFrontRight->getPower();
+    case propulsion::Motor::BackLeft:
+      return motorBackLeft->getPower();
+    case propulsion::Motor::BackRight:
+      return motorBackRight->getPower();
+    default:
+      throw std::invalid_argument("unknown motor");
   }
-  this->motorBackLeft->setPower(power);
 }
 
-void LocalConstruction::setPropulsionBackRightPower(float power)
+float LocalConstruction::getRps(propulsion::Motor motor)
 {
-  if(power > 1 || power < -1)
+  switch (motor)
   {
-    throw std::invalid_argument("power not in range -1, +1");
+    case propulsion::Motor::FrontLeft:
+      return motorFrontLeft->getRps();
+    case propulsion::Motor::FrontRight:
+      return motorFrontRight->getRps();
+    case propulsion::Motor::BackLeft:
+      return motorBackLeft->getRps();
+    case propulsion::Motor::BackRight:
+      return motorBackRight->getRps();
+    default:
+      throw std::invalid_argument("unknown motor");
   }
-  this->motorBackRight->setPower(power);
 }
 
-
-float LocalConstruction::getPropulsionFrontLeftPower()
-{
-  return this->motorFrontLeft->getPower();
-}
-
-float LocalConstruction::getPropulsionFrontRightPower()
-{
-  return this->motorFrontRight->getPower();
-}
-
-float LocalConstruction::getPropulsionBackLeftPower()
-{
-  return this->motorBackLeft->getPower();
-}
-
-float LocalConstruction::getPropulsionBackRightPower()
-{
-  return this->motorBackRight->getPower();
-}
-
-float LocalConstruction::getRpsFrontLeft()
-{
-  return this->motorFrontLeft->getRps();
-}
-
-float LocalConstruction::getRpsFrontRight()
-{
-  return this->motorFrontRight->getRps();
-}
-
-float LocalConstruction::getRpsBackLeft()
-{
-  return this->motorBackLeft->getRps();
-}
-
-float LocalConstruction::getRpsBackRight()
-{
-  return this->motorBackRight->getRps();
-}
-
-void LocalConstruction::setSteeringLeftDirection(float direction)
+void LocalConstruction::setDirection(
+  navigation::Steering steering,
+  float direction)
 {
   if(direction > 1 || direction < -1)
   {
     throw std::invalid_argument("direction not in range -1, +1");
   }
-  this->steeringLeft->setDirection(direction);
-}
 
-void LocalConstruction::setSteeringRightDirection(float direction)
-{
-  if(direction > 1 || direction < -1)
+  switch (steering)
   {
-    throw std::invalid_argument("direction not in range -1, +1");
+    case navigation::Steering::Left:
+      steeringLeft->setDirection(direction);
+      break;
+    case navigation::Steering::Right:
+      steeringRight->setDirection(direction);
+      break;
   }
-  this->steeringRight->setDirection(direction);
 }
 
-float LocalConstruction::getSteeringLeftDirection()
+float LocalConstruction::getDirection(navigation::Steering steering)
 {
-  return this->steeringLeft->getDirection();
-}
-
-float LocalConstruction::getSteeringRightDirection()
-{
-  return this->steeringRight->getDirection();
+  switch (steering)
+  {
+    case navigation::Steering::Left:
+      return steeringLeft->getDirection();
+    case navigation::Steering::Right:
+      return steeringRight->getDirection();
+    default:
+      throw std::invalid_argument("unknown steering");
+  }
 }
 
 } // namespace lupus::constructions

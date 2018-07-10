@@ -75,10 +75,11 @@ void PropulsionService::update(float deltatime)
 
 float PropulsionService::getPower()
 {
-  float power = this->construction->getPropulsionFrontLeftPower();
-  power += this->construction->getPropulsionFrontRightPower();
-  power += this->construction->getPropulsionBackLeftPower();
-  power += this->construction->getPropulsionBackRightPower();
+  float power = 0;
+  power += this->construction->getPower(Motor::FrontLeft);
+  power += this->construction->getPower(Motor::FrontRight);
+  power += this->construction->getPower(Motor::BackLeft);
+  power += this->construction->getPower(Motor::BackRight);
   power /= 4;
   return power;
 }
@@ -90,10 +91,10 @@ void PropulsionService::setPower(float power)
     throw std::invalid_argument("power not in range -1, +1");
   }
 
-  this->construction->setPropulsionFrontLeftPower(power);
-  this->construction->setPropulsionFrontRightPower(power);
-  this->construction->setPropulsionBackLeftPower(power);
-  this->construction->setPropulsionBackRightPower(power);
+  this->construction->setPower(Motor::FrontLeft, power);
+  this->construction->setPower(Motor::FrontRight, power);
+  this->construction->setPower(Motor::BackLeft, power);
+  this->construction->setPower(Motor::BackRight, power);
 }
 
 void PropulsionService::setAcceleration(float acceleration)

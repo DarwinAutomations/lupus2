@@ -9,7 +9,6 @@
 #include <cstdlib>
 
 #include "simulated_control_unit.h"
-#include "steering_unit.h"
 #include "propulsion_unit.h"
 #include "ultrasonic_sensor.h"
 #include "ultrasonic_service.h"
@@ -21,8 +20,6 @@
 #include "controller.h"
 #include "intelligent_controller.h"
 #include "gpio_driver.h"
-
-#define ULTRASONIC_TRIGGER 18
 
 using namespace lupus;
 
@@ -52,10 +49,10 @@ int main()
       gpioDriver,
       ultrasonicService);
 
-  construction->setPropulsionFrontLeftPower(0);
-  construction->setPropulsionFrontRightPower(0);
-  construction->setPropulsionBackLeftPower(0);
-  construction->setPropulsionBackRightPower(0);
+  construction->setPower(propulsion::Motor::FrontLeft, 0);
+  construction->setPower(propulsion::Motor::FrontRight, 0);
+  construction->setPower(propulsion::Motor::BackLeft, 0);
+  construction->setPower(propulsion::Motor::BackRight, 0);
 
   auto profile = std::make_shared<profiles::GrannyProfile>();
   auto propulsionService = 
@@ -145,12 +142,12 @@ void output_loop(
   {
     std::system("clear");
     std::cout << "Direction: " << controller->getDirection() << std::endl;
-    std::cout << "Power: " << construction->getPropulsionFrontRightPower() << std::endl;
+    std::cout << "Power: " << construction->getPower(propulsion::Motor::FrontLeft) << std::endl;
     printf("RPS: %3.1f/%3.1f/%3.1f/%3.1f", 
-        construction->getRpsFrontLeft(),
-        construction->getRpsFrontRight(),
-        construction->getRpsBackLeft(),
-        construction->getRpsBackRight());
+        construction->getRps(propulsion::Motor::FrontLeft),
+        construction->getRps(propulsion::Motor::FrontRight),
+        construction->getRps(propulsion::Motor::BackLeft),
+        construction->getRps(propulsion::Motor::BackRight));
     std::cout << std::endl;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

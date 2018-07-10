@@ -52,23 +52,11 @@ class LocalConstruction: public IConstruction
     );
     virtual ~LocalConstruction () = default;
 
-    void setPropulsionFrontLeftPower(float power);
-    void setPropulsionFrontRightPower(float power);
-    void setPropulsionBackLeftPower(float power);
-    void setPropulsionBackRightPower(float power);
-    float getPropulsionFrontLeftPower();
-    float getPropulsionFrontRightPower();
-    float getPropulsionBackLeftPower();
-    float getPropulsionBackRightPower();
-    float getRpsFrontLeft();
-    float getRpsFrontRight();
-    float getRpsBackLeft();
-    float getRpsBackRight();
-
-    void setSteeringLeftDirection(float direction);
-    void setSteeringRightDirection(float direction);
-    float getSteeringLeftDirection();
-    float getSteeringRightDirection();
+    void setPower(propulsion::Motor motor, float power);
+    float getPower(propulsion::Motor motor);
+    float getRps(propulsion::Motor motor);
+    void setDirection(navigation::Steering steering, float direction);
+    float getDirection(navigation::Steering steering);
 };
 
 } // namespace lupus::constructions

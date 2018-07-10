@@ -3,7 +3,13 @@
 
 namespace lupus::propulsion
 {
-
+enum Motor
+{
+  FrontLeft,
+  FrontRight,
+  BackLeft,
+  BackRight
+};
 class IMotor
 {
 

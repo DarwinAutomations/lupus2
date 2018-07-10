@@ -4,6 +4,12 @@
 namespace lupus::navigation
 {
 
+enum Steering
+{
+  Left,
+  Right
+};
+
 class ISteering
 {
 public:
