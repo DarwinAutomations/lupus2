@@ -59,7 +59,7 @@ int main()
 
   auto profile = std::make_shared<profiles::GrannyProfile>();
   auto propulsionService = 
-    std::make_shared<navigation::propulsion::PropulsionService>(construction, profile);
+    std::make_shared<propulsion::PropulsionService>(construction, profile);
 
   auto controller = 
     std::make_shared<controllers::IntelligentController>(

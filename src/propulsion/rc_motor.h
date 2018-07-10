@@ -1,5 +1,5 @@
-#ifndef NAVIGATION_PROPULSION_RC_MOTOR_H
-#define NAVIGATION_PROPULSION_RC_MOTOR_H
+#ifndef PROPULSION_RC_MOTOR_H
+#define PROPULSION_RC_MOTOR_H
 
 #include <memory>
 
@@ -7,7 +7,7 @@
 #include "propulsion_unit.h"
 #include "rps_sensor.h"
 
-namespace lupus::navigation::propulsion
+namespace lupus::propulsion
 {
 
 class RCMotor final: public IMotor
@@ -27,6 +27,6 @@ public:
   float getRps();
 };
 
-} // namespace lupus::navigation::propulsion
+} // namespace lupus::propulsion
 
-#endif /* NAVIGATION_PROPULSION_RC_MOTOR_H */
+#endif /* PROPULSION_RC_MOTOR_H */

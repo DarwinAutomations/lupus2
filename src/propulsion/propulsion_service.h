@@ -1,12 +1,12 @@
-#ifndef NAVIGATION_PROPULSION_PROPULSION_SERVICE_H
-#define NAVIGATION_PROPULSION_PROPULSION_SERVICE_H
+#ifndef PROPULSION_PROPULSION_SERVICE_H
+#define PROPULSION_PROPULSION_SERVICE_H
 
 #include <memory>
 
 #include "construction.h"
 #include "profile.h"
 
-namespace lupus::navigation::propulsion
+namespace lupus::propulsion
 {
 
 class PropulsionService
@@ -36,6 +36,6 @@ public:
   void decelerate();
 };
 
-} // namespace lupus::navigation::propulsion
+} // namespace lupus::propulsion
 
-#endif /* NAVIGATION_PROPULSION_PROPULSION_SERVICE_H */
+#endif /* PROPULSION_PROPULSION_SERVICE_H */

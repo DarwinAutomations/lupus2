@@ -15,7 +15,7 @@ class IntelligentController : public IController
 {
   private:
     std::shared_ptr<constructions::IConstruction> construction;
-    std::shared_ptr<navigation::propulsion::PropulsionService> propulsionService;
+    std::shared_ptr<propulsion::PropulsionService> propulsionService;
     std::thread updateThread;
     bool isRunning = false;
 
@@ -26,7 +26,7 @@ class IntelligentController : public IController
   public:
     IntelligentController(
       std::shared_ptr<constructions::IConstruction> construction,
-      std::shared_ptr<navigation::propulsion::PropulsionService> propulsionService);
+      std::shared_ptr<propulsion::PropulsionService> propulsionService);
     ~IntelligentController ();
 
     void setAcceleration(float accleration);

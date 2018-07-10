@@ -1,5 +1,5 @@
-#ifndef NAVIGATION_PROPULSION_PROPULSION_UNIT_H
-#define NAVIGATION_PROPULSION_PROPULSION_UNIT_H
+#ifndef PROPULSION_PROPULSION_UNIT_H
+#define PROPULSION_PROPULSION_UNIT_H
 
 #include <memory>
 
@@ -7,7 +7,7 @@
 #include "hall_sensor.h"
 #include "pwm_driver.h"
 
-namespace lupus::navigation::propulsion
+namespace lupus::propulsion
 {
 
 class PropulsionUnit
@@ -36,6 +36,6 @@ public:
   float getPower();
 };
 
-} // namespace lupus::navigation::propulsion
+} // namespace lupus::propulsion
 
-#endif /* NAVIGATION_PROPULSION_PROPULSION_UNIT_H */
+#endif /* PROPULSION_PROPULSION_UNIT_H */

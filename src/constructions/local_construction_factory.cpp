@@ -36,32 +36,32 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
 
   // propulsion units:
   // propulsion unit front left:
-  auto motorFL = std::make_shared<navigation::propulsion::RCMotor>(
-    std::make_shared<navigation::propulsion::PropulsionUnit>(
+  auto motorFL = std::make_shared<propulsion::RCMotor>(
+    std::make_shared<propulsion::PropulsionUnit>(
       pwmDriver, 0, 350, 460, 350, 240),
     std::make_shared<sensors::HallRpsSensor>(
       std::make_shared<sensors::HallSensor>(
         gpioDriver, 12)));
 
   // propulsion unit front right:
-  auto motorFR = std::make_shared<navigation::propulsion::RCMotor>(
-    std::make_shared<navigation::propulsion::PropulsionUnit>(
+  auto motorFR = std::make_shared<propulsion::RCMotor>(
+    std::make_shared<propulsion::PropulsionUnit>(
       pwmDriver, 1, 350, 460, 350, 240),
     std::make_shared<sensors::HallRpsSensor>(
       std::make_shared<sensors::HallSensor>(
         gpioDriver, 16)));
 
   // propulsion unit back left:
-  auto motorBL = std::make_shared<navigation::propulsion::RCMotor>(
-    std::make_shared<navigation::propulsion::PropulsionUnit>(
+  auto motorBL = std::make_shared<propulsion::RCMotor>(
+    std::make_shared<propulsion::PropulsionUnit>(
       pwmDriver, 2, 350, 460, 350, 240),
     std::make_shared<sensors::HallRpsSensor>(
       std::make_shared<sensors::HallSensor>(
         gpioDriver, 20)));
 
   // propulsion unit back right:
-  auto motorBR = std::make_shared<navigation::propulsion::RCMotor>(
-    std::make_shared<navigation::propulsion::PropulsionUnit>(
+  auto motorBR = std::make_shared<propulsion::RCMotor>(
+    std::make_shared<propulsion::PropulsionUnit>(
       pwmDriver, 3, 350, 460, 350, 240),
     std::make_shared<sensors::HallRpsSensor>(
       std::make_shared<sensors::HallSensor>(

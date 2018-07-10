@@ -10,7 +10,7 @@ IS=\
 -Isrc/constructions\
 -Isrc/controllers\
 -Isrc/navigation\
--Isrc/navigation/propulsion\
+-Isrc/propulsion\
 -Isrc/pwm\
 -Isrc/simulations\
 -Isrc/profiles\
@@ -22,15 +22,15 @@ src/main.cpp\
 src/constructions/local_construction.cpp\
 src/controllers/intelligent_controller.cpp\
 src/navigation/steering_unit.cpp\
-src/navigation/propulsion/propulsion_service.cpp\
+src/propulsion/propulsion_service.cpp\
 src/profiles/granny_profile.cpp\
 
 SRCS=$(CORE)\
 src/pwm/pwm_driver.cpp\
 src/pwm/pwm_control_unit.cpp\
 src/gpio/gpio_driver.cpp\
-src/navigation/propulsion/propulsion_unit.cpp\
-src/navigation/propulsion/rc_motor.cpp\
+src/propulsion/propulsion_unit.cpp\
+src/propulsion/rc_motor.cpp\
 src/sensors/hall_rps_sensor.cpp\
 src/sensors/hall_sensor.cpp\
 src/sensors/ultrasonic_sensor.cpp\

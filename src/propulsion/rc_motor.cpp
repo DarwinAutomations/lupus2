@@ -3,7 +3,7 @@
 
 #include "rc_motor.h"
 
-namespace lupus::navigation::propulsion
+namespace lupus::propulsion
 {
 
 RCMotor::RCMotor(

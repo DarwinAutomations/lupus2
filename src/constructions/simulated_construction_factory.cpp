@@ -35,25 +35,25 @@ std::shared_ptr<LocalConstruction> SimulatedConstructionFactory::create(
   auto cuPropulsionFrontLeft 
     = std::make_shared<simulations::SimulatedControlUnit>();
   auto propulsionUnitFrontLeft 
-    = std::make_shared<navigation::propulsion::PropulsionUnit>(controlUnitLeft);
+    = std::make_shared<propulsion::PropulsionUnit>(controlUnitLeft);
 
   // propulsion unit front right:
   auto cuPropulsionFrontRight 
     = std::make_shared<simulations::SimulatedControlUnit>();
   auto propulsionUnitFrontRight 
-    = std::make_shared<navigation::propulsion::PropulsionUnit>(controlUnitLeft);
+    = std::make_shared<propulsion::PropulsionUnit>(controlUnitLeft);
 
   // propulsion unit back left:
   auto cuPropulsionBackLeft 
     = std::make_shared<simulations::SimulatedControlUnit>();
   auto propulsionUnitBackLeft 
-    = std::make_shared<navigation::propulsion::PropulsionUnit>(controlUnitLeft);
+    = std::make_shared<propulsion::PropulsionUnit>(controlUnitLeft);
 
   // propulsion unit back right:
   auto cuPropulsionBackRight 
     = std::make_shared<simulations::SimulatedControlUnit>();
   auto propulsionUnitBackRight 
-    = std::make_shared<navigation::propulsion::PropulsionUnit>(controlUnitLeft);
+    = std::make_shared<propulsion::PropulsionUnit>(controlUnitLeft);
 
   // sensors:
   // ultrasnoic sensor front left:

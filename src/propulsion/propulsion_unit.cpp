@@ -3,7 +3,7 @@
 
 #include "propulsion_unit.h"
 
-namespace lupus::navigation::propulsion
+namespace lupus::propulsion
 {
 
 PropulsionUnit::PropulsionUnit(
@@ -54,4 +54,4 @@ float PropulsionUnit::getPower()
   return this->power;
 }
 
-} // namespace lupus::navigation::propulsion
+} // namespace lupus::propulsion

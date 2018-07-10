@@ -17,10 +17,10 @@ class LocalConstruction: public IConstruction
     std::shared_ptr<navigation::SteeringUnit> steeringLeft;
     std::shared_ptr<navigation::SteeringUnit> steeringRight;
 
-    std::shared_ptr<navigation::propulsion::IMotor> motorFrontLeft;
-    std::shared_ptr<navigation::propulsion::IMotor> motorFrontRight;
-    std::shared_ptr<navigation::propulsion::IMotor> motorBackLeft;
-    std::shared_ptr<navigation::propulsion::IMotor> motorBackRight;
+    std::shared_ptr<propulsion::IMotor> motorFrontLeft;
+    std::shared_ptr<propulsion::IMotor> motorFrontRight;
+    std::shared_ptr<propulsion::IMotor> motorBackLeft;
+    std::shared_ptr<propulsion::IMotor> motorBackRight;
 
     std::shared_ptr<sensors::IDistanceSensor> distanceFrontLeft;
     std::shared_ptr<sensors::IDistanceSensor> distanceFrontCenterLeft;
@@ -36,10 +36,10 @@ class LocalConstruction: public IConstruction
       std::shared_ptr<navigation::SteeringUnit> steeringLeft,
       std::shared_ptr<navigation::SteeringUnit> steeringRight,
 
-      std::shared_ptr<navigation::propulsion::IMotor> motorFrontLeft,
-      std::shared_ptr<navigation::propulsion::IMotor> motorFrontRight,
-      std::shared_ptr<navigation::propulsion::IMotor> motorBackLeft,
-      std::shared_ptr<navigation::propulsion::IMotor> motorBackRight,
+      std::shared_ptr<propulsion::IMotor> motorFrontLeft,
+      std::shared_ptr<propulsion::IMotor> motorFrontRight,
+      std::shared_ptr<propulsion::IMotor> motorBackLeft,
+      std::shared_ptr<propulsion::IMotor> motorBackRight,
 
       std::shared_ptr<sensors::IDistanceSensor> distanceFrontLeft,
       std::shared_ptr<sensors::IDistanceSensor> distanceFrontCenterLeft,

@@ -3,7 +3,7 @@
 
 #include "propulsion_service.h"
 
-namespace lupus::navigation::propulsion
+namespace lupus::propulsion
 {
 
 PropulsionService::PropulsionService (
@@ -107,4 +107,4 @@ void PropulsionService::decelerate()
   this->isDecelerating = true;
 }
 
-} // namespace lupus::navigation::propulsion
+} // namespace lupus::propulsion
