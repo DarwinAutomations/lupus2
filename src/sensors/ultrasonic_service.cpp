@@ -1,5 +1,5 @@
 #include <time.h>
-#include <chrono> 
+#include <chrono>
 #include <thread>
 #include <future>
 #include <map>
@@ -9,7 +9,7 @@
 #include "distance_sensor.h"
 #include "ultrasonic_service.h"
 
-#define DISTANCE_PER_SECOND 171500
+#define SPEED_OF_SOUND 340
 
 namespace lupus::sensors
 {
@@ -22,7 +22,7 @@ UltrasonicService::UltrasonicService (std::shared_ptr<gpio::GpioDriver> gpio, in
   }
 
   this->gpio = std::move(gpio);
-  this->isRunning = true; 
+  this->isRunning = true;
   this->idCounter = 0;
 
   this->measuringThread = std::thread(
@@ -54,13 +54,13 @@ void UltrasonicService::measuringLoop(int frequency)
       std::tie(trigger, echo) = kv.second;
 
       auto future = std::async(
-          std::launch::async, 
-          UltrasonicService::measure, 
+          std::launch::async,
+          UltrasonicService::measure,
           this->gpio, trigger, echo, &time);
 
-      futures[sensorId] = std::move(future);  
+      futures[sensorId] = std::move(future);
     }
-    
+
     this->registryMutex.unlock();
     this->dataMutex.lock();
     for(auto &kv: futures)
@@ -83,9 +83,9 @@ void UltrasonicService::measuringLoop(int frequency)
 
 int UltrasonicService::measure(
     std::shared_ptr<gpio::GpioDriver> gpio,
-    int trigger, int echo, 
+    int trigger, int echo,
     std::chrono::time_point<std::chrono::system_clock>* startTime)
-{ 
+{
   if(startTime)
   {
     std::this_thread::sleep_until(*startTime);
@@ -120,14 +120,14 @@ int UltrasonicService::measure(
     return IDistanceSensor::DistanceOutOfRange;
   }
 
-  return (duration / 1000000.0) * DISTANCE_PER_SECOND;
+  return duration / 1000000.0 * SPEED_OF_SOUND / 2;
 }
 
 int UltrasonicService::registerSensor(int trigger, int echo)
 {
   this->registryMutex.lock();
   this->dataMutex.lock();
-  
+
   int id = this->idCounter++;
   this->gpio->setMode(trigger, gpio::GpioPinMode::InputPin);
   this->gpio->setMode(echo, gpio::GpioPinMode::OutputPin);
@@ -136,7 +136,7 @@ int UltrasonicService::registerSensor(int trigger, int echo)
 
   this->dataMutex.unlock();
   this->registryMutex.unlock();
-  
+
   return id;
 }
 
@@ -147,7 +147,7 @@ void UltrasonicService::deregisterSensor(int id)
   this->registryMutex.unlock();
 }
 
-int UltrasonicService::getDistance(int id)
+float UltrasonicService::getDistance(int id)
 {
   this->dataMutex.lock();
   int data = this->data.at(id);
@@ -156,4 +156,3 @@ int UltrasonicService::getDistance(int id)
 }
 
 } // namespace lupus::sensors
-

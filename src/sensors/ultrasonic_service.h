@@ -19,7 +19,7 @@ class UltrasonicService
     std::mutex registryMutex;
     std::mutex dataMutex;
     std::thread measuringThread;
-    std::map<int, int> data;
+    std::map<int, float> data;
     std::map<int, std::tuple<int, int>> registry;
     int idCounter;
     bool isRunning;
@@ -30,7 +30,7 @@ class UltrasonicService
     virtual ~UltrasonicService ();
     int registerSensor(int trigger, int echo);
     void deregisterSensor(int id);
-    int getDistance(int id);
+    float getDistance(int id);
     static int measure(
         std::shared_ptr<gpio::GpioDriver> gpio,
         int trigger, int echo,

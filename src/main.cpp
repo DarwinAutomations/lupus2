@@ -17,6 +17,7 @@
 #include "propulsion_service.h"
 #include "local_construction.h"
 #include "local_construction_factory.h"
+#include "local_construction_configuration.h"
 #include "controller.h"
 #include "intelligent_controller.h"
 #include "gpio_driver.h"
@@ -44,10 +45,129 @@ int main()
   auto ultrasonicService = std::make_shared<sensors::UltrasonicService>(
       gpioDriver, 1);
 
+  constructions::LocalConstructionConfiguration configuration =
+  {
+    {
+      4,
+      220,
+      565
+    },
+    {
+      5,
+      220,
+      565
+    },
+
+    {
+      {
+        0,
+        350,
+        460,
+        350,
+        240
+      },
+      {
+        12
+      }
+    },
+    {
+      {
+        1,
+        350,
+        460,
+        350,
+        240
+      },
+      {
+        16
+      }
+    },
+    {
+      {
+        2,
+        350,
+        460,
+        350,
+        240
+      },
+      {
+        20
+      }
+    },
+    {
+      {
+        3,
+        350,
+        460,
+        350,
+        240
+      },
+      {
+        21
+      }
+    },
+
+    {
+      4,
+      0.01,
+      0.2617993878 /* PI / 12 */,
+      18,
+      17
+    },
+    {
+      4,
+      0.01,
+      0.2617993878 /* PI / 12 */,
+      23,
+      27
+    },
+    {
+      4,
+      0.01,
+      0.2617993878 /* PI / 12 */,
+      24,
+      22},
+    {
+      4,
+      0.01,
+      0.2617993878 /* PI / 12 */,
+      25,
+      5},
+    {
+      4,
+      0.01,
+      0.2617993878 /* PI / 12 */,
+      18,
+      6
+    },
+    {
+      4,
+      0.01,
+      0.2617993878 /* PI / 12 */,
+      23,
+      13
+    },
+    {
+      4,
+      0.01,
+      0.2617993878 /* PI / 12 */,
+      24,
+      19
+    },
+    {
+      4,
+      0.01,
+      0.2617993878 /* PI / 12 */,
+      25,
+      26
+    },
+  };
+
   auto construction = constructions::LocalConstructionFactory::create(
       pwmDriver,
       gpioDriver,
-      ultrasonicService);
+      ultrasonicService,
+      configuration);
 
   construction->setPower(propulsion::Motor::FrontLeft, 0);
   construction->setPower(propulsion::Motor::FrontRight, 0);
@@ -55,10 +175,10 @@ int main()
   construction->setPower(propulsion::Motor::BackRight, 0);
 
   auto profile = std::make_shared<profiles::GrannyProfile>();
-  auto propulsionService = 
+  auto propulsionService =
     std::make_shared<propulsion::PropulsionService>(construction, profile);
 
-  auto controller = 
+  auto controller =
     std::make_shared<controllers::IntelligentController>(
       construction,
       propulsionService);
@@ -67,15 +187,15 @@ int main()
   bool isActive = true;
 
   auto input_thread = std::thread(
-    input_loop, 
+    input_loop,
     std::ref(isActive),
     controller);
 
   auto output_thread = std::thread(
-    output_loop, 
+    output_loop,
     std::ref(isActive),
     controller,
-    construction); 
+    construction);
 
   // wait for user input and exit
   while(getchar() != 'q');
@@ -143,7 +263,7 @@ void output_loop(
     std::system("clear");
     std::cout << "Direction: " << controller->getDirection() << std::endl;
     std::cout << "Power: " << construction->getPower(propulsion::Motor::FrontLeft) << std::endl;
-    printf("RPS: %3.1f/%3.1f/%3.1f/%3.1f", 
+    printf("RPS: %3.1f/%3.1f/%3.1f/%3.1f",
         construction->getRps(propulsion::Motor::FrontLeft),
         construction->getRps(propulsion::Motor::FrontRight),
         construction->getRps(propulsion::Motor::BackLeft),

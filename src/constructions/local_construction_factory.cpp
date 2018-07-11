@@ -14,104 +14,142 @@
 namespace lupus::constructions
 {
 
+std::shared_ptr<navigation::ISteering> LocalConstructionFactory::createSteering(
+    std::shared_ptr<pwm::PwmDriver> pwmDriver,
+    SteeringConfiguration configuration)
+{
+  return std::make_shared<navigation::RCSteering>(
+    std::make_shared<navigation::Servo>(
+      pwmDriver,
+      configuration.pin,
+      configuration.min,
+      configuration.max));
+}
+
+std::shared_ptr<propulsion::IMotor> LocalConstructionFactory::createMotor(
+    std::shared_ptr<pwm::PwmDriver> pwmDriver,
+    std::shared_ptr<gpio::GpioDriver> gpioDriver,
+    MotorConfiguration configuration)
+{
+  return std::make_shared<propulsion::RCMotor>(
+    std::make_shared<propulsion::PropulsionUnit>(
+      pwmDriver,
+      configuration.propulsionUnit.pin,
+      configuration.propulsionUnit.forwardMin,
+      configuration.propulsionUnit.forwardMax,
+      configuration.propulsionUnit.backwardMin,
+      configuration.propulsionUnit.backwardMax),
+    std::make_shared<sensors::HallRpsSensor>(
+      std::make_shared<sensors::HallSensor>(
+        gpioDriver,
+	      configuration.hallSensor.pin)));
+}
+
+std::shared_ptr<sensors::IDistanceSensor> LocalConstructionFactory::createUltrasonicSensor(
+    std::shared_ptr<gpio::GpioDriver> gpioDriver,
+    std::shared_ptr<sensors::UltrasonicService> ultrasonicService,
+    UltrasonicSensorConfiguration configuration)
+{
+  return std::make_shared<sensors::UltrasonicSensor>(
+      ultrasonicService,
+      configuration.measurementRangeMin,
+      configuration.measurementRangeMax,
+      configuration.measurementAccuracy,
+      configuration.measurementAngle,
+      configuration.triggerPin,
+      configuration.echoPin);
+}
+
 std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
     std::shared_ptr<pwm::PwmDriver> pwmDriver,
     std::shared_ptr<gpio::GpioDriver> gpioDriver,
-    std::shared_ptr<sensors::UltrasonicService> ultrasonicService)
+    std::shared_ptr<sensors::UltrasonicService> ultrasonicService,
+    LocalConstructionConfiguration configuration)
 {
   // navigation units:
   // navigation unit left:
-  auto steeringL = std::make_shared<navigation::RCSteering>(
-    std::make_shared<navigation::Servo>(
-      pwmDriver, 4, 220, 565));
+  auto steeringL = LocalConstructionFactory::createSteering(
+    pwmDriver,
+    configuration.servoLeft);
 
   // navigation unit right:
-  auto steeringR = std::make_shared<navigation::RCSteering>(
-    std::make_shared<navigation::Servo>(
-      pwmDriver, 5, 220, 565));
+  auto steeringR = LocalConstructionFactory::createSteering(
+    pwmDriver,
+    configuration.servoRight);
 
   // propulsion units:
   // propulsion unit front left:
-  auto motorFL = std::make_shared<propulsion::RCMotor>(
-    std::make_shared<propulsion::PropulsionUnit>(
-      pwmDriver, 0, 350, 460, 350, 240),
-    std::make_shared<sensors::HallRpsSensor>(
-      std::make_shared<sensors::HallSensor>(
-        gpioDriver, 12)));
+  auto motorFL = LocalConstructionFactory::createMotor(
+    pwmDriver,
+    gpioDriver,
+    configuration.motorFrontLeft);
 
   // propulsion unit front right:
-  auto motorFR = std::make_shared<propulsion::RCMotor>(
-    std::make_shared<propulsion::PropulsionUnit>(
-      pwmDriver, 1, 350, 460, 350, 240),
-    std::make_shared<sensors::HallRpsSensor>(
-      std::make_shared<sensors::HallSensor>(
-        gpioDriver, 16)));
+  auto motorFR = LocalConstructionFactory::createMotor(
+    pwmDriver,
+    gpioDriver,
+    configuration.motorFrontRight);
 
   // propulsion unit back left:
-  auto motorBL = std::make_shared<propulsion::RCMotor>(
-    std::make_shared<propulsion::PropulsionUnit>(
-      pwmDriver, 2, 350, 460, 350, 240),
-    std::make_shared<sensors::HallRpsSensor>(
-      std::make_shared<sensors::HallSensor>(
-        gpioDriver, 20)));
+  auto motorBL = LocalConstructionFactory::createMotor(
+    pwmDriver,
+    gpioDriver,
+    configuration.motorBackLeft);
 
   // propulsion unit back right:
-  auto motorBR = std::make_shared<propulsion::RCMotor>(
-    std::make_shared<propulsion::PropulsionUnit>(
-      pwmDriver, 3, 350, 460, 350, 240),
-    std::make_shared<sensors::HallRpsSensor>(
-      std::make_shared<sensors::HallSensor>(
-        gpioDriver, 21)));
+  auto motorBR = LocalConstructionFactory::createMotor(
+    pwmDriver,
+    gpioDriver,
+    configuration.motorBackRight);
 
   // sensors:
   // ultrasnoic sensor front left:
-  auto ultrasonicSensorFrontLeft = std::make_shared<sensors::UltrasonicSensor>(
+  auto ultrasonicSensorFrontLeft = LocalConstructionFactory::createUltrasonicSensor(
+      gpioDriver,
       ultrasonicService,
-      4000, 10, 0.2617993878 /* PI / 12 */,
-      18, 17);
+      configuration.ultrasonicFrontLeft);
 
   // ultrasnoic sensor front center left:
-  auto ultrasonicSensorFrontCenterLeft = std::make_shared<sensors::UltrasonicSensor>(
+  auto ultrasonicSensorFrontCenterLeft = LocalConstructionFactory::createUltrasonicSensor(
+      gpioDriver,
       ultrasonicService,
-      4000, 10, 0.2617993878 /* PI / 12 */,
-      23, 27);
+      configuration.ultrasonicFrontLeft);
 
   // ultrasnoic sensor front center right:
-  auto ultrasonicSensorFrontCenterRight = std::make_shared<sensors::UltrasonicSensor>(
+  auto ultrasonicSensorFrontCenterRight = LocalConstructionFactory::createUltrasonicSensor(
+      gpioDriver,
       ultrasonicService,
-      4000, 10, 0.2617993878 /* PI / 12 */,
-      24, 22);
+      configuration.ultrasonicFrontLeft);
 
   // ultrasnoic sensor front right:
-  auto ultrasonicSensorFrontRight = std::make_shared<sensors::UltrasonicSensor>(
+  auto ultrasonicSensorFrontRight = LocalConstructionFactory::createUltrasonicSensor(
+      gpioDriver,
       ultrasonicService,
-      4000, 10, 0.2617993878 /* PI / 12 */,
-      25, 5);
+      configuration.ultrasonicFrontLeft);
 
   // ultrasnoic sensor back left:
-  auto ultrasonicSensorBackLeft = std::make_shared<sensors::UltrasonicSensor>(
+  auto ultrasonicSensorBackLeft = LocalConstructionFactory::createUltrasonicSensor(
+      gpioDriver,
       ultrasonicService,
-      4000, 10, 0.2617993878 /* PI / 12 */,
-      18, 6);
+      configuration.ultrasonicFrontLeft);
 
   // ultrasnoic sensor back center left:
-  auto ultrasonicSensorBackCenterLeft = std::make_shared<sensors::UltrasonicSensor>(
+  auto ultrasonicSensorBackCenterLeft = LocalConstructionFactory::createUltrasonicSensor(
+      gpioDriver,
       ultrasonicService,
-      4000, 10, 0.2617993878 /* PI / 12 */,
-      23, 13);
+      configuration.ultrasonicFrontLeft);
 
   // ultrasnoic sensor back center right:
-  auto ultrasonicSensorBackCenterRight = std::make_shared<sensors::UltrasonicSensor>(
+  auto ultrasonicSensorBackCenterRight = LocalConstructionFactory::createUltrasonicSensor(
+      gpioDriver,
       ultrasonicService,
-      4000, 10, 0.2617993878 /* PI / 12 */,
-      24, 19);
+      configuration.ultrasonicFrontLeft);
 
   // ultrasnoic sensor back right:
-  auto ultrasonicSensorBackRight = std::make_shared<sensors::UltrasonicSensor>(
+  auto ultrasonicSensorBackRight = LocalConstructionFactory::createUltrasonicSensor(
+      gpioDriver,
       ultrasonicService,
-      4000, 10, 0.2617993878 /* PI / 12 */,
-      25, 26);
-
+      configuration.ultrasonicFrontLeft);
 
   // consutruction:
   auto construction = std::make_shared<constructions::LocalConstruction>(

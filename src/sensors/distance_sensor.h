@@ -8,10 +8,11 @@ class IDistanceSensor
 {
   public:
     virtual ~IDistanceSensor() = default;
-    virtual int getDistance() = 0;
-    virtual int getAccuracy() = 0;
+    virtual float getDistance() = 0;
+    virtual float getAccuracy() = 0;
     virtual float getAngle() = 0;
-    virtual int getRange() = 0;
+    virtual float getRangeStart() = 0;
+    virtual float getRangeEnd() = 0;
 
     const static int DistanceUnknown = -2;
     const static int DistanceOutOfRange = -1;

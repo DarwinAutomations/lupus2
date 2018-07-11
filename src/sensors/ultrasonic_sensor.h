@@ -15,18 +15,27 @@ class UltrasonicSensor : public IDistanceSensor
   private:
     std::shared_ptr<UltrasonicService> service;
     int id;
-    
-    int range;
-    int accuracy;
+
+    float rangeStart;
+    float rangeEnd;
+    float accuracy;
     float angle;
 
   public:
-    UltrasonicSensor(std::shared_ptr<UltrasonicService> service, int range, int accuracy, float angle, int trigger, int echo);
+    UltrasonicSensor(
+      std::shared_ptr<UltrasonicService> service,
+      float rangeStart,
+      float rangeEnd,
+      float accuracy,
+      float angle,
+      int trigger,
+      int echo);
     virtual ~UltrasonicSensor();
-    int getDistance();
-    int getAccuracy() override;
+    float getDistance();
+    float getAccuracy() override;
     float getAngle() override;
-    int getRange() override;
+    float getRangeStart() override;
+    float getRangeEnd() override;
 
 };
 

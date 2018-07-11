@@ -4,7 +4,14 @@
 namespace lupus::sensors
 {
 
-UltrasonicSensor::UltrasonicSensor(std::shared_ptr<UltrasonicService> service, int range, int accuracy, float angle, int trigger, int echo)
+UltrasonicSensor::UltrasonicSensor(
+  std::shared_ptr<UltrasonicService> service,
+  float rangeStart,
+  float rangeEnd,
+  float accuracy,
+  float angle,
+  int trigger,
+  int echo)
 {
   if(!service)
   {
@@ -12,7 +19,8 @@ UltrasonicSensor::UltrasonicSensor(std::shared_ptr<UltrasonicService> service, i
   }
 
   this->service = std::move(service);
-  this->range = range;
+  this->rangeStart = rangeStart;
+  this->rangeEnd = rangeEnd;
   this->accuracy = accuracy;
   this->angle = angle;
 
@@ -24,17 +32,22 @@ UltrasonicSensor::~UltrasonicSensor()
   this->service->deregisterSensor(this->id);
 }
 
-int UltrasonicSensor::getDistance()
+float UltrasonicSensor::getDistance()
 {
   return this->service->getDistance(this->id);
 }
 
-int UltrasonicSensor::getRange()
+float UltrasonicSensor::getRangeStart()
 {
-  return this->range;
+  return this->rangeStart;
 }
 
-int UltrasonicSensor::getAccuracy()
+float UltrasonicSensor::getRangeEnd()
+{
+  return this->rangeEnd;
+}
+
+float UltrasonicSensor::getAccuracy()
 {
   return this->accuracy;
 }
