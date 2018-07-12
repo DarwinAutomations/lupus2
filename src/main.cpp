@@ -37,6 +37,10 @@ int main()
 {
   const int i2cAddress = 0x40;
   const int frequency = 60;
+  const char* configurationFile = "data/default.cfg";
+
+  auto configuration =
+    constructions::LocalConstructionConfiguration::fromFile(configurationFile);
 
   auto gpioDriver = std::make_shared<gpio::GpioDriver>();
   auto pwmDriver = std::make_shared<pwm::PwmDriver>(i2cAddress);
@@ -45,129 +49,12 @@ int main()
   auto ultrasonicService = std::make_shared<sensors::UltrasonicService>(
       gpioDriver, 1);
 
-  constructions::LocalConstructionConfiguration configuration =
-  {
-    {
-      4,
-      220,
-      565
-    },
-    {
-      5,
-      220,
-      565
-    },
-
-    {
-      {
-        0,
-        350,
-        460,
-        350,
-        240
-      },
-      {
-        12
-      }
-    },
-    {
-      {
-        1,
-        350,
-        460,
-        350,
-        240
-      },
-      {
-        16
-      }
-    },
-    {
-      {
-        2,
-        350,
-        460,
-        350,
-        240
-      },
-      {
-        20
-      }
-    },
-    {
-      {
-        3,
-        350,
-        460,
-        350,
-        240
-      },
-      {
-        21
-      }
-    },
-
-    {
-      4,
-      0.01,
-      0.2617993878 /* PI / 12 */,
-      18,
-      17
-    },
-    {
-      4,
-      0.01,
-      0.2617993878 /* PI / 12 */,
-      23,
-      27
-    },
-    {
-      4,
-      0.01,
-      0.2617993878 /* PI / 12 */,
-      24,
-      22},
-    {
-      4,
-      0.01,
-      0.2617993878 /* PI / 12 */,
-      25,
-      5},
-    {
-      4,
-      0.01,
-      0.2617993878 /* PI / 12 */,
-      18,
-      6
-    },
-    {
-      4,
-      0.01,
-      0.2617993878 /* PI / 12 */,
-      23,
-      13
-    },
-    {
-      4,
-      0.01,
-      0.2617993878 /* PI / 12 */,
-      24,
-      19
-    },
-    {
-      4,
-      0.01,
-      0.2617993878 /* PI / 12 */,
-      25,
-      26
-    },
-  };
 
   auto construction = constructions::LocalConstructionFactory::create(
       pwmDriver,
       gpioDriver,
       ultrasonicService,
-      configuration);
+      *configuration);
 
   construction->setPower(propulsion::Motor::FrontLeft, 0);
   construction->setPower(propulsion::Motor::FrontRight, 0);

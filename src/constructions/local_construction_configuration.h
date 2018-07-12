@@ -1,6 +1,9 @@
 #ifndef CONSTRUCTIONS_LOCAL_CONSTRUCTION_CONFIGURATION_H
 #define CONSTRUCTIONS_LOCAL_CONSTRUCTION_CONFIGURATION_H
 
+#include <libconfig.h++>
+#include <memory>
+
 namespace lupus::constructions
 {
 
@@ -37,14 +40,28 @@ struct UltrasonicSensorConfiguration
   float measurementRangeMax;
   float measurementAccuracy;
   float measurementAngle;
-  float triggerPin;
-  float echoPin;
+  int triggerPin;
+  int echoPin;
 };
 
-struct LocalConstructionConfiguration
+class LocalConstructionConfiguration
 {
-  SteeringConfiguration servoLeft;
-  SteeringConfiguration servoRight;
+private:
+  static void steering(
+      libconfig::Setting& config,
+      SteeringConfiguration& steering);
+
+  static void motor(
+      libconfig::Setting& config,
+      MotorConfiguration& motor);
+
+  static void distanceSensor(
+      libconfig::Setting& config,
+      UltrasonicSensorConfiguration& sensor);
+
+public:
+  SteeringConfiguration steeringLeft;
+  SteeringConfiguration steeringRight;
 
   MotorConfiguration motorFrontLeft;
   MotorConfiguration motorFrontRight;
@@ -59,6 +76,8 @@ struct LocalConstructionConfiguration
   UltrasonicSensorConfiguration ultrasonicBackLeftCenter;
   UltrasonicSensorConfiguration ultrasonicBackRightCenter;
   UltrasonicSensorConfiguration ultrasonicBackRight;
+
+  static std::shared_ptr<LocalConstructionConfiguration> fromFile(const char* file);
 };
 
 } // namespace lupus::consturctions

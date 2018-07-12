@@ -14,51 +14,7 @@
 namespace lupus::constructions
 {
 
-std::shared_ptr<navigation::ISteering> LocalConstructionFactory::createSteering(
-    std::shared_ptr<pwm::PwmDriver> pwmDriver,
-    SteeringConfiguration configuration)
-{
-  return std::make_shared<navigation::RCSteering>(
-    std::make_shared<navigation::Servo>(
-      pwmDriver,
-      configuration.pin,
-      configuration.min,
-      configuration.max));
-}
 
-std::shared_ptr<propulsion::IMotor> LocalConstructionFactory::createMotor(
-    std::shared_ptr<pwm::PwmDriver> pwmDriver,
-    std::shared_ptr<gpio::GpioDriver> gpioDriver,
-    MotorConfiguration configuration)
-{
-  return std::make_shared<propulsion::RCMotor>(
-    std::make_shared<propulsion::PropulsionUnit>(
-      pwmDriver,
-      configuration.propulsionUnit.pin,
-      configuration.propulsionUnit.forwardMin,
-      configuration.propulsionUnit.forwardMax,
-      configuration.propulsionUnit.backwardMin,
-      configuration.propulsionUnit.backwardMax),
-    std::make_shared<sensors::HallRpsSensor>(
-      std::make_shared<sensors::HallSensor>(
-        gpioDriver,
-	      configuration.hallSensor.pin)));
-}
-
-std::shared_ptr<sensors::IDistanceSensor> LocalConstructionFactory::createUltrasonicSensor(
-    std::shared_ptr<gpio::GpioDriver> gpioDriver,
-    std::shared_ptr<sensors::UltrasonicService> ultrasonicService,
-    UltrasonicSensorConfiguration configuration)
-{
-  return std::make_shared<sensors::UltrasonicSensor>(
-      ultrasonicService,
-      configuration.measurementRangeMin,
-      configuration.measurementRangeMax,
-      configuration.measurementAccuracy,
-      configuration.measurementAngle,
-      configuration.triggerPin,
-      configuration.echoPin);
-}
 
 std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
     std::shared_ptr<pwm::PwmDriver> pwmDriver,
@@ -70,12 +26,12 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
   // navigation unit left:
   auto steeringL = LocalConstructionFactory::createSteering(
     pwmDriver,
-    configuration.servoLeft);
+    configuration.steeringLeft);
 
   // navigation unit right:
   auto steeringR = LocalConstructionFactory::createSteering(
     pwmDriver,
-    configuration.servoRight);
+    configuration.steeringRight);
 
   // propulsion units:
   // propulsion unit front left:
@@ -170,6 +126,52 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
   );
 
   return construction;
+}
+
+std::shared_ptr<navigation::ISteering> LocalConstructionFactory::createSteering(
+    std::shared_ptr<pwm::PwmDriver> pwmDriver,
+    SteeringConfiguration configuration)
+{
+  return std::make_shared<navigation::RCSteering>(
+    std::make_shared<navigation::Servo>(
+      pwmDriver,
+      configuration.pin,
+      configuration.min,
+      configuration.max));
+}
+
+std::shared_ptr<propulsion::IMotor> LocalConstructionFactory::createMotor(
+    std::shared_ptr<pwm::PwmDriver> pwmDriver,
+    std::shared_ptr<gpio::GpioDriver> gpioDriver,
+    MotorConfiguration configuration)
+{
+  return std::make_shared<propulsion::RCMotor>(
+    std::make_shared<propulsion::PropulsionUnit>(
+      pwmDriver,
+      configuration.propulsionUnit.pin,
+      configuration.propulsionUnit.forwardMin,
+      configuration.propulsionUnit.forwardMax,
+      configuration.propulsionUnit.backwardMin,
+      configuration.propulsionUnit.backwardMax),
+    std::make_shared<sensors::HallRpsSensor>(
+      std::make_shared<sensors::HallSensor>(
+        gpioDriver,
+	      configuration.hallSensor.pin)));
+}
+
+std::shared_ptr<sensors::IDistanceSensor> LocalConstructionFactory::createUltrasonicSensor(
+    std::shared_ptr<gpio::GpioDriver> gpioDriver,
+    std::shared_ptr<sensors::UltrasonicService> ultrasonicService,
+    UltrasonicSensorConfiguration configuration)
+{
+  return std::make_shared<sensors::UltrasonicSensor>(
+      ultrasonicService,
+      configuration.measurementRangeMin,
+      configuration.measurementRangeMax,
+      configuration.measurementAccuracy,
+      configuration.measurementAngle,
+      configuration.triggerPin,
+      configuration.echoPin);
 }
 
 } // namespace lupus::constructions

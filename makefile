@@ -3,7 +3,7 @@ CXX = g++
 RM = rm -f
 CPPFLAGS = $(IS) -Wall -g
 LDFLAGS = -g
-LDLIBS = -lpthread -lpigpio
+LDLIBS = -lpthread -lpigpio -lconfig++
 
 IS=\
 -Isrc\
@@ -37,6 +37,7 @@ src/sensors/hall_sensor.cpp\
 src/sensors/ultrasonic_sensor.cpp\
 src/sensors/ultrasonic_service.cpp\
 src/constructions/local_construction_factory.cpp\
+src/constructions/local_construction_configuration.cpp\
 
 SRCSSIM=$(CORE)\
 src/simulations/simulated_control_unit.cpp\
