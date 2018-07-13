@@ -4,63 +4,122 @@
 namespace lupus::constructions
 {
 std::shared_ptr<LocalConstructionConfiguration>
-LocalConstructionConfiguration::fromFile(
+LocalConstructionConfigurationRepository::fromFile(
     const char* file)
 {
   libconfig::Config configFile;
   configFile.readFile(file);
   std::shared_ptr<LocalConstructionConfiguration> config = std::make_shared<LocalConstructionConfiguration>();
 
-  LocalConstructionConfiguration::steering(
+  LocalConstructionConfigurationRepository::getSteering(
     configFile.lookup("construction.steeringLeft"),
     config->steeringLeft);
-  LocalConstructionConfiguration::steering(
+  LocalConstructionConfigurationRepository::getSteering(
     configFile.lookup("construction.steeringRight"),
     config->steeringRight);
 
-  LocalConstructionConfiguration::motor(
+  LocalConstructionConfigurationRepository::getMotor(
     configFile.lookup("construction.motorFrontLeft"),
     config->motorFrontLeft);
-  LocalConstructionConfiguration::motor(
+  LocalConstructionConfigurationRepository::getMotor(
     configFile.lookup("construction.motorFrontRight"),
     config->motorFrontRight);
-  LocalConstructionConfiguration::motor(
+  LocalConstructionConfigurationRepository::getMotor(
     configFile.lookup("construction.motorBackLeft"),
     config->motorBackLeft);
-  LocalConstructionConfiguration::motor(
+  LocalConstructionConfigurationRepository::getMotor(
     configFile.lookup("construction.motorBackRight"),
     config->motorBackRight);
 
-  LocalConstructionConfiguration::distanceSensor(
+  LocalConstructionConfigurationRepository::getDistanceSensor(
     configFile.lookup("construction.ultrasonicFrontLeft"),
     config->ultrasonicFrontLeft);
-  LocalConstructionConfiguration::distanceSensor(
+  LocalConstructionConfigurationRepository::getDistanceSensor(
     configFile.lookup("construction.ultrasonicFrontLeftCenter"),
     config->ultrasonicFrontLeftCenter);
-  LocalConstructionConfiguration::distanceSensor(
+  LocalConstructionConfigurationRepository::getDistanceSensor(
     configFile.lookup("construction.ultrasonicFrontRightCenter"),
     config->ultrasonicFrontRightCenter);
-  LocalConstructionConfiguration::distanceSensor(
+  LocalConstructionConfigurationRepository::getDistanceSensor(
     configFile.lookup("construction.ultrasonicFrontRight"),
     config->ultrasonicFrontRight);
 
-  LocalConstructionConfiguration::distanceSensor(
+  LocalConstructionConfigurationRepository::getDistanceSensor(
     configFile.lookup("construction.ultrasonicBackLeft"),
     config->ultrasonicBackLeft);
-  LocalConstructionConfiguration::distanceSensor(
+  LocalConstructionConfigurationRepository::getDistanceSensor(
     configFile.lookup("construction.ultrasonicBackLeftCenter"),
     config->ultrasonicBackLeftCenter);
-  LocalConstructionConfiguration::distanceSensor(
+  LocalConstructionConfigurationRepository::getDistanceSensor(
     configFile.lookup("construction.ultrasonicBackRightCenter"),
     config->ultrasonicBackRightCenter);
-  LocalConstructionConfiguration::distanceSensor(
+  LocalConstructionConfigurationRepository::getDistanceSensor(
     configFile.lookup("construction.ultrasonicBackRight"),
     config->ultrasonicBackRight);
 
   return config;
 }
 
-void LocalConstructionConfiguration::steering(
+void LocalConstructionConfigurationRepository::toFile(
+    const char* file,
+    std::shared_ptr<LocalConstructionConfiguration> config)
+{
+  libconfig::Config configFile;
+  libconfig::Setting& root = configFile.getRoot();
+  libconfig::Setting& consturction = root.add(
+    "construciton", libconfig::Setting::Type::TypeGroup);
+
+
+  LocalConstructionConfigurationRepository::setSteering(
+    consturction.add("steeringLeft", libconfig::Setting::Type::TypeGroup),
+    config->steeringLeft);
+  LocalConstructionConfigurationRepository::setSteering(
+    consturction.add("steeringRight", libconfig::Setting::Type::TypeGroup),
+    config->steeringRight);
+
+  LocalConstructionConfigurationRepository::setMotor(
+    consturction.add("motorFrontLeft", libconfig::Setting::Type::TypeGroup),
+    config->motorFrontLeft);
+  LocalConstructionConfigurationRepository::setMotor(
+    consturction.add("motorFrontRight", libconfig::Setting::Type::TypeGroup),
+    config->motorFrontRight);
+  LocalConstructionConfigurationRepository::setMotor(
+    consturction.add("motorBackLeft", libconfig::Setting::Type::TypeGroup),
+    config->motorBackLeft);
+  LocalConstructionConfigurationRepository::setMotor(
+    consturction.add("motorBackRight", libconfig::Setting::Type::TypeGroup),
+    config->motorBackRight);
+
+  LocalConstructionConfigurationRepository::setDistanceSensor(
+    consturction.add("ultrasonicFrontLeft", libconfig::Setting::Type::TypeGroup),
+    config->ultrasonicFrontLeft);
+  LocalConstructionConfigurationRepository::setDistanceSensor(
+    consturction.add("ultrasonicFrontLeftCenter", libconfig::Setting::Type::TypeGroup),
+    config->ultrasonicFrontLeftCenter);
+  LocalConstructionConfigurationRepository::setDistanceSensor(
+    consturction.add("ultrasonicFrontRightCenter", libconfig::Setting::Type::TypeGroup),
+    config->ultrasonicFrontRightCenter);
+  LocalConstructionConfigurationRepository::setDistanceSensor(
+    consturction.add("ultrasonicFrontRight", libconfig::Setting::Type::TypeGroup),
+    config->ultrasonicFrontRight);
+
+  LocalConstructionConfigurationRepository::setDistanceSensor(
+    consturction.add("ultrasonicBackLeft", libconfig::Setting::Type::TypeGroup),
+    config->ultrasonicBackLeft);
+  LocalConstructionConfigurationRepository::setDistanceSensor(
+    consturction.add("ultrasonicBackLeftCenter", libconfig::Setting::Type::TypeGroup),
+    config->ultrasonicBackLeftCenter);
+  LocalConstructionConfigurationRepository::setDistanceSensor(
+    consturction.add("ultrasonicBackRightCenter", libconfig::Setting::Type::TypeGroup),
+    config->ultrasonicBackRightCenter);
+  LocalConstructionConfigurationRepository::setDistanceSensor(
+    consturction.add("ultrasonicBackRight", libconfig::Setting::Type::TypeGroup),
+    config->ultrasonicBackRight);
+
+  configFile.writeFile(file);
+}
+
+void LocalConstructionConfigurationRepository::getSteering(
     libconfig::Setting& config,
     SteeringConfiguration& steering)
 {
@@ -69,7 +128,7 @@ void LocalConstructionConfiguration::steering(
   steering.max = config.lookup("max");
 }
 
-void LocalConstructionConfiguration::motor(
+void LocalConstructionConfigurationRepository::getMotor(
     libconfig::Setting& config,
     MotorConfiguration& motor)
 {
@@ -82,16 +141,52 @@ void LocalConstructionConfiguration::motor(
   motor.hallSensor.pin = config.lookup("hallSensor.pin");
 }
 
-void LocalConstructionConfiguration::distanceSensor(
+void LocalConstructionConfigurationRepository::getDistanceSensor(
     libconfig::Setting& config,
     UltrasonicSensorConfiguration& sensor)
 {
-    sensor.measurementRangeMin = config.lookup("measurementRangeMin");
-    sensor.measurementRangeMax = config.lookup("measurementRangeMax");
-    sensor.measurementAccuracy = config.lookup("measurementAccuracy");
-    sensor.measurementAngle = config.lookup("measurementAngle");
-    sensor.triggerPin = config.lookup("triggerPin");
-    sensor.echoPin = config.lookup("echoPin");
-  }
+  sensor.measurementRangeMin = config.lookup("measurementRangeMin");
+  sensor.measurementRangeMax = config.lookup("measurementRangeMax");
+  sensor.measurementAccuracy = config.lookup("measurementAccuracy");
+  sensor.measurementAngle = config.lookup("measurementAngle");
+  sensor.triggerPin = config.lookup("triggerPin");
+  sensor.echoPin = config.lookup("echoPin");
+}
+
+void LocalConstructionConfigurationRepository::setSteering(
+    libconfig::Setting& config,
+    SteeringConfiguration& steering)
+{
+  config.add("pin", libconfig::Setting::Type::TypeInt) = steering.pin;
+  config.add("min", libconfig::Setting::Type::TypeInt) = steering.min;
+  config.add("max", libconfig::Setting::Type::TypeInt) = steering.max;
+}
+
+void LocalConstructionConfigurationRepository::setMotor(
+    libconfig::Setting& config,
+    MotorConfiguration& motor)
+{
+  libconfig::Setting& propulsionUnit = config.add("propulsionUnit", libconfig::Setting::Type::TypeGroup);
+  propulsionUnit.add("pin", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.pin;
+  propulsionUnit.add("forwardMin", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.forwardMin;
+  propulsionUnit.add("backwardMin", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.backwardMin;
+  propulsionUnit.add("forwardMax", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.forwardMax;
+  propulsionUnit.add("backwardMax", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.backwardMax;
+
+  libconfig::Setting& sensor = config.add("hallSensor", libconfig::Setting::Type::TypeGroup);
+  sensor.add("pin", libconfig::Setting::Type::TypeInt) = motor.hallSensor.pin;
+}
+
+void LocalConstructionConfigurationRepository::setDistanceSensor(
+    libconfig::Setting& config,
+    UltrasonicSensorConfiguration& sensor)
+{
+  config.add("measurementRangeMin", libconfig::Setting::Type::TypeFloat) = sensor.measurementRangeMin;
+  config.add("measurementRangeMax", libconfig::Setting::Type::TypeFloat) = sensor.measurementRangeMax;
+  config.add("measurementAccuracy", libconfig::Setting::Type::TypeFloat) = sensor.measurementAccuracy;
+  config.add("measurementAngle", libconfig::Setting::Type::TypeFloat) = sensor.measurementAngle;
+  config.add("triggerPin", libconfig::Setting::Type::TypeInt) = sensor.triggerPin;
+  config.add("echoPin", libconfig::Setting::Type::TypeInt) = sensor.echoPin;
+}
 
 } // namespace lupus::constructions

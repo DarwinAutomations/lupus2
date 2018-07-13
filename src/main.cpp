@@ -40,7 +40,7 @@ int main()
   const char* configurationFile = "data/default.cfg";
 
   auto configuration =
-    constructions::LocalConstructionConfiguration::fromFile(configurationFile);
+    constructions::LocalConstructionConfigurationRepository::fromFile(configurationFile);
 
   auto gpioDriver = std::make_shared<gpio::GpioDriver>();
   auto pwmDriver = std::make_shared<pwm::PwmDriver>(i2cAddress);

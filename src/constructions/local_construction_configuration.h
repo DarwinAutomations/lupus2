@@ -46,19 +46,6 @@ struct UltrasonicSensorConfiguration
 
 class LocalConstructionConfiguration
 {
-private:
-  static void steering(
-      libconfig::Setting& config,
-      SteeringConfiguration& steering);
-
-  static void motor(
-      libconfig::Setting& config,
-      MotorConfiguration& motor);
-
-  static void distanceSensor(
-      libconfig::Setting& config,
-      UltrasonicSensorConfiguration& sensor);
-
 public:
   SteeringConfiguration steeringLeft;
   SteeringConfiguration steeringRight;
@@ -76,8 +63,36 @@ public:
   UltrasonicSensorConfiguration ultrasonicBackLeftCenter;
   UltrasonicSensorConfiguration ultrasonicBackRightCenter;
   UltrasonicSensorConfiguration ultrasonicBackRight;
+};
 
-  static std::shared_ptr<LocalConstructionConfiguration> fromFile(const char* file);
+class LocalConstructionConfigurationRepository
+{
+private:
+  static void getSteering(
+      libconfig::Setting& config,
+      SteeringConfiguration& steering);
+  static void getMotor(
+      libconfig::Setting& config,
+      MotorConfiguration& motor);
+  static void getDistanceSensor(
+      libconfig::Setting& config,
+      UltrasonicSensorConfiguration& sensor);
+
+  static void setSteering(
+      libconfig::Setting& config,
+      SteeringConfiguration& steering);
+  static void setMotor(
+      libconfig::Setting& config,
+      MotorConfiguration& motor);
+  static void setDistanceSensor(
+      libconfig::Setting& config,
+      UltrasonicSensorConfiguration& sensor);
+public:
+  static std::shared_ptr<LocalConstructionConfiguration> fromFile(
+      const char* file);
+  static void toFile(
+      const char* file,
+      std::shared_ptr<LocalConstructionConfiguration>);
 };
 
 } // namespace lupus::consturctions
