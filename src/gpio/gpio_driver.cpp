@@ -43,9 +43,14 @@ GpioDriver::~GpioDriver ()
   GpioDriver::countMutex.unlock();
 }
 
-void GpioDriver::setMode(int pin, GpioPinMode mode)
+void GpioDriver::setMode(int pin, PinMode mode)
 {
   gpioSetMode(pin, mode);
+}
+
+void GpioDriver::setPull(int pin, PinPull mode)
+{
+  gpioSetPullUpDown(pin, mode);
 }
 
 void GpioDriver::write(int pin, bool value)

@@ -129,8 +129,8 @@ int UltrasonicService::registerSensor(int trigger, int echo)
   this->dataMutex.lock();
 
   int id = this->idCounter++;
-  this->gpio->setMode(trigger, gpio::GpioPinMode::InputPin);
-  this->gpio->setMode(echo, gpio::GpioPinMode::OutputPin);
+  this->gpio->setMode(trigger, gpio::PinMode::Input);
+  this->gpio->setMode(echo, gpio::PinMode::Output);
   this->registry[id] = std::make_tuple(trigger, echo);
   this->data[id] = IDistanceSensor::DistanceUnknown;
 

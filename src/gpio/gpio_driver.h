@@ -10,10 +10,16 @@
 namespace lupus::gpio 
 {
 
-enum GpioPinMode
+enum PinMode
 {
-  InputPin = PI_INPUT,
-  OutputPin = PI_OUTPUT
+  Input = PI_INPUT,
+  Output = PI_OUTPUT
+};
+
+enum PinPull
+{
+  Up = PI_PUD_UP,
+  Down = PI_PUD_DOWN
 };
 
 class GpioDriver
@@ -36,7 +42,8 @@ public:
   GpioDriver ();
   virtual ~GpioDriver ();
   
-  void setMode(int pin, GpioPinMode mode);
+  void setMode(int pin, PinMode mode);
+  void setPull(int pin, PinPull mode);
   void write(int pin, bool value);
   bool read(int pin);
   int registerOnChange(int pin, std::function<void(int, int, uint32_t)>);

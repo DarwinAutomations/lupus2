@@ -17,7 +17,8 @@ HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int pin)
   }
   this->gpio = std::move(gpio);
   this->pin = pin;
-
+  gpio->setMode(pin, gpio::PinMode::Input);
+  gpio->setPull(pin, gpio::PinPull::Up);
   id = gpio->registerOnChange(
     pin, 
     std::bind(
