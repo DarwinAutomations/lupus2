@@ -20,6 +20,7 @@ public:
 
   void setDirection(float direction);
   float getDirection();
+  float getRawDirection();
 };
 
 } // namespace lupus::navigation

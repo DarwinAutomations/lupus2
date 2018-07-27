@@ -28,12 +28,18 @@ void Servo::setDirection(float direction)
   value = direction;
 
   int off = min + (max - min) * direction;
+  rawValue = off;
   pwmDriver->setPwm(channel, 0, off);
 }
 
 float Servo::getDirection()
 {
   return value;
+}
+
+int Servo::getRawDirection()
+{
+  return rawValue;
 }
 
 } // namespace lupus::navigation

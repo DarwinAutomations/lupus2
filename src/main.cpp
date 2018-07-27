@@ -60,6 +60,8 @@ int main()
   construction->setPower(propulsion::Motor::FrontRight, 0);
   construction->setPower(propulsion::Motor::BackLeft, 0);
   construction->setPower(propulsion::Motor::BackRight, 0);
+  construction->setDirection(navigation::Steering::Left, 0);
+  construction->setDirection(navigation::Steering::Right, 0);
 
   auto profile = std::make_shared<profiles::GrannyProfile>();
   auto propulsionService =
@@ -147,13 +149,21 @@ void output_loop(
 {
   while (isActive)
   {
-    std::system("clear");
-    std::cout << "Direction: " << controller->getDirection() << std::endl;
-    std::cout << "Power: " << construction->getPower(propulsion::Motor::FrontLeft) << std::endl;
-    printf("RPS: %3.1f/%3.1f/%3.1f/%3.1f",
+    printf("%5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f",
+        controller->getDirection(),
+	construction->getSteering(navigation::Steering::Left)->getRawDirection(),
+	construction->getSteering(navigation::Steering::Right)->getRawDirection(),
+        construction->getPower(propulsion::Motor::FrontLeft) * 100,
+        construction->getMotor(propulsion::Motor::FrontLeft)->getRawPower(),
         construction->getRps(propulsion::Motor::FrontLeft),
+        construction->getPower(propulsion::Motor::FrontRight) * 100,
+        construction->getMotor(propulsion::Motor::FrontRight)->getRawPower(),
         construction->getRps(propulsion::Motor::FrontRight),
+        construction->getPower(propulsion::Motor::BackLeft) * 100,
+        construction->getMotor(propulsion::Motor::BackLeft)->getRawPower(),
         construction->getRps(propulsion::Motor::BackLeft),
+        construction->getPower(propulsion::Motor::BackRight) * 100,
+        construction->getMotor(propulsion::Motor::BackRight)->getRawPower(),
         construction->getRps(propulsion::Motor::BackRight));
     std::cout << std::endl;
 

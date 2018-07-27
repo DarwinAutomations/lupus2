@@ -24,6 +24,7 @@ public:
 
   void setPower(float power);
   float getPower();
+  float getRawPower();
   float getRps();
 };
 

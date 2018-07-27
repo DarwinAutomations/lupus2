@@ -16,6 +16,7 @@ private:
   std::shared_ptr<pwm::PwmDriver> pwmDriver;
   int channel;
   float power;
+  int rawPower;
 
   float forwardMin;
   float forwardMax;
@@ -34,6 +35,7 @@ public:
 
   void setPower(float power);
   float getPower();
+  int getRawPower();
 };
 
 } // namespace lupus::propulsion

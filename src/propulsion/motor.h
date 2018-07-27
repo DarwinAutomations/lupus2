@@ -18,6 +18,7 @@ public:
 
   virtual void setPower(float power) = 0;
   virtual float getPower() = 0;
+  virtual float getRawPower() = 0;
   virtual float getRps() = 0;
 
 };

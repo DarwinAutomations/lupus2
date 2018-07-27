@@ -52,9 +52,12 @@ class LocalConstruction: public IConstruction
     );
     virtual ~LocalConstruction () = default;
 
+    std::shared_ptr<propulsion::IMotor> getMotor(propulsion::Motor motor);
     void setPower(propulsion::Motor motor, float power);
     float getPower(propulsion::Motor motor);
     float getRps(propulsion::Motor motor);
+
+    std::shared_ptr<navigation::ISteering> getSteering(navigation::Steering);
     void setDirection(navigation::Steering steering, float direction);
     float getDirection(navigation::Steering steering);
 };

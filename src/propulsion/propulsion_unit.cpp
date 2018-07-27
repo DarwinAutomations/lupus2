@@ -45,13 +45,18 @@ void PropulsionUnit::setPower(float power)
   {
     off = forwardMin + (forwardMax - forwardMin) * power;
   }
-
+  this->rawPower = off;
   pwmDriver->setPwm(this->channel, 0, off);
 }
 
 float PropulsionUnit::getPower()
 {
   return this->power;
+}
+
+int PropulsionUnit::getRawPower()
+{
+  return this->rawPower;
 }
 
 } // namespace lupus::propulsion

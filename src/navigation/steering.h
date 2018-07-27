@@ -16,6 +16,7 @@ public:
   virtual ~ISteering () = default;
   virtual void setDirection(float direction) = 0;
   virtual float getDirection() = 0;
+  virtual float getRawDirection() = 0;
 };
 
 } // namespace lupus::navigation

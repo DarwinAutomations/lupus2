@@ -14,6 +14,7 @@ private:
   std::shared_ptr<pwm::PwmDriver> pwmDriver;
   int channel;
   float value;
+  int rawValue;
   float min;
   float max;
 public:
@@ -25,6 +26,7 @@ public:
   virtual ~Servo () = default;
   virtual void setDirection(float direction);
   virtual float getDirection();
+  virtual int getRawDirection();
 };
 
 } // namespace lupus::navigation

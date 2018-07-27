@@ -29,4 +29,9 @@ float RCSteering::getDirection()
   return this->servo->getDirection() * 2 -1;
 }
 
+float RCSteering::getRawDirection()
+{
+  return this->servo->getRawDirection();
+}
+
 } // namespace lupus::navigation

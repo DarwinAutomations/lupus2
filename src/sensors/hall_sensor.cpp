@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <functional>
 #include <algorithm>
+#include <limits>
 
 #include "hall_sensor.h"
 #include "gpio_driver.h"
@@ -9,7 +10,7 @@ namespace lupus::sensors
 {
 
 HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int pin)
-  : periods(3,0)
+  : periods(3, std::numeric_limits<int>::infinity())
 {
   if(!gpio)
   {
