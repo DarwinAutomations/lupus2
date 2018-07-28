@@ -10,10 +10,10 @@ int GpioDriver::instanceCount = 0;
 int GpioDriver::callbacksCount = 0;
 std::mutex GpioDriver::countMutex;
 std::map<
-  int, 
+  int,
   std::tuple<
-    int, 
-    std::function<void(int, int, uint32_t)>>> GpioDriver::callbacks;
+    int,
+    std::function<void(int, int, std::chrono::high_resolution_clock::time_point)>>> GpioDriver::callbacks;
 std::mutex GpioDriver::callbackMutex;
 
 
@@ -63,7 +63,7 @@ bool GpioDriver::read(int pin)
   return (bool)gpioRead(pin);
 }
 
-int GpioDriver::registerOnChange(int pin, std::function<void(int, int, uint32_t)> func)
+int GpioDriver::registerOnChange(int pin, std::function<void(int, int, std::chrono::high_resolution_clock::time_point)> func)
 {
   std::lock_guard<std::mutex> lock(GpioDriver::callbackMutex);
   int id = GpioDriver::callbacksCount++;
@@ -83,16 +83,20 @@ void GpioDriver::deregisterOnChange(int id)
 
 void GpioDriver::callback(int pin, int level, uint32_t tick)
 {
+  auto now = std::chrono::high_resolution_clock::now();
+  auto nowTick = gpioTick();
+  auto timePoint = now - std::chrono::microseconds(nowTick - tick);
+
   std::lock_guard<std::mutex> lock(GpioDriver::callbackMutex);
   for(auto &kv: GpioDriver::callbacks)
   {
-    std::function<void(int,int,uint32_t)> cb;
+    std::function<void(int, int, std::chrono::high_resolution_clock::time_point)> cb;
     int cbPin;
     std::tie(cbPin, cb) = kv.second;
     if(cbPin != pin)
       continue;
 
-    cb(pin, level, tick);
+    cb(pin, level, timePoint);
   }
 }
 

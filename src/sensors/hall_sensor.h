@@ -14,18 +14,16 @@ class HallSensor
 {
   private:
     std::shared_ptr<gpio::GpioDriver> gpio;
-    int id;
     std::mutex mutex;
+    int id;
     int pin;
-    uint32_t lastTick;
-    std::vector<int> periods;
-    void callback(int pin, int level, uint32_t tick);
+    std::vector<std::chrono::high_resolution_clock::time_point> measurements;
+    void callback(int pin, int level, std::chrono::high_resolution_clock::time_point timePoint);
 
   public:
     HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int pin);
     virtual ~HallSensor();
-    float getLatestPeriodTime();
-    float getNormalisedPeriodTime();
+    std::chrono::microseconds getPeriodTime();
 };
 
 } // namespace lupus::sensors

@@ -16,7 +16,7 @@ HallRpsSensor::HallRpsSensor(
 
 float HallRpsSensor::getRps()
 {
-  return 1000000.0 / sensor->getNormalisedPeriodTime();
+  return 1000000.0 / sensor->getPeriodTime().count();
 }
 
 } // namespace lupus::sensors

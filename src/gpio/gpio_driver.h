@@ -5,9 +5,10 @@
 #include <map>
 #include <tuple>
 #include <functional>
+#include <chrono>
 #include <pigpio.h>
 
-namespace lupus::gpio 
+namespace lupus::gpio
 {
 
 enum PinMode
@@ -28,12 +29,12 @@ class GpioDriver
 private:
   static int instanceCount;
   static std::mutex countMutex;
-  
+
   static std::map<
-    int, 
+    int,
     std::tuple<
-      int, 
-      std::function<void(int, int, uint32_t)>>> callbacks;
+      int,
+      std::function<void(int, int, std::chrono::high_resolution_clock::time_point)>>> callbacks;
   static void callback(int id, int level, uint32_t tick);
   static int callbacksCount;
   static std::mutex callbackMutex;
@@ -41,12 +42,12 @@ private:
 public:
   GpioDriver ();
   virtual ~GpioDriver ();
-  
+
   void setMode(int pin, PinMode mode);
   void setPull(int pin, PinPull mode);
   void write(int pin, bool value);
   bool read(int pin);
-  int registerOnChange(int pin, std::function<void(int, int, uint32_t)>);
+  int registerOnChange(int pin, std::function<void(int, int, std::chrono::high_resolution_clock::time_point)>);
   void deregisterOnChange(int id);
 };
 

@@ -10,7 +10,7 @@ namespace lupus::sensors
 {
 
 HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int pin)
-  : periods(3, std::numeric_limits<int>::infinity())
+  : measurements(3, std::chrono::high_resolution_clock::time_point())
 {
   if(!gpio)
   {
@@ -21,11 +21,11 @@ HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int pin)
   gpio->setMode(pin, gpio::PinMode::Input);
   gpio->setPull(pin, gpio::PinPull::Up);
   id = gpio->registerOnChange(
-    pin, 
+    pin,
     std::bind(
-      &HallSensor::callback, this, 
-      std::placeholders::_1, 
-      std::placeholders::_2, 
+      &HallSensor::callback, this,
+      std::placeholders::_1,
+      std::placeholders::_2,
       std::placeholders::_3));
 }
 
@@ -34,40 +34,31 @@ HallSensor::~HallSensor()
   gpio->deregisterOnChange(id);
 }
 
-float HallSensor::getLatestPeriodTime()
-{
-  return periods[2];
-}
 
-float HallSensor::getNormalisedPeriodTime()
+std::chrono::microseconds HallSensor::getPeriodTime()
 {
   std::lock_guard<std::mutex> guard(mutex);
 
-  if(periods[0] >= periods[1] && periods[0] >= periods[2])
-  {
-    return periods[1] > periods[2] ? periods[1] : periods[2];
-  }
-  if ( periods[0] <= periods[1] && periods[0] <= periods[2])
-  {
-    return periods[1] < periods[2] ? periods[1] : periods[2];
-  }
-  return periods[0];
+  auto lastPeriodTime = std::chrono::duration_cast<std::chrono::microseconds> (measurements[0] - measurements[1]);
+  auto currentMinPeriodTime = std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::high_resolution_clock::now() - measurements[0]);
+  if(lastPeriodTime < currentMinPeriodTime)
+    return currentMinPeriodTime;
+  return lastPeriodTime;
 }
 
-void HallSensor::callback(int pin, int level, uint32_t tick)
+void HallSensor::callback(int pin, int level, std::chrono::high_resolution_clock::time_point timePoint)
 {
   if(level != 1)
     return;
 
   std::lock_guard<std::mutex> guard(mutex);
-  std::rotate(periods.begin(), periods.begin() + 1, periods.end());
 
-  if(lastTick > tick)
-    tick += std::numeric_limits<uint32_t>::max();
-  auto period = tick - lastTick;
+  std::rotate(
+    measurements.rbegin(),
+    measurements.rbegin() + 1,
+    measurements.rend());
 
-  periods[2] = period;
-  lastTick = tick;
+  measurements[0] = timePoint;
 }
 
 } // namespace lupus::sensors
