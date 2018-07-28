@@ -10,20 +10,37 @@
 namespace lupus::sensors
 {
 
+enum HallSensorState
+{
+  Magnet,
+  NoMagnet
+};
+
 class HallSensor
 {
   private:
     std::shared_ptr<gpio::GpioDriver> gpio;
-    std::mutex mutex;
-    int id;
-    int pin;
-    std::vector<std::chrono::high_resolution_clock::time_point> measurements;
+    int sensorPin;
+    HallSensorState state;
+
+    static std::mutex callbackMutex;
+    static std::map<
+      int,
+      std::function<void(
+        int, int,
+        std::chrono::high_resolution_clock::time_point)>> callbacks;
+    static int callbacksCount;
     void callback(int pin, int level, std::chrono::high_resolution_clock::time_point timePoint);
+    int callbackId;
 
   public:
-    HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int pin);
+    HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int sensorPin);
     virtual ~HallSensor();
-    std::chrono::microseconds getPeriodTime();
+
+    HallSensorState getState();
+    int registerOnChange(
+      std::function<void(int, std::chrono::high_resolution_clock::time_point)>);
+    void deregisterOnChange(int id);
 };
 
 } // namespace lupus::sensors

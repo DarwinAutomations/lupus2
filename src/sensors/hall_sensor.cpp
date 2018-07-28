@@ -9,7 +9,7 @@
 namespace lupus::sensors
 {
 
-HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int pin)
+HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int sensorPin)
   : measurements(3, std::chrono::high_resolution_clock::time_point())
 {
   if(!gpio)
@@ -17,11 +17,11 @@ HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int pin)
     throw std::invalid_argument("gpio driver must not be null");
   }
   this->gpio = std::move(gpio);
-  this->pin = pin;
-  gpio->setMode(pin, gpio::PinMode::Input);
-  gpio->setPull(pin, gpio::PinPull::Up);
-  id = gpio->registerOnChange(
-    pin,
+  this->sensorPin = sensorPin;
+  gpio->setMode(sensorPin, gpio::PinMode::Input);
+  gpio->setPull(sensorPin, gpio::PinPull::Up);
+  callbackId = gpio->registerOnChange(
+    sensorPin,
     std::bind(
       &HallSensor::callback, this,
       std::placeholders::_1,
@@ -31,34 +31,54 @@ HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int pin)
 
 HallSensor::~HallSensor()
 {
-  gpio->deregisterOnChange(id);
+  gpio->deregisterOnChange(callbackId);
 }
 
-
-std::chrono::microseconds HallSensor::getPeriodTime()
+HallSensorState getState()
 {
-  std::lock_guard<std::mutex> guard(mutex);
-
-  auto lastPeriodTime = std::chrono::duration_cast<std::chrono::microseconds> (measurements[0] - measurements[1]);
-  auto currentMinPeriodTime = std::chrono::duration_cast<std::chrono::microseconds> (std::chrono::high_resolution_clock::now() - measurements[0]);
-  if(lastPeriodTime < currentMinPeriodTime)
-    return currentMinPeriodTime;
-  return lastPeriodTime;
+  return state;
 }
 
-void HallSensor::callback(int pin, int level, std::chrono::high_resolution_clock::time_point timePoint)
+void HallRpsSensor::callback(
+  int pin,
+  int level,
+  std::chrono::high_resolution_clock::time_point timePoint)
 {
-  if(level != 1)
-    return;
+  switch(level)
+  {
+      case 0:
+        state = HallSensorState::NoMagnet;
+        break;
+      case 1:
+        state = HallSensorState::Magnet;
+        break;
+      default:
+        return;
+  }
 
-  std::lock_guard<std::mutex> guard(mutex);
+  std::lock_guard<std::mutex> lock(callbackMutex);
+  for(auto &callback: callbacks)
+  {
+    callback(state, timePoint);
+  }
+}
 
-  std::rotate(
-    measurements.rbegin(),
-    measurements.rbegin() + 1,
-    measurements.rend());
+int HallRpsSensor::registerOnChange(
+  std::function<void(int, std::chrono::high_resolution_clock::time_point)> func)
+{
+  std::lock_guard<std::mutex> lock(callbackMutex);
+  int id = callbacksCount++;
+  callbacks[id] = func;
+  return id;
+}
 
-  measurements[0] = timePoint;
+void HallRpsSensor::deregisterOnChange(int id)
+{
+  std::lock_guard<std::mutex> lock(GpioDriver::callbackMutex);
+  if (GpioDriver::callbacks.count(id))
+  {
+    GpioDriver::callbacks.erase(id);
+  }
 }
 
 } // namespace lupus::sensors
