@@ -9,6 +9,7 @@
 
 #include "simulated_control_unit.h"
 #include "propulsion_unit.h"
+#include "distance_sensor.h"
 #include "ultrasonic_sensor.h"
 #include "ultrasonic_service.h"
 #include "profile.h"
@@ -149,23 +150,30 @@ void output_loop(
 {
   while (isActive)
   {
-    printf("%5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f",
-        controller->getDirection(),
-	construction->getSteering(navigation::Steering::Left)->getRawDirection(),
-	construction->getSteering(navigation::Steering::Right)->getRawDirection(),
-        construction->getPower(propulsion::Motor::FrontLeft) * 100,
-        construction->getMotor(propulsion::Motor::FrontLeft)->getRawPower(),
-        construction->getRps(propulsion::Motor::FrontLeft),
-        construction->getPower(propulsion::Motor::FrontRight) * 100,
-        construction->getMotor(propulsion::Motor::FrontRight)->getRawPower(),
-        construction->getRps(propulsion::Motor::FrontRight),
-        construction->getPower(propulsion::Motor::BackLeft) * 100,
-        construction->getMotor(propulsion::Motor::BackLeft)->getRawPower(),
-        construction->getRps(propulsion::Motor::BackLeft),
-        construction->getPower(propulsion::Motor::BackRight) * 100,
-        construction->getMotor(propulsion::Motor::BackRight)->getRawPower(),
-        construction->getRps(propulsion::Motor::BackRight));
-    std::cout << std::endl;
+    printf("%5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f\n",
+      controller->getDirection(),
+    	construction->getSteering(navigation::Steering::Left)->getRawDirection(),
+    	construction->getSteering(navigation::Steering::Right)->getRawDirection(),
+      construction->getPower(propulsion::Motor::FrontLeft) * 100,
+      construction->getMotor(propulsion::Motor::FrontLeft)->getRawPower(),
+      construction->getRps(propulsion::Motor::FrontLeft),
+      construction->getPower(propulsion::Motor::FrontRight) * 100,
+      construction->getMotor(propulsion::Motor::FrontRight)->getRawPower(),
+      construction->getRps(propulsion::Motor::FrontRight),
+      construction->getPower(propulsion::Motor::BackLeft) * 100,
+      construction->getMotor(propulsion::Motor::BackLeft)->getRawPower(),
+      construction->getRps(propulsion::Motor::BackLeft),
+      construction->getPower(propulsion::Motor::BackRight) * 100,
+      construction->getMotor(propulsion::Motor::BackRight)->getRawPower(),
+      construction->getRps(propulsion::Motor::BackRight),
+      construction->getDistance(sensors::DistanceSensor::FrontLeft),
+      construction->getDistance(sensors::DistanceSensor::FrontCenterLeft),
+      construction->getDistance(sensors::DistanceSensor::FrontCenterRight),
+      construction->getDistance(sensors::DistanceSensor::FrontRight),
+      construction->getDistance(sensors::DistanceSensor::BackLeft),
+      construction->getDistance(sensors::DistanceSensor::BackCenterLeft),
+      construction->getDistance(sensors::DistanceSensor::BackCenterRight),
+      construction->getDistance(sensors::DistanceSensor::BackRight));
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }

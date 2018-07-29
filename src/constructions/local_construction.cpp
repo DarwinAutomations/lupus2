@@ -45,7 +45,8 @@ LocalConstruction::LocalConstruction(
 }
 
 
-std::shared_ptr<propulsion::IMotor> LocalConstruction::getMotor(propulsion::Motor motor)
+std::shared_ptr<propulsion::IMotor>
+LocalConstruction::getMotor(propulsion::Motor motor)
 {
   switch (motor)
   {
@@ -121,7 +122,8 @@ float LocalConstruction::getRps(propulsion::Motor motor)
 
 
 
-std::shared_ptr<navigation::ISteering> LocalConstruction::getSteering(navigation::Steering steering)
+std::shared_ptr<navigation::ISteering>
+LocalConstruction::getSteering(navigation::Steering steering)
 {
   switch (steering)
   {
@@ -164,6 +166,71 @@ float LocalConstruction::getDirection(navigation::Steering steering)
       return steeringRight->getDirection();
     default:
       throw std::invalid_argument("get direction: unknown steering");
+  }
+}
+
+std::shared_ptr<sensors::IDistanceSensor>
+LocalConstruction::getDistanceSensor(sensors::DistanceSensor distanceSensor)
+{
+  switch (distanceSensor) {
+    case sensors::DistanceSensor::FrontLeft:
+      return distanceFrontLeft;
+      break;
+    case sensors::DistanceSensor::FrontCenterLeft:
+      return distanceFrontCenterLeft;
+      break;
+    case sensors::DistanceSensor::FrontCenterRight:
+      return distanceFrontCenterRight;
+      break;
+    case sensors::DistanceSensor::FrontRight:
+      return distanceFrontRight;
+      break;
+    case sensors::DistanceSensor::BackLeft:
+      return distanceBackLeft;
+      break;
+    case sensors::DistanceSensor::BackCenterLeft:
+      return distanceBackCenterLeft;
+      break;
+    case sensors::DistanceSensor::BackCenterRight:
+      return distanceBackCenterRight;
+      break;
+    case sensors::DistanceSensor::BackRight:
+      return distanceBackRight;
+      break;
+    default:
+      throw std::invalid_argument("get distance sensor: unknown sensor");
+  }
+}
+
+float LocalConstruction::getDistance(sensors::DistanceSensor distanceSensor)
+{
+  switch (distanceSensor) {
+    case sensors::DistanceSensor::FrontLeft:
+      return distanceFrontLeft->getDistance();
+      break;
+    case sensors::DistanceSensor::FrontCenterLeft:
+      return distanceFrontCenterLeft->getDistance();
+      break;
+    case sensors::DistanceSensor::FrontCenterRight:
+      return distanceFrontCenterRight->getDistance();
+      break;
+    case sensors::DistanceSensor::FrontRight:
+      return distanceFrontRight->getDistance();
+      break;
+    case sensors::DistanceSensor::BackLeft:
+      return distanceBackLeft->getDistance();
+      break;
+    case sensors::DistanceSensor::BackCenterLeft:
+      return distanceBackCenterLeft->getDistance();
+      break;
+    case sensors::DistanceSensor::BackCenterRight:
+      return distanceBackCenterRight->getDistance();
+      break;
+    case sensors::DistanceSensor::BackRight:
+      return distanceBackRight->getDistance();
+      break;
+    default:
+      throw std::invalid_argument("get distance: unknown sensor");
   }
 }
 

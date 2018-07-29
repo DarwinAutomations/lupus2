@@ -60,6 +60,9 @@ class LocalConstruction: public IConstruction
     std::shared_ptr<navigation::ISteering> getSteering(navigation::Steering);
     void setDirection(navigation::Steering steering, float direction);
     float getDirection(navigation::Steering steering);
+
+    std::shared_ptr<sensors::IDistanceSensor> getDistanceSensor(sensors::DistanceSensor);
+    float getDistance(sensors::DistanceSensor);
 };
 
 } // namespace lupus::constructions

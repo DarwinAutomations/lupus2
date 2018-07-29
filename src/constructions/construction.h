@@ -5,6 +5,7 @@
 
 #include "steering.h"
 #include "motor.h"
+#include "distance_sensor.h"
 
 namespace lupus::constructions
 {
@@ -22,6 +23,10 @@ class IConstruction
     virtual std::shared_ptr<navigation::ISteering> getSteering(navigation::Steering) = 0;
     virtual void setDirection(navigation::Steering steering, float direction) = 0;
     virtual float getDirection(navigation::Steering steering) = 0;
+
+    virtual std::shared_ptr<sensors::IDistanceSensor> getDistanceSensor(sensors::DistanceSensor) = 0;
+    virtual float getDistance(sensors::DistanceSensor) = 0;
+
 };
 
 } // namespace lupus::constructions
