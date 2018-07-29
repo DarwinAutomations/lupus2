@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <functional>
-#include <algorithm>
 #include <limits>
+#include <chrono>
 
 #include "hall_sensor.h"
 #include "gpio_driver.h"
@@ -10,7 +10,6 @@ namespace lupus::sensors
 {
 
 HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int sensorPin)
-  : measurements(3, std::chrono::high_resolution_clock::time_point())
 {
   if(!gpio)
   {
@@ -18,9 +17,9 @@ HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int sensorPin)
   }
   this->gpio = std::move(gpio);
   this->sensorPin = sensorPin;
-  gpio->setMode(sensorPin, gpio::PinMode::Input);
-  gpio->setPull(sensorPin, gpio::PinPull::Up);
-  callbackId = gpio->registerOnChange(
+  this->gpio->setMode(sensorPin, gpio::PinMode::Input);
+  this->gpio->setPull(sensorPin, gpio::PinPull::Up);
+  callbackId = this->gpio->registerOnChange(
     sensorPin,
     std::bind(
       &HallSensor::callback, this,
@@ -34,12 +33,12 @@ HallSensor::~HallSensor()
   gpio->deregisterOnChange(callbackId);
 }
 
-HallSensorState getState()
+HallSensorState HallSensor::getState()
 {
   return state;
 }
 
-void HallRpsSensor::callback(
+void HallSensor::callback(
   int pin,
   int level,
   std::chrono::high_resolution_clock::time_point timePoint)
@@ -59,12 +58,12 @@ void HallRpsSensor::callback(
   std::lock_guard<std::mutex> lock(callbackMutex);
   for(auto &callback: callbacks)
   {
-    callback(state, timePoint);
+    callback.second(state, timePoint);
   }
 }
 
-int HallRpsSensor::registerOnChange(
-  std::function<void(int, std::chrono::high_resolution_clock::time_point)> func)
+int HallSensor::registerOnChange(
+  std::function<void(HallSensorState, std::chrono::high_resolution_clock::time_point)> func)
 {
   std::lock_guard<std::mutex> lock(callbackMutex);
   int id = callbacksCount++;
@@ -72,12 +71,12 @@ int HallRpsSensor::registerOnChange(
   return id;
 }
 
-void HallRpsSensor::deregisterOnChange(int id)
+void HallSensor::deregisterOnChange(int id)
 {
-  std::lock_guard<std::mutex> lock(GpioDriver::callbackMutex);
-  if (GpioDriver::callbacks.count(id))
+  std::lock_guard<std::mutex> lock(callbackMutex);
+  if (callbacks.count(id))
   {
-    GpioDriver::callbacks.erase(id);
+    callbacks.erase(id);
   }
 }
 

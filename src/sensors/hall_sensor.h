@@ -18,29 +18,29 @@ enum HallSensorState
 
 class HallSensor
 {
-  private:
-    std::shared_ptr<gpio::GpioDriver> gpio;
-    int sensorPin;
-    HallSensorState state;
+public:
+  HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int sensorPin);
+  virtual ~HallSensor();
 
-    static std::mutex callbackMutex;
-    static std::map<
-      int,
-      std::function<void(
-        int, int,
-        std::chrono::high_resolution_clock::time_point)>> callbacks;
-    static int callbacksCount;
-    void callback(int pin, int level, std::chrono::high_resolution_clock::time_point timePoint);
-    int callbackId;
+  HallSensorState getState();
+  int registerOnChange(
+    std::function<void(HallSensorState, std::chrono::high_resolution_clock::time_point)>);
+  void deregisterOnChange(int id);
 
-  public:
-    HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int sensorPin);
-    virtual ~HallSensor();
+private:
+  std::shared_ptr<gpio::GpioDriver> gpio;
+  int sensorPin;
+  HallSensorState state;
 
-    HallSensorState getState();
-    int registerOnChange(
-      std::function<void(int, std::chrono::high_resolution_clock::time_point)>);
-    void deregisterOnChange(int id);
+  std::mutex callbackMutex;
+  std::map<
+    int,
+    std::function<void(
+      HallSensorState,
+      std::chrono::high_resolution_clock::time_point)>> callbacks;
+  int callbacksCount;
+  void callback(int pin, int level, std::chrono::high_resolution_clock::time_point timePoint);
+  int callbackId;
 };
 
 } // namespace lupus::sensors
