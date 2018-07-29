@@ -9,6 +9,11 @@ namespace lupus::sensors
 
 class HallRpsSensor final: public IRpsSensor
 {
+public:
+  HallRpsSensor(std::shared_ptr<HallSensor> sensor);
+  virtual ~HallRpsSensor();
+  float getRps();
+
 private:
   std::shared_ptr<HallSensor> sensor;
   int callbackId;
@@ -17,14 +22,8 @@ private:
   void callback(
     HallSensorState state,
     std::chrono::high_resolution_clock::time_point timePoint);
-  std::chrono::microseconds getPeriodTime()
+  std::chrono::microseconds getPeriodTime();
 
-
-
-public:
-  HallRpsSensor(std::shared_ptr<HallSensor> sensor);
-  virtual ~HallRpsSensor() = default;
-  float getRps();
 };
 
 } // namespace lupus::sensors

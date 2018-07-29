@@ -1,4 +1,7 @@
 #include <stdexcept>
+#include <algorithm>
+#include <functional>
+
 #include "hall_rps_sensor.h"
 
 namespace lupus::sensors
@@ -6,6 +9,7 @@ namespace lupus::sensors
 
 HallRpsSensor::HallRpsSensor(
     std::shared_ptr<HallSensor> sensor)
+  : measurements(3, std::chrono::high_resolution_clock::time_point())
 {
   if(!sensor)
   {
@@ -13,12 +17,11 @@ HallRpsSensor::HallRpsSensor(
   }
 
   this->sensor = std::move(sensor);
-  callbackId = sensor->registerOnChange(
+  callbackId = this->sensor->registerOnChange(
     std::bind(
       &HallRpsSensor::callback, this,
       std::placeholders::_1,
-      std::placeholders::_2)
-  )
+      std::placeholders::_2));
 }
 
 HallRpsSensor::~HallRpsSensor()
@@ -48,10 +51,10 @@ std::chrono::microseconds HallRpsSensor::getPeriodTime()
 }
 
 void HallRpsSensor::callback(
-  int level,
+  HallSensorState state,
   std::chrono::high_resolution_clock::time_point timePoint)
 {
-  if(level != 1)
+  if(state != HallSensorState::Magnet)
     return;
 
   std::lock_guard<std::mutex> guard(dataMutex);
