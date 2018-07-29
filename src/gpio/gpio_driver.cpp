@@ -6,97 +6,88 @@
 namespace lupus::gpio
 {
 
-int GpioDriver::instanceCount = 0;
-int GpioDriver::callbacksCount = 0;
-std::mutex GpioDriver::countMutex;
-std::map<
-  int,
-  std::tuple<
-    int,
-    std::function<void(int, int, std::chrono::high_resolution_clock::time_point)>>> GpioDriver::callbacks;
-std::mutex GpioDriver::callbackMutex;
-
-
-GpioDriver::GpioDriver ()
+GpioDriver::GpioDriver(char* address, char* port)
 {
-  GpioDriver::countMutex.lock();
-  GpioDriver::instanceCount++;
-  if(GpioDriver::instanceCount == 1)
+  pi = pigpio_start(address, port);
+  if(pi < 0)
   {
-    if(gpioInitialise() < 0)
-    {
-      GpioDriver::countMutex.unlock();
-      throw std::invalid_argument("gpio library initialisation failed");
-    }
+    throw std::runtime_error("pigpiod: failed to establish connection.");
   }
-  GpioDriver::countMutex.unlock();
 }
 
-GpioDriver::~GpioDriver ()
+GpioDriver::~GpioDriver()
 {
-  GpioDriver::countMutex.lock();
-  GpioDriver::instanceCount--;
-  if(GpioDriver::instanceCount == 0)
-  {
-    gpioTerminate();
-  }
-  GpioDriver::countMutex.unlock();
+  pigpio_stop(pi);
 }
 
 void GpioDriver::setMode(int pin, PinMode mode)
 {
-  gpioSetMode(pin, mode);
+  set_mode(pi, pin, mode);
 }
 
 void GpioDriver::setPull(int pin, PinPull mode)
 {
-  gpioSetPullUpDown(pin, mode);
-}
-
-void GpioDriver::write(int pin, bool value)
-{
-  gpioWrite(pin, value);
+  set_pull_up_down(pi, pin, mode);
 }
 
 bool GpioDriver::read(int pin)
 {
-  return (bool)gpioRead(pin);
+  return (bool) gpio_read(pi, pin);
 }
 
-int GpioDriver::registerOnChange(int pin, std::function<void(int, int, std::chrono::high_resolution_clock::time_point)> func)
+void GpioDriver::write(int pin, bool value)
 {
-  std::lock_guard<std::mutex> lock(GpioDriver::callbackMutex);
-  int id = GpioDriver::callbacksCount++;
-  GpioDriver::callbacks[id] = std::make_tuple(pin, func);
-  gpioSetAlertFunc(pin, GpioDriver::callback);
-  return id;
+  gpio_write(pi, pin, value);
 }
 
-void GpioDriver::deregisterOnChange(int id)
+
+int GpioDriver::registerOnChange(
+  int pin,
+  std::function<void(
+    int, int, std::chrono::high_resolution_clock::time_point)> func)
 {
-  std::lock_guard<std::mutex> lock(GpioDriver::callbackMutex);
-  if (GpioDriver::callbacks.count(id))
-  {
-    GpioDriver::callbacks.erase(id);
-  }
+  std::lock_guard<std::mutex> lock(callbackMutex);
+  int callbackId = callbacksCount++;
+  callbacks[callbackId] = std::make_tuple(pin, func);
+
+  callback_ex(
+    pi,
+    pin,
+    EITHER_EDGE,
+    [](int pi, unsigned pin, unsigned level, uint32_t tick, void * _this)
+    {
+      ((GpioDriver*)_this)->callback(pin, level, tick);
+    },
+    this);
+
+  return callbackId;
+}
+
+void GpioDriver::deregisterOnChange(int callbackId)
+{
+std::lock_guard<std::mutex> lock(callbackMutex);
+if (GpioDriver::callbacks.count(callbackId))
+{
+  GpioDriver::callbacks.erase(callbackId);
+}
 }
 
 void GpioDriver::callback(int pin, int level, uint32_t tick)
 {
   auto now = std::chrono::high_resolution_clock::now();
-  auto nowTick = gpioTick();
+  auto nowTick = get_current_tick(pi);
   auto timePoint = now - std::chrono::microseconds(nowTick - tick);
 
-  std::lock_guard<std::mutex> lock(GpioDriver::callbackMutex);
-  for(auto &kv: GpioDriver::callbacks)
+  std::lock_guard<std::mutex> lock(callbackMutex);
+  for(auto &kv: callbacks)
   {
-    std::function<void(int, int, std::chrono::high_resolution_clock::time_point)> cb;
-    int cbPin;
-    std::tie(cbPin, cb) = kv.second;
-    if(cbPin != pin)
+    std::function<void(int,int,std::chrono::high_resolution_clock::time_point)> callback;
+    int callbackPin;
+    std::tie(callbackPin, callback) = kv.second;
+    if(callbackPin != pin)
       continue;
 
-    cb(pin, level, timePoint);
+    callback(pin, level, timePoint);
   }
 }
 

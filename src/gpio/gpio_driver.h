@@ -6,7 +6,7 @@
 #include <tuple>
 #include <functional>
 #include <chrono>
-#include <pigpio.h>
+#include <pigpiod_if2.h>
 
 namespace lupus::gpio
 {
@@ -26,29 +26,31 @@ enum PinPull
 class GpioDriver
 {
 
-private:
-  static int instanceCount;
-  static std::mutex countMutex;
-
-  static std::map<
-    int,
-    std::tuple<
-      int,
-      std::function<void(int, int, std::chrono::high_resolution_clock::time_point)>>> callbacks;
-  static void callback(int id, int level, uint32_t tick);
-  static int callbacksCount;
-  static std::mutex callbackMutex;
-
 public:
-  GpioDriver ();
+  GpioDriver (char* address, char* port);
   virtual ~GpioDriver ();
 
   void setMode(int pin, PinMode mode);
   void setPull(int pin, PinPull mode);
   void write(int pin, bool value);
   bool read(int pin);
-  int registerOnChange(int pin, std::function<void(int, int, std::chrono::high_resolution_clock::time_point)>);
+  int registerOnChange(
+    int pin,
+    std::function<void(int, int, std::chrono::high_resolution_clock::time_point)>);
   void deregisterOnChange(int id);
+
+
+private:
+  void callback(int id, int level, uint32_t tick);
+
+  int pi;
+  std::mutex callbackMutex;
+  std::map<
+    int,
+    std::tuple<
+      int,
+      std::function<void(int, int, std::chrono::high_resolution_clock::time_point)>>> callbacks;
+  int callbacksCount;
 };
 
 } // namespace lupus::gpio

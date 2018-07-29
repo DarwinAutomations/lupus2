@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <linux/joystick.h>
 #include <thread>
-#include <pigpio.h>
 #include <cstdlib>
 
 #include "simulated_control_unit.h"
@@ -42,13 +41,14 @@ int main()
   auto configuration =
     constructions::LocalConstructionConfigurationRepository::fromFile(configurationFile);
 
-  auto gpioDriver = std::make_shared<gpio::GpioDriver>();
+  auto gpioDriver = std::make_shared<gpio::GpioDriver>(
+    (char*)NULL,
+    (char*)NULL);
   auto pwmDriver = std::make_shared<pwm::PwmDriver>(i2cAddress);
   pwmDriver->setPwmFrequency(frequency);
 
   auto ultrasonicService = std::make_shared<sensors::UltrasonicService>(
       gpioDriver, 1);
-
 
   auto construction = constructions::LocalConstructionFactory::create(
       pwmDriver,

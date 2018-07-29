@@ -3,7 +3,7 @@ CXX = g++
 RM = rm -f
 CPPFLAGS = $(IS) -Wall -g
 LDFLAGS = -g
-LDLIBS = -lpthread -lpigpio -lconfig++
+LDLIBS = -lpthread -lpigpiod_if2 -lconfig++
 
 IS=\
 -Isrc\
