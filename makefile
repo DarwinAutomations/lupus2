@@ -7,41 +7,36 @@ LDLIBS = -lpthread -lpigpiod_if2 -lconfig++
 
 IS=\
 -Isrc\
--Isrc/constructions\
--Isrc/controllers\
--Isrc/navigation\
--Isrc/propulsion\
--Isrc/pwm\
--Isrc/simulations\
--Isrc/profiles\
--Isrc/sensors\
--Isrc/gpio\
+-Isrc/construction\
+-Isrc/construction/steering_unit\
+-Isrc/construction/motor\
+-Isrc/construction/rps_sensor\
+-Isrc/construction/distance_sensor\
+-Isrc/drivers/pwm\
+-Isrc/drivers/gpio\
+-Isrc/application/profiles\
 
 CORE=\
 src/main.cpp\
-src/constructions/local_construction.cpp\
-src/controllers/intelligent_controller.cpp\
-src/propulsion/propulsion_service.cpp\
-src/profiles/granny_profile.cpp\
+src/construction/lupus.cpp\
+src/construction/lupus_controller.cpp\
+src/construction/motor/propulsion_service.cpp\
+src/application/profiles/granny_profile.cpp\
 
 SRCS=$(CORE)\
-src/pwm/pwm_driver.cpp\
-src/pwm/pwm_control_unit.cpp\
-src/gpio/gpio_driver.cpp\
-src/navigation/servo.cpp\
-src/navigation/rc_steering.cpp\
-src/propulsion/propulsion_unit.cpp\
-src/propulsion/rc_motor.cpp\
-src/sensors/hall_rps_sensor.cpp\
-src/sensors/hall_sensor.cpp\
-src/sensors/ultrasonic_sensor.cpp\
-src/sensors/ultrasonic_service.cpp\
-src/constructions/local_construction_factory.cpp\
-src/constructions/local_construction_configuration.cpp\
-
-SRCSSIM=$(CORE)\
-src/simulations/simulated_control_unit.cpp\
-src/constructions/simulated_consturction_factory.cpp\
+src/drivers/pwm/pwm_driver.cpp\
+src/drivers/pwm/pwm_control_unit.cpp\
+src/drivers/gpio/gpio_driver.cpp\
+src/construction/steering_unit/servo.cpp\
+src/construction/steering_unit/rc_steering.cpp\
+src/construction/motor/propulsion_unit.cpp\
+src/construction/motor/rc_motor.cpp\
+src/construction/rps_sensor/hall_rps_sensor.cpp\
+src/construction/rps_sensor/hall_sensor.cpp\
+src/construction/distance_sensor/ultrasonic_sensor.cpp\
+src/construction/distance_sensor/ultrasonic_service.cpp\
+src/construction/lupus_factory.cpp\
+src/construction/lupus_configuration.cpp\
 
 OBJS=$(subst .cpp,.o, $(SRCS))
 OBJSSIM=$(subst .cpp,.o, $(SRCSSIM))
@@ -49,11 +44,8 @@ OBJSSIM=$(subst .cpp,.o, $(SRCSSIM))
 make: $(OBJS)
 	$(CXX) $(LDFLAGS) -o bin/lupus.bin $(OBJS) $(LDLIBS)
 
-simulation: $(OBJSSIM)
-	$(CXX) $(LDFLAGS) -o bin/lupus_simulation.bin $(OBJSSIM) $(LDLIBS)
-
 clean:
-	$(RM) $(OBJS) $(OBJSSIM)
+	$(RM) $(OBJS)
 
 distclean: clean
-	$(RM) bin/lupus_simulation.bin bin/lupus.bin
+	$(RM) bin/lupus.bin

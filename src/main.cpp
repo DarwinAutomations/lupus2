@@ -7,7 +7,10 @@
 #include <thread>
 #include <cstdlib>
 
-#include "simulated_control_unit.h"
+#include "gpio_driver.h"
+#include "lupus.h"
+#include "lupus_factory.h"
+#include "lupus_controller.h"
 #include "propulsion_unit.h"
 #include "distance_sensor.h"
 #include "ultrasonic_sensor.h"
@@ -15,23 +18,20 @@
 #include "profile.h"
 #include "granny_profile.h"
 #include "propulsion_service.h"
-#include "local_construction.h"
-#include "local_construction_factory.h"
-#include "local_construction_configuration.h"
+#include "lupus_configuration.h"
 #include "controller.h"
-#include "intelligent_controller.h"
-#include "gpio_driver.h"
+#include "controller.h"
 
 using namespace lupus;
 
 void input_loop(
   bool& isActive,
-  std::shared_ptr<controllers::IController> controller);
+  std::shared_ptr<construction::LupusController> controller);
 
 void output_loop(
   bool& isActive,
-  std::shared_ptr<controllers::IController> controller,
-  std::shared_ptr<constructions::IConstruction> construciton);
+  std::shared_ptr<construction::LupusController> controller,
+  std::shared_ptr<construction::Lupus> lupus);
 
 int main()
 {
@@ -40,37 +40,37 @@ int main()
   const char* configurationFile = "data/default.cfg";
 
   auto configuration =
-    constructions::LocalConstructionConfigurationRepository::fromFile(configurationFile);
+    construction::LupusConfigurationRepository::fromFile(configurationFile);
 
-  auto gpioDriver = std::make_shared<gpio::GpioDriver>(
+  auto gpioDriver = std::make_shared<drivers::gpio::GpioDriver>(
     (char*)NULL,
     (char*)NULL);
-  auto pwmDriver = std::make_shared<pwm::PwmDriver>(i2cAddress);
+  auto pwmDriver = std::make_shared<drivers::pwm::PwmDriver>(i2cAddress);
   pwmDriver->setPwmFrequency(frequency);
 
-  auto ultrasonicService = std::make_shared<sensors::UltrasonicService>(
+  auto ultrasonicService = std::make_shared<construction::distanceSensor::UltrasonicService>(
       gpioDriver, 1);
 
-  auto construction = constructions::LocalConstructionFactory::create(
+  auto lupus = construction::LupusFactory::create(
       pwmDriver,
       gpioDriver,
       ultrasonicService,
       *configuration);
 
-  construction->setPower(propulsion::Motor::FrontLeft, 0);
-  construction->setPower(propulsion::Motor::FrontRight, 0);
-  construction->setPower(propulsion::Motor::BackLeft, 0);
-  construction->setPower(propulsion::Motor::BackRight, 0);
-  construction->setDirection(navigation::SteeringUnit::Left, 0);
-  construction->setDirection(navigation::SteeringUnit::Right, 0);
+  lupus->setPower(construction::motor::Motor::FrontLeft, 0);
+  lupus->setPower(construction::motor::Motor::FrontRight, 0);
+  lupus->setPower(construction::motor::Motor::BackLeft, 0);
+  lupus->setPower(construction::motor::Motor::BackRight, 0);
+  lupus->setDirection(construction::steeringUnit::SteeringUnit::Left, 0);
+  lupus->setDirection(construction::steeringUnit::SteeringUnit::Right, 0);
 
-  auto profile = std::make_shared<profiles::GrannyProfile>();
+  auto profile = std::make_shared<application::profiles::GrannyProfile>();
   auto propulsionService =
-    std::make_shared<propulsion::PropulsionService>(construction, profile);
+    std::make_shared<construction::motor::PropulsionService>(lupus, profile);
 
   auto controller =
-    std::make_shared<controllers::IntelligentController>(
-      construction,
+    std::make_shared<construction::LupusController>(
+      lupus,
       propulsionService);
 
   // start input and output thread
@@ -85,7 +85,7 @@ int main()
     output_loop,
     std::ref(isActive),
     controller,
-    construction);
+    lupus);
 
   // wait for user input and exit
   while(getchar() != 'q');
@@ -98,7 +98,7 @@ int main()
 
 void input_loop(
   bool& isActive,
-  std::shared_ptr<controllers::IController> controller)
+  std::shared_ptr<construction::LupusController> controller)
 {
   js_event* event = new js_event();
   int fd = open("/dev/input/js0", O_RDONLY | O_NONBLOCK);
@@ -145,35 +145,35 @@ void input_loop(
 
 void output_loop(
   bool& isActive,
-  std::shared_ptr<controllers::IController> controller,
-  std::shared_ptr<constructions::IConstruction> construction)
+  std::shared_ptr<construction::LupusController> controller,
+  std::shared_ptr<construction::Lupus> lupus)
 {
   while (isActive)
   {
     printf("%5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f\n",
       controller->getDirection(),
-    	construction->getSteering(navigation::SteeringUnit::Left)->getRawDirection(),
-    	construction->getSteering(navigation::SteeringUnit::Right)->getRawDirection(),
-      construction->getPower(propulsion::Motor::FrontLeft) * 100,
-      construction->getMotor(propulsion::Motor::FrontLeft)->getRawPower(),
-      construction->getRps(propulsion::Motor::FrontLeft),
-      construction->getPower(propulsion::Motor::FrontRight) * 100,
-      construction->getMotor(propulsion::Motor::FrontRight)->getRawPower(),
-      construction->getRps(propulsion::Motor::FrontRight),
-      construction->getPower(propulsion::Motor::BackLeft) * 100,
-      construction->getMotor(propulsion::Motor::BackLeft)->getRawPower(),
-      construction->getRps(propulsion::Motor::BackLeft),
-      construction->getPower(propulsion::Motor::BackRight) * 100,
-      construction->getMotor(propulsion::Motor::BackRight)->getRawPower(),
-      construction->getRps(propulsion::Motor::BackRight),
-      construction->getDistance(sensors::DistanceSensor::FrontLeft),
-      construction->getDistance(sensors::DistanceSensor::FrontCenterLeft),
-      construction->getDistance(sensors::DistanceSensor::FrontCenterRight),
-      construction->getDistance(sensors::DistanceSensor::FrontRight),
-      construction->getDistance(sensors::DistanceSensor::BackLeft),
-      construction->getDistance(sensors::DistanceSensor::BackCenterLeft),
-      construction->getDistance(sensors::DistanceSensor::BackCenterRight),
-      construction->getDistance(sensors::DistanceSensor::BackRight));
+    	lupus->getSteering(construction::steeringUnit::SteeringUnit::Left)->getRawDirection(),
+    	lupus->getSteering(construction::steeringUnit::SteeringUnit::Right)->getRawDirection(),
+      lupus->getPower(construction::motor::Motor::FrontLeft) * 100,
+      lupus->getMotor(construction::motor::Motor::FrontLeft)->getRawPower(),
+      lupus->getRps(construction::motor::Motor::FrontLeft),
+      lupus->getPower(construction::motor::Motor::FrontRight) * 100,
+      lupus->getMotor(construction::motor::Motor::FrontRight)->getRawPower(),
+      lupus->getRps(construction::motor::Motor::FrontRight),
+      lupus->getPower(construction::motor::Motor::BackLeft) * 100,
+      lupus->getMotor(construction::motor::Motor::BackLeft)->getRawPower(),
+      lupus->getRps(construction::motor::Motor::BackLeft),
+      lupus->getPower(construction::motor::Motor::BackRight) * 100,
+      lupus->getMotor(construction::motor::Motor::BackRight)->getRawPower(),
+      lupus->getRps(construction::motor::Motor::BackRight),
+      lupus->getDistance(construction::distanceSensor::DistanceSensor::FrontLeft),
+      lupus->getDistance(construction::distanceSensor::DistanceSensor::FrontCenterLeft),
+      lupus->getDistance(construction::distanceSensor::DistanceSensor::FrontCenterRight),
+      lupus->getDistance(construction::distanceSensor::DistanceSensor::FrontRight),
+      lupus->getDistance(construction::distanceSensor::DistanceSensor::BackLeft),
+      lupus->getDistance(construction::distanceSensor::DistanceSensor::BackCenterLeft),
+      lupus->getDistance(construction::distanceSensor::DistanceSensor::BackCenterRight),
+      lupus->getDistance(construction::distanceSensor::DistanceSensor::BackRight));
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
