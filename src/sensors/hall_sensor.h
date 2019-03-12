@@ -39,7 +39,7 @@ private:
       HallSensorState,
       std::chrono::high_resolution_clock::time_point)>> callbacks;
   int callbacksCount;
-  void callback(int pin, int level, std::chrono::high_resolution_clock::time_point timePoint);
+  void callback(int id, int pin, int level, std::chrono::high_resolution_clock::time_point timePoint);
   int callbackId;
 };
 

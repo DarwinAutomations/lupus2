@@ -123,13 +123,13 @@ float LocalConstruction::getRps(propulsion::Motor motor)
 
 
 std::shared_ptr<navigation::ISteering>
-LocalConstruction::getSteering(navigation::Steering steering)
+LocalConstruction::getSteering(navigation::SteeringUnit steering)
 {
   switch (steering)
   {
-    case navigation::Steering::Left:
+    case navigation::SteeringUnit::Left:
       return steeringLeft;
-    case navigation::Steering::Right:
+    case navigation::SteeringUnit::Right:
       return steeringRight;
     default:
       throw std::invalid_argument("get steering: unknown steering");
@@ -137,7 +137,7 @@ LocalConstruction::getSteering(navigation::Steering steering)
 }
 
 void LocalConstruction::setDirection(
-  navigation::Steering steering,
+  navigation::SteeringUnit steering,
   float direction)
 {
   if(direction > 1 || direction < -1)
@@ -147,22 +147,22 @@ void LocalConstruction::setDirection(
 
   switch (steering)
   {
-    case navigation::Steering::Left:
+    case navigation::SteeringUnit::Left:
       steeringLeft->setDirection(direction);
       break;
-    case navigation::Steering::Right:
+    case navigation::SteeringUnit::Right:
       steeringRight->setDirection(direction);
       break;
   }
 }
 
-float LocalConstruction::getDirection(navigation::Steering steering)
+float LocalConstruction::getDirection(navigation::SteeringUnit steering)
 {
   switch (steering)
   {
-    case navigation::Steering::Left:
+    case navigation::SteeringUnit::Left:
       return steeringLeft->getDirection();
-    case navigation::Steering::Right:
+    case navigation::SteeringUnit::Right:
       return steeringRight->getDirection();
     default:
       throw std::invalid_argument("get direction: unknown steering");

@@ -61,8 +61,8 @@ int main()
   construction->setPower(propulsion::Motor::FrontRight, 0);
   construction->setPower(propulsion::Motor::BackLeft, 0);
   construction->setPower(propulsion::Motor::BackRight, 0);
-  construction->setDirection(navigation::Steering::Left, 0);
-  construction->setDirection(navigation::Steering::Right, 0);
+  construction->setDirection(navigation::SteeringUnit::Left, 0);
+  construction->setDirection(navigation::SteeringUnit::Right, 0);
 
   auto profile = std::make_shared<profiles::GrannyProfile>();
   auto propulsionService =
@@ -152,8 +152,8 @@ void output_loop(
   {
     printf("%5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f\n",
       controller->getDirection(),
-    	construction->getSteering(navigation::Steering::Left)->getRawDirection(),
-    	construction->getSteering(navigation::Steering::Right)->getRawDirection(),
+    	construction->getSteering(navigation::SteeringUnit::Left)->getRawDirection(),
+    	construction->getSteering(navigation::SteeringUnit::Right)->getRawDirection(),
       construction->getPower(propulsion::Motor::FrontLeft) * 100,
       construction->getMotor(propulsion::Motor::FrontLeft)->getRawPower(),
       construction->getRps(propulsion::Motor::FrontLeft),

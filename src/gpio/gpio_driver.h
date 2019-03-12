@@ -36,12 +36,17 @@ public:
   bool read(int pin);
   int registerOnChange(
     int pin,
-    std::function<void(int, int, std::chrono::high_resolution_clock::time_point)>);
+    std::function<void(int, int, int, std::chrono::high_resolution_clock::time_point)>);
   void deregisterOnChange(int id);
 
 
 private:
-  void callback(int id, int level, uint32_t tick);
+  static void pinChangeEventHandler(
+    int pi,
+    unsigned int pin,
+    unsigned int level,
+    unsigned int tick,
+    void* _this);
 
   int pi;
   std::mutex callbackMutex;
@@ -49,7 +54,7 @@ private:
     int,
     std::tuple<
       int,
-      std::function<void(int, int, std::chrono::high_resolution_clock::time_point)>>> callbacks;
+      std::function<void(int, int, int, std::chrono::high_resolution_clock::time_point)>>> callbacks;
   int callbacksCount;
 };
 

@@ -1,7 +1,10 @@
 #include <stdexcept>
+#include <functional>
 #include <pigpio.h>
 
 #include <gpio_driver.h>
+
+using namespace std::placeholders;
 
 namespace lupus::gpio
 {
@@ -44,7 +47,7 @@ void GpioDriver::write(int pin, bool value)
 int GpioDriver::registerOnChange(
   int pin,
   std::function<void(
-    int, int, std::chrono::high_resolution_clock::time_point)> func)
+    int, int, int, std::chrono::high_resolution_clock::time_point)> func)
 {
   std::lock_guard<std::mutex> lock(callbackMutex);
   int callbackId = callbacksCount++;
@@ -54,10 +57,7 @@ int GpioDriver::registerOnChange(
     pi,
     pin,
     EITHER_EDGE,
-    [](int pi, unsigned pin, unsigned level, uint32_t tick, void * _this)
-    {
-      ((GpioDriver*)_this)->callback(pin, level, tick);
-    },
+    &GpioDriver::pinChangeEventHandler,
     this);
 
   return callbackId;
@@ -65,29 +65,34 @@ int GpioDriver::registerOnChange(
 
 void GpioDriver::deregisterOnChange(int callbackId)
 {
-std::lock_guard<std::mutex> lock(callbackMutex);
-if (GpioDriver::callbacks.count(callbackId))
-{
-  GpioDriver::callbacks.erase(callbackId);
-}
+  std::lock_guard<std::mutex> lock(callbackMutex);
+  if (GpioDriver::callbacks.count(callbackId))
+  {
+    GpioDriver::callbacks.erase(callbackId);
+  }
 }
 
-void GpioDriver::callback(int pin, int level, uint32_t tick)
+void GpioDriver::pinChangeEventHandler(int pi,
+  unsigned int pin,
+  unsigned int level,
+  unsigned int tick,
+  void* _this)
 {
   auto now = std::chrono::high_resolution_clock::now();
   auto nowTick = get_current_tick(pi);
   auto timePoint = now - std::chrono::microseconds(nowTick - tick);
 
-  std::lock_guard<std::mutex> lock(callbackMutex);
-  for(auto &kv: callbacks)
+  std::lock_guard<std::mutex> lock(((GpioDriver*)_this)->callbackMutex);
+  for(auto &kv: ((GpioDriver*)_this)->callbacks)
   {
-    std::function<void(int,int,std::chrono::high_resolution_clock::time_point)> callback;
+    int id = kv.first;
+    std::function<void(int, int, int, std::chrono::high_resolution_clock::time_point)> callback;
     int callbackPin;
     std::tie(callbackPin, callback) = kv.second;
-    if(callbackPin != pin)
+    if((unsigned)callbackPin != pin)
       continue;
 
-    callback(pin, level, timePoint);
+    callback((int)id, (int)pin, (int)level, timePoint);
   }
 }
 

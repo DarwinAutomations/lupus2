@@ -25,7 +25,8 @@ HallSensor::HallSensor(std::shared_ptr<gpio::GpioDriver> gpio, int sensorPin)
       &HallSensor::callback, this,
       std::placeholders::_1,
       std::placeholders::_2,
-      std::placeholders::_3));
+      std::placeholders::_3,
+      std::placeholders::_4));
 }
 
 HallSensor::~HallSensor()
@@ -39,20 +40,21 @@ HallSensorState HallSensor::getState()
 }
 
 void HallSensor::callback(
+  int id,
   int pin,
   int level,
   std::chrono::high_resolution_clock::time_point timePoint)
 {
   switch(level)
   {
-      case 0:
-        state = HallSensorState::NoMagnet;
-        break;
-      case 1:
-        state = HallSensorState::Magnet;
-        break;
-      default:
-        return;
+    case 0:
+      state = HallSensorState::NoMagnet;
+      break;
+    case 1:
+      state = HallSensorState::Magnet;
+      break;
+    default:
+      return;
   }
 
   std::lock_guard<std::mutex> lock(callbackMutex);

@@ -1,6 +1,6 @@
 #include <stdexcept>
 #include <memory>
-#include <chrono> 
+#include <chrono>
 #include <thread>
 
 #include "intelligent_controller.h"
@@ -59,15 +59,15 @@ void IntelligentController::setDirection(float direction)
     throw std::invalid_argument("direction not in range -1, +1");
   }
 
-  this->construction->setDirection(navigation::Steering::Left, direction);
-  this->construction->setDirection(navigation::Steering::Right, direction);
+  this->construction->setDirection(navigation::SteeringUnit::Left, direction);
+  this->construction->setDirection(navigation::SteeringUnit::Right, direction);
 }
 
 float IntelligentController::getDirection()
 {
   float direction = 0;
-  direction += this->construction->getDirection(navigation::Steering::Left);
-  direction += this->construction->getDirection(navigation::Steering::Right);
+  direction += this->construction->getDirection(navigation::SteeringUnit::Left);
+  direction += this->construction->getDirection(navigation::SteeringUnit::Right);
   direction /= 2;
   return direction;
 }

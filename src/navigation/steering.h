@@ -4,7 +4,7 @@
 namespace lupus::navigation
 {
 
-enum Steering
+enum SteeringUnit
 {
   Left,
   Right

@@ -20,9 +20,9 @@ class IConstruction
     virtual float getPower(propulsion::Motor motor) = 0;
     virtual float getRps(propulsion::Motor motor) = 0;
 
-    virtual std::shared_ptr<navigation::ISteering> getSteering(navigation::Steering) = 0;
-    virtual void setDirection(navigation::Steering steering, float direction) = 0;
-    virtual float getDirection(navigation::Steering steering) = 0;
+    virtual std::shared_ptr<navigation::ISteering> getSteering(navigation::SteeringUnit) = 0;
+    virtual void setDirection(navigation::SteeringUnit steering, float direction) = 0;
+    virtual float getDirection(navigation::SteeringUnit steering) = 0;
 
     virtual std::shared_ptr<sensors::IDistanceSensor> getDistanceSensor(sensors::DistanceSensor) = 0;
     virtual float getDistance(sensors::DistanceSensor) = 0;

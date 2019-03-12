@@ -69,43 +69,43 @@ std::shared_ptr<LocalConstruction> LocalConstructionFactory::create(
   auto ultrasonicSensorFrontCenterLeft = LocalConstructionFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontLeft);
+      configuration.ultrasonicFrontLeftCenter);
 
   // ultrasnoic sensor front center right:
   auto ultrasonicSensorFrontCenterRight = LocalConstructionFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontLeft);
+      configuration.ultrasonicFrontRightCenter);
 
   // ultrasnoic sensor front right:
   auto ultrasonicSensorFrontRight = LocalConstructionFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontLeft);
+      configuration.ultrasonicFrontRight);
 
   // ultrasnoic sensor back left:
   auto ultrasonicSensorBackLeft = LocalConstructionFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontLeft);
+      configuration.ultrasonicBackLeft);
 
   // ultrasnoic sensor back center left:
   auto ultrasonicSensorBackCenterLeft = LocalConstructionFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontLeft);
+      configuration.ultrasonicBackLeftCenter);
 
   // ultrasnoic sensor back center right:
   auto ultrasonicSensorBackCenterRight = LocalConstructionFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontLeft);
+      configuration.ultrasonicBackRightCenter);
 
   // ultrasnoic sensor back right:
   auto ultrasonicSensorBackRight = LocalConstructionFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontLeft);
+      configuration.ultrasonicBackRight);
 
   // consutruction:
   auto construction = std::make_shared<constructions::LocalConstruction>(

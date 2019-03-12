@@ -1,13 +1,16 @@
 #include <time.h>
 #include <chrono>
 #include <thread>
-#include <future>
+#include <functional>
 #include <map>
+#include <set>
 #include <tuple>
 #include <vector>
 
 #include "distance_sensor.h"
 #include "ultrasonic_service.h"
+
+using namespace std::placeholders;
 
 #define SPEED_OF_SOUND 340
 
@@ -23,10 +26,9 @@ UltrasonicService::UltrasonicService (std::shared_ptr<gpio::GpioDriver> gpio, in
 
   this->gpio = std::move(gpio);
   this->isRunning = true;
-  this->idCounter = 0;
 
   this->measuringThread = std::thread(
-      &UltrasonicService::measuringLoop, this, frequency);
+    &UltrasonicService::measuringLoop, this, frequency);
 }
 
 UltrasonicService::~UltrasonicService ()
@@ -39,102 +41,77 @@ void UltrasonicService::measuringLoop(int frequency)
 {
   auto time = std::chrono::system_clock::now();
   auto period = std::chrono::milliseconds((int) (1000.0 / frequency));
-  std::map<int, std::future<int>> futures;
 
   while(this->isRunning)
   {
-    futures.clear();
+    std::this_thread::sleep_until(time);
     time += period;
+
+    std::set<int> triggers;
 
     this->registryMutex.lock();
     for(auto &kv: this->registry)
     {
-      auto sensorId = kv.first;
       int trigger, echo;
       std::tie(trigger, echo) = kv.second;
 
-      auto future = std::async(
-          std::launch::async,
-          UltrasonicService::measure,
-          this->gpio, trigger, echo, &time);
-
-      futures[sensorId] = std::move(future);
+      triggers.insert(trigger);
     }
-
     this->registryMutex.unlock();
-    this->dataMutex.lock();
-    for(auto &kv: futures)
-    {
-      int sensorId = kv.first;
-      auto distance = &kv.second;
-      if(std::future_status::ready == distance->wait_until(time + std::chrono::milliseconds(75)))
-      {
-        this->data[sensorId] = distance->get();
-      }
-      else
-      {
-        this->data[sensorId] = IDistanceSensor::DistanceUnknown;
-      }
-    }
-    this->dataMutex.unlock();
 
+    for(int trigger: triggers)
+    {
+      this->gpio->write(trigger, true);
+    }
+    // sleepForTriggerLength
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    for(int trigger: triggers)
+    {
+      this->gpio->write(trigger, false);
+    }
+
+    this->lastMassTrigger = std::chrono::system_clock::now();
   }
 }
 
-int UltrasonicService::measure(
-    std::shared_ptr<gpio::GpioDriver> gpio,
-    int trigger, int echo,
-    std::chrono::time_point<std::chrono::system_clock>* startTime)
+void UltrasonicService::onEchoChange(
+  int id,
+  int pin,
+  int level,
+  std::chrono::high_resolution_clock::time_point echoTime)
 {
-  if(startTime)
+  // policy.isNotRisingEdge...
+  if(level == 1) return;
+
+  auto triggerTime = this->lastMassTrigger;
+  float newDistance = std::chrono::duration_cast<std::chrono::microseconds>(
+    echoTime - triggerTime).count() / 2 / 1000000.0 * SPEED_OF_SOUND;
+
+  //if policy.distanceInRange(sensor, newDistance):
+  float maxReliableDistance = 4.0;
+  float minRelibaleDistance = 0.3;
+  if(newDistance > maxReliableDistance || newDistance < minRelibaleDistance)
   {
-    std::this_thread::sleep_until(*startTime);
+    this->data[id] = IDistanceSensor::DistanceOutOfRange;
+    return;
   }
-
-  if(!gpio->read(trigger))
-  {
-    gpio->write(trigger, true);
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    gpio->write(trigger, false);
-  }
-
-  auto end = std::chrono::high_resolution_clock::now();
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - *startTime).count();
-  while(!gpio->read(echo) && duration < 30000)
-  {
-    end = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::microseconds>(end - *startTime).count();
-  }
-
-  auto start = end;
-  duration = 0;
-  while(gpio->read(echo) && duration < 40000)
-  {
-    end = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-  }
-
-
-  if(duration > 35000)
-  {
-    return IDistanceSensor::DistanceOutOfRange;
-  }
-
-  return duration / 1000000.0 * SPEED_OF_SOUND / 2;
+  this->data[id] = newDistance;
 }
 
 int UltrasonicService::registerSensor(int trigger, int echo)
 {
+  this->gpio->setMode(trigger, gpio::PinMode::Output);
+  this->gpio->setMode(echo, gpio::PinMode::Input);
+  // register on change event
+  int id = this->gpio->registerOnChange(
+    echo,
+    std::bind(&UltrasonicService::onEchoChange, this, _1, _2, _3, _4));
   this->registryMutex.lock();
-  this->dataMutex.lock();
 
-  int id = this->idCounter++;
-  this->gpio->setMode(trigger, gpio::PinMode::Input);
-  this->gpio->setMode(echo, gpio::PinMode::Output);
   this->registry[id] = std::make_tuple(trigger, echo);
   this->data[id] = IDistanceSensor::DistanceUnknown;
 
-  this->dataMutex.unlock();
   this->registryMutex.unlock();
 
   return id;
@@ -149,10 +126,9 @@ void UltrasonicService::deregisterSensor(int id)
 
 float UltrasonicService::getDistance(int id)
 {
-  this->dataMutex.lock();
-  int data = this->data.at(id);
-  this->dataMutex.unlock();
-  return data;
+  //if data->timePoint < lastMassTrigger || lastMassTrigger > maxReliableDistance:
+  //  return IDistanceSensor::DistanceUnknown;
+  return this->data.at(id);
 }
 
 } // namespace lupus::sensors

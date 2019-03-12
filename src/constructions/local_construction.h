@@ -57,9 +57,9 @@ class LocalConstruction: public IConstruction
     float getPower(propulsion::Motor motor);
     float getRps(propulsion::Motor motor);
 
-    std::shared_ptr<navigation::ISteering> getSteering(navigation::Steering);
-    void setDirection(navigation::Steering steering, float direction);
-    float getDirection(navigation::Steering steering);
+    std::shared_ptr<navigation::ISteering> getSteering(navigation::SteeringUnit);
+    void setDirection(navigation::SteeringUnit steering, float direction);
+    float getDirection(navigation::SteeringUnit steering);
 
     std::shared_ptr<sensors::IDistanceSensor> getDistanceSensor(sensors::DistanceSensor);
     float getDistance(sensors::DistanceSensor);
