@@ -1,11 +1,12 @@
 #include <stdexcept>
+
+#include "distance_sensor.h"
 #include "ultrasonic_sensor.h"
 
 namespace lupus::sensors
 {
 
 UltrasonicSensor::UltrasonicSensor(
-  std::shared_ptr<UltrasonicService> service,
   float rangeStart,
   float rangeEnd,
   float accuracy,
@@ -13,48 +14,53 @@ UltrasonicSensor::UltrasonicSensor(
   int trigger,
   int echo)
 {
-  if(!service)
-  {
-    throw std::invalid_argument("ultrasonic_service must not be null");
-  }
-
-  this->service = std::move(service);
+  this->distance = IDistanceSensor::DistanceUnknown;
   this->rangeStart = rangeStart;
   this->rangeEnd = rangeEnd;
   this->accuracy = accuracy;
   this->angle = angle;
-
-  this->id = this->service->registerSensor(trigger, echo);
+  this->triggerPin = trigger;
+  this->echoPin = echo;
 }
 
-UltrasonicSensor::~UltrasonicSensor()
+void UltrasonicSensor::setDistance(float newDistance)
 {
-  this->service->deregisterSensor(this->id);
+  distance = newDistance;
 }
 
 float UltrasonicSensor::getDistance()
 {
-  return this->service->getDistance(this->id);
+  return distance;
 }
 
 float UltrasonicSensor::getRangeStart()
 {
-  return this->rangeStart;
+  return rangeStart;
 }
 
 float UltrasonicSensor::getRangeEnd()
 {
-  return this->rangeEnd;
+  return rangeEnd;
 }
 
 float UltrasonicSensor::getAccuracy()
 {
-  return this->accuracy;
+  return accuracy;
 }
 
 float UltrasonicSensor::getAngle()
 {
-  return this->angle;
+  return angle;
+}
+
+int UltrasonicSensor::getTriggerPin()
+{
+  return triggerPin;
+}
+
+int UltrasonicSensor::getEchoPin()
+{
+  return echoPin;
 }
 
 } // namespace lupus::sensors

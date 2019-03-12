@@ -13,30 +13,30 @@ namespace lupus::sensors
 class UltrasonicSensor : public IDistanceSensor
 {
   private:
-    std::shared_ptr<UltrasonicService> service;
-    int id;
-
+    float distance;
     float rangeStart;
     float rangeEnd;
     float accuracy;
     float angle;
+    int triggerPin;
+    int echoPin;
 
   public:
     UltrasonicSensor(
-      std::shared_ptr<UltrasonicService> service,
       float rangeStart,
       float rangeEnd,
       float accuracy,
       float angle,
       int trigger,
       int echo);
-    virtual ~UltrasonicSensor();
-    float getDistance();
+    void setDistance(float newDistance) override;
+    float getDistance() override;
     float getAccuracy() override;
     float getAngle() override;
     float getRangeStart() override;
     float getRangeEnd() override;
-
+    int getTriggerPin() override;
+    int getEchoPin() override;
 };
 
 } // namespace lupus::sensors

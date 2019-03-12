@@ -164,14 +164,18 @@ std::shared_ptr<sensors::IDistanceSensor> LocalConstructionFactory::createUltras
     std::shared_ptr<sensors::UltrasonicService> ultrasonicService,
     UltrasonicSensorConfiguration configuration)
 {
-  return std::make_shared<sensors::UltrasonicSensor>(
-      ultrasonicService,
-      configuration.measurementRangeMin,
-      configuration.measurementRangeMax,
-      configuration.measurementAccuracy,
-      configuration.measurementAngle,
-      configuration.triggerPin,
-      configuration.echoPin);
+  auto sensor = std::make_shared<sensors::UltrasonicSensor>(
+    configuration.measurementRangeMin,
+    configuration.measurementRangeMax,
+    configuration.measurementAccuracy,
+    configuration.measurementAngle,
+    configuration.triggerPin,
+    configuration.echoPin);
+
+  ultrasonicService->registerSensor(sensor);
+  // TODO: deregisterSensor with retruned id
+
+  return sensor;
 }
 
 } // namespace lupus::constructions

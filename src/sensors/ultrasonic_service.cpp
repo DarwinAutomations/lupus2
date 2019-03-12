@@ -1,11 +1,11 @@
+#include <stdexcept>
+#include <memory>
 #include <time.h>
 #include <chrono>
 #include <thread>
 #include <functional>
 #include <map>
 #include <set>
-#include <tuple>
-#include <vector>
 
 #include "distance_sensor.h"
 #include "ultrasonic_service.h"
@@ -17,7 +17,9 @@ using namespace std::placeholders;
 namespace lupus::sensors
 {
 
-UltrasonicService::UltrasonicService (std::shared_ptr<gpio::GpioDriver> gpio, int frequency)
+UltrasonicService::UltrasonicService (
+  std::shared_ptr<gpio::GpioDriver> gpio,
+  int frequency)
 {
   if(!gpio)
   {
@@ -50,12 +52,9 @@ void UltrasonicService::measuringLoop(int frequency)
     std::set<int> triggers;
 
     this->registryMutex.lock();
-    for(auto &kv: this->registry)
+    for(auto &entry: this->registry)
     {
-      int trigger, echo;
-      std::tie(trigger, echo) = kv.second;
-
-      triggers.insert(trigger);
+      triggers.insert(entry.second->getTriggerPin());
     }
     this->registryMutex.unlock();
 
@@ -93,26 +92,32 @@ void UltrasonicService::onEchoChange(
   float minRelibaleDistance = 0.3;
   if(newDistance > maxReliableDistance || newDistance < minRelibaleDistance)
   {
-    this->data[id] = IDistanceSensor::DistanceOutOfRange;
-    return;
+    newDistance = IDistanceSensor::DistanceOutOfRange;
   }
-  this->data[id] = newDistance;
+
+  registry[id]->setDistance(newDistance);
 }
 
-int UltrasonicService::registerSensor(int trigger, int echo)
+int UltrasonicService::registerSensor(std::shared_ptr<IDistanceSensor> sensor)
 {
-  this->gpio->setMode(trigger, gpio::PinMode::Output);
-  this->gpio->setMode(echo, gpio::PinMode::Input);
+  if(!sensor)
+  {
+    throw std::invalid_argument("sensor cannot be null");
+  }
+
+  int trigger = sensor->getTriggerPin();
+  int echo = sensor->getEchoPin();
+
+  gpio->setMode(trigger, gpio::PinMode::Output);
+  gpio->setMode(echo, gpio::PinMode::Input);
   // register on change event
-  int id = this->gpio->registerOnChange(
+  int id = gpio->registerOnChange(
     echo,
     std::bind(&UltrasonicService::onEchoChange, this, _1, _2, _3, _4));
-  this->registryMutex.lock();
 
-  this->registry[id] = std::make_tuple(trigger, echo);
-  this->data[id] = IDistanceSensor::DistanceUnknown;
+  std::lock_guard<std::mutex> lock(registryMutex);
 
-  this->registryMutex.unlock();
+  registry[id] = std::move(sensor);
 
   return id;
 }
@@ -122,13 +127,6 @@ void UltrasonicService::deregisterSensor(int id)
   this->registryMutex.lock();
   this->registry.erase(id);
   this->registryMutex.unlock();
-}
-
-float UltrasonicService::getDistance(int id)
-{
-  //if data->timePoint < lastMassTrigger || lastMassTrigger > maxReliableDistance:
-  //  return IDistanceSensor::DistanceUnknown;
-  return this->data.at(id);
 }
 
 } // namespace lupus::sensors

@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "gpio_driver.h"
+#include "distance_sensor.h"
 
 namespace lupus::sensors
 {
@@ -18,10 +19,9 @@ class UltrasonicService
     bool isRunning;
     std::chrono::high_resolution_clock::time_point lastMassTrigger;
     std::shared_ptr<gpio::GpioDriver> gpio;
-    std::mutex registryMutex;
     std::thread measuringThread;
-    std::map<int, float> data;
-    std::map<int, std::tuple<int, int>> registry;
+    std::mutex registryMutex;
+    std::map<int, std::shared_ptr<IDistanceSensor>> registry;
 
     void measuringLoop(int frequency);
     void onEchoChange(
@@ -31,9 +31,8 @@ class UltrasonicService
   public:
     UltrasonicService (std::shared_ptr<gpio::GpioDriver> gpio, int frequency);
     virtual ~UltrasonicService ();
-    int registerSensor(int trigger, int echo);
+    int registerSensor(std::shared_ptr<IDistanceSensor>);
     void deregisterSensor(int id);
-    float getDistance(int id);
 };
 
 } // namespace lupus::sensors
