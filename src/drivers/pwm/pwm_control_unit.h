@@ -3,7 +3,6 @@
 
 #include <memory>
 
-#include "control_unit.h"
 #include "pwm_driver.h"
 
 namespace lupus::drivers::pwm

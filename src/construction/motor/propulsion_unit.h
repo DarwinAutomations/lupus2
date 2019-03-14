@@ -3,8 +3,6 @@
 
 #include <memory>
 
-#include "control_unit.h"
-#include "hall_sensor.h"
 #include "pwm_driver.h"
 
 namespace lupus::construction::motor

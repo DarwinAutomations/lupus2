@@ -1,5 +1,4 @@
 #include <stdexcept>
-#include <algorithm>
 #include <functional>
 
 #include "hall_rps_sensor.h"
@@ -8,63 +7,60 @@ namespace lupus::construction::rpsSensor
 {
 
 HallRpsSensor::HallRpsSensor(
-    std::shared_ptr<HallSensor> sensor)
-  : measurements(3, std::chrono::high_resolution_clock::time_point())
+  std::shared_ptr<drivers::gpio::GpioDriver> gpio,
+  int sensorPin)
 {
-  if(!sensor)
+  if(!gpio)
   {
-    throw std::invalid_argument("hall sensor must not be null");
+    throw std::invalid_argument("gpio driver must not be null");
   }
 
-  this->sensor = std::move(sensor);
-  callbackId = this->sensor->registerOnChange(
+  this->gpio = std::move(gpio);
+  this->rps = 0;
+  this->lastMeasurement = std::chrono::high_resolution_clock::now();
+
+  this->gpio->setMode(sensorPin, drivers::gpio::PinMode::Input);
+  this->gpio->setPull(sensorPin, drivers::gpio::PinPull::Up);
+
+  callbackId = this->gpio->registerOnChange(
+    sensorPin,
     std::bind(
       &HallRpsSensor::callback, this,
       std::placeholders::_1,
-      std::placeholders::_2));
+      std::placeholders::_2,
+      std::placeholders::_3,
+      std::placeholders::_4));
 }
 
 HallRpsSensor::~HallRpsSensor()
 {
-  sensor->deregisterOnChange(callbackId);
+  gpio->deregisterOnChange(callbackId);
 }
 
 float HallRpsSensor::getRps()
 {
-  return 1000000.0 / getPeriodTime().count();
-}
-
-std::chrono::microseconds HallRpsSensor::getPeriodTime()
-{
-  std::lock_guard<std::mutex> guard(dataMutex);
-
-  auto lastPeriodTime
-    = std::chrono::duration_cast<std::chrono::microseconds> (
-      measurements[0] - measurements[1]);
-  auto currentMinPeriodTime
-    = std::chrono::duration_cast<std::chrono::microseconds> (
-      std::chrono::high_resolution_clock::now() - measurements[0]);
-
-  if(lastPeriodTime < currentMinPeriodTime)
-    return currentMinPeriodTime;
-  return lastPeriodTime;
+  return rps;
 }
 
 void HallRpsSensor::callback(
-  HallSensorState state,
+  int id,
+  int pin,
+  int level,
   std::chrono::high_resolution_clock::time_point timePoint)
 {
-  if(state != HallSensorState::Magnet)
+  if(level != HallSensorState::Magnet)
     return;
 
-  std::lock_guard<std::mutex> guard(dataMutex);
+  setRps(timePoint);
+  }
 
-  std::rotate(
-    measurements.rbegin(),
-    measurements.rbegin() + 1,
-    measurements.rend());
+void HallRpsSensor::setRps(
+  std::chrono::high_resolution_clock::time_point thisMeasurement)
+{
+  rps = 1000000.0 / std::chrono::duration_cast<std::chrono::microseconds>(
+    thisMeasurement - lastMeasurement).count();
 
-  measurements[0] = timePoint;
+  lastMeasurement = thisMeasurement;
 }
 
 }

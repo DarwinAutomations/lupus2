@@ -1,28 +1,41 @@
 #ifndef SENSORS_HALL_RPS_SENSOR_H
 #define SENSORS_HALL_RPS_SENSOR_H
 
-#include "rps_sensor.h"
-#include "hall_sensor.h"
+#include <memory>
+#include <chrono>
+
+#include "gpio_driver.h"
 
 namespace lupus::construction::rpsSensor
 {
+  enum HallSensorState
+  {
+    Magnet = 1,
+    NoMagnet = 0
+  };
 
-class HallRpsSensor final: public IRpsSensor
+class HallRpsSensor
 {
 public:
-  HallRpsSensor(std::shared_ptr<HallSensor> sensor);
+  HallRpsSensor(
+    std::shared_ptr<drivers::gpio::GpioDriver> gpio,
+    int sensorPin);
   virtual ~HallRpsSensor();
   float getRps();
 
 private:
-  std::shared_ptr<HallSensor> sensor;
+  std::shared_ptr<drivers::gpio::GpioDriver> gpio;
+  float rps;
+  std::chrono::high_resolution_clock::time_point lastMeasurement;
   int callbackId;
-  std::mutex dataMutex;
-  std::vector<std::chrono::high_resolution_clock::time_point> measurements;
+
   void callback(
-    HallSensorState state,
+    int id,
+    int pin,
+    int level,
     std::chrono::high_resolution_clock::time_point timePoint);
-  std::chrono::microseconds getPeriodTime();
+
+  void setRps(std::chrono::high_resolution_clock::time_point timePoint);
 
 };
 

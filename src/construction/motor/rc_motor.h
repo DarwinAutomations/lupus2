@@ -5,7 +5,7 @@
 
 #include "motor.h"
 #include "propulsion_unit.h"
-#include "rps_sensor.h"
+#include "hall_rps_sensor.h"
 
 namespace lupus::construction::motor
 {
@@ -14,12 +14,12 @@ class RCMotor final: public IMotor
 {
 private:
   std::shared_ptr<PropulsionUnit> propulsionUnit;
-  std::shared_ptr<construction::rpsSensor::IRpsSensor> rpsSensor;
+  std::shared_ptr<construction::rpsSensor::HallRpsSensor> rpsSensor;
 
 public:
   RCMotor (
     std::shared_ptr<PropulsionUnit> propulsionUnit,
-    std::shared_ptr<construction::rpsSensor::IRpsSensor> rpsSensor);
+    std::shared_ptr<construction::rpsSensor::HallRpsSensor> rpsSensor);
   virtual ~RCMotor () = default;
 
   void setPower(float power);

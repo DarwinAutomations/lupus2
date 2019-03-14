@@ -4,7 +4,6 @@
 #include "lupus_factory.h"
 #include "servo.h"
 #include "rc_steering.h"
-#include "hall_sensor.h"
 #include "hall_rps_sensor.h"
 #include "propulsion_unit.h"
 #include "rc_motor.h"
@@ -155,9 +154,8 @@ std::shared_ptr<construction::motor::IMotor> LupusFactory::createMotor(
       configuration.propulsionUnit.backwardMin,
       configuration.propulsionUnit.backwardMax),
     std::make_shared<construction::rpsSensor::HallRpsSensor>(
-      std::make_shared<construction::rpsSensor::HallSensor>(
-        gpioDriver,
-	      configuration.hallSensor.pin)));
+      gpioDriver,
+      configuration.hallSensor.pin));
 }
 
 std::shared_ptr<construction::distanceSensor::IDistanceSensor> LupusFactory::createUltrasonicSensor(
