@@ -8,6 +8,7 @@
 #include "hall_rps_sensor.h"
 #include "propulsion_unit.h"
 #include "rc_motor.h"
+#include "distance_sensor_config.h"
 #include "ultrasonic_sensor.h"
 #include "ultrasonic_service.h"
 
@@ -63,49 +64,49 @@ std::shared_ptr<Lupus> LupusFactory::create(
   auto ultrasonicSensorFrontLeft = LupusFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontLeft);
+      *configuration.ultrasonicFrontLeft);
 
   // ultrasnoic sensor front center left:
   auto ultrasonicSensorFrontCenterLeft = LupusFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontLeftCenter);
+      *configuration.ultrasonicFrontLeftCenter);
 
   // ultrasnoic sensor front center right:
   auto ultrasonicSensorFrontCenterRight = LupusFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontRightCenter);
+      *configuration.ultrasonicFrontRightCenter);
 
   // ultrasnoic sensor front right:
   auto ultrasonicSensorFrontRight = LupusFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicFrontRight);
+      *configuration.ultrasonicFrontRight);
 
   // ultrasnoic sensor back left:
   auto ultrasonicSensorBackLeft = LupusFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicBackLeft);
+      *configuration.ultrasonicBackLeft);
 
   // ultrasnoic sensor back center left:
   auto ultrasonicSensorBackCenterLeft = LupusFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicBackLeftCenter);
+      *configuration.ultrasonicBackLeftCenter);
 
   // ultrasnoic sensor back center right:
   auto ultrasonicSensorBackCenterRight = LupusFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicBackRightCenter);
+      *configuration.ultrasonicBackRightCenter);
 
   // ultrasnoic sensor back right:
   auto ultrasonicSensorBackRight = LupusFactory::createUltrasonicSensor(
       gpioDriver,
       ultrasonicService,
-      configuration.ultrasonicBackRight);
+      *configuration.ultrasonicBackRight);
 
   // consutruction:
   auto lupus = std::make_shared<construction::Lupus>(
@@ -162,15 +163,10 @@ std::shared_ptr<construction::motor::IMotor> LupusFactory::createMotor(
 std::shared_ptr<construction::distanceSensor::IDistanceSensor> LupusFactory::createUltrasonicSensor(
     std::shared_ptr<drivers::gpio::GpioDriver> gpioDriver,
     std::shared_ptr<construction::distanceSensor::UltrasonicService> ultrasonicService,
-    UltrasonicSensorConfiguration configuration)
+    distanceSensor::DistanceSensorConfiguration configuration)
 {
   auto sensor = std::make_shared<construction::distanceSensor::UltrasonicSensor>(
-    configuration.measurementRangeMin,
-    configuration.measurementRangeMax,
-    configuration.measurementAccuracy,
-    configuration.measurementAngle,
-    configuration.triggerPin,
-    configuration.echoPin);
+    configuration);
 
   ultrasonicService->registerSensor(sensor);
   // TODO: deregisterSensor with retruned id

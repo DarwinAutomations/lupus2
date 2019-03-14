@@ -27,6 +27,7 @@ class UltrasonicService
     void onEchoChange(
       int id, int pin, int level,
       std::chrono::high_resolution_clock::time_point echo_time);
+    void setupPins(DistanceSensorConfiguration config);
 
   public:
     UltrasonicService (std::shared_ptr<drivers::gpio::GpioDriver> gpio, int frequency);

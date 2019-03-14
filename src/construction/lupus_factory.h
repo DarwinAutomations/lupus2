@@ -11,6 +11,7 @@
 #include "steering.h"
 #include "motor.h"
 #include "distance_sensor.h"
+#include "distance_sensor_config.h"
 
 namespace lupus::construction
 {
@@ -28,7 +29,7 @@ private:
   static std::shared_ptr<construction::distanceSensor::IDistanceSensor> createUltrasonicSensor(
     std::shared_ptr<drivers::gpio::GpioDriver> gpioDriver,
     std::shared_ptr<construction::distanceSensor::UltrasonicService> ultrasonicService,
-    UltrasonicSensorConfiguration configuration);
+    distanceSensor::DistanceSensorConfiguration configuration);
 
 public:
   static std::shared_ptr<Lupus> create(

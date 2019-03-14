@@ -54,7 +54,7 @@ void UltrasonicService::measuringLoop(int frequency)
     this->registryMutex.lock();
     for(auto &entry: this->registry)
     {
-      triggers.insert(entry.second->getTriggerPin());
+      triggers.insert(entry.second->getConfiguration().triggerPin);
     }
     this->registryMutex.unlock();
 
@@ -83,19 +83,26 @@ void UltrasonicService::onEchoChange(
   // policy.isNotRisingEdge...
   if(level == 1) return;
 
+  auto sensor = registry[id];
+  if(!sensor)
+  {
+    throw std::invalid_argument("sensor cannot be null");
+  }
+
+  auto config = sensor->getConfiguration();
+
   auto triggerTime = this->lastMassTrigger;
   float newDistance = std::chrono::duration_cast<std::chrono::microseconds>(
     echoTime - triggerTime).count() / 2 / 1000000.0 * SPEED_OF_SOUND;
 
   //if policy.distanceInRange(sensor, newDistance):
-  float maxReliableDistance = 4.0;
-  float minRelibaleDistance = 0.3;
-  if(newDistance > maxReliableDistance || newDistance < minRelibaleDistance)
+  if(newDistance < config.measurementRangeMin
+    || newDistance > config.measurementRangeMax)
   {
     newDistance = IDistanceSensor::DistanceOutOfRange;
   }
 
-  registry[id]->setDistance(newDistance);
+  sensor->setDistance(newDistance);
 }
 
 int UltrasonicService::registerSensor(std::shared_ptr<IDistanceSensor> sensor)
@@ -105,18 +112,15 @@ int UltrasonicService::registerSensor(std::shared_ptr<IDistanceSensor> sensor)
     throw std::invalid_argument("sensor cannot be null");
   }
 
-  int trigger = sensor->getTriggerPin();
-  int echo = sensor->getEchoPin();
+  auto config = sensor->getConfiguration();
+  setupPins(config);
 
-  gpio->setMode(trigger, drivers::gpio::PinMode::Output);
-  gpio->setMode(echo, drivers::gpio::PinMode::Input);
   // register on change event
   int id = gpio->registerOnChange(
-    echo,
+    config.echoPin,
     std::bind(&UltrasonicService::onEchoChange, this, _1, _2, _3, _4));
 
   std::lock_guard<std::mutex> lock(registryMutex);
-
   registry[id] = std::move(sensor);
 
   return id;
@@ -127,6 +131,12 @@ void UltrasonicService::deregisterSensor(int id)
   this->registryMutex.lock();
   this->registry.erase(id);
   this->registryMutex.unlock();
+}
+
+void UltrasonicService::setupPins(DistanceSensorConfiguration config)
+{
+  gpio->setMode(config.triggerPin, drivers::gpio::PinMode::Output);
+  gpio->setMode(config.echoPin, drivers::gpio::PinMode::Input);
 }
 
 }

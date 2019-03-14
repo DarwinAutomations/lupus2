@@ -1,26 +1,16 @@
 #include <stdexcept>
 
 #include "distance_sensor.h"
+#include "distance_sensor_config.h"
 #include "ultrasonic_sensor.h"
 
 namespace lupus::construction::distanceSensor
 {
 
-UltrasonicSensor::UltrasonicSensor(
-  float rangeStart,
-  float rangeEnd,
-  float accuracy,
-  float angle,
-  int trigger,
-  int echo)
+UltrasonicSensor::UltrasonicSensor(DistanceSensorConfiguration config)
+  : configuration(config)
 {
-  this->distance = IDistanceSensor::DistanceUnknown;
-  this->rangeStart = rangeStart;
-  this->rangeEnd = rangeEnd;
-  this->accuracy = accuracy;
-  this->angle = angle;
-  this->triggerPin = trigger;
-  this->echoPin = echo;
+  distance = IDistanceSensor::DistanceUnknown;
 }
 
 void UltrasonicSensor::setDistance(float newDistance)
@@ -33,34 +23,9 @@ float UltrasonicSensor::getDistance()
   return distance;
 }
 
-float UltrasonicSensor::getRangeStart()
+DistanceSensorConfiguration UltrasonicSensor::getConfiguration()
 {
-  return rangeStart;
-}
-
-float UltrasonicSensor::getRangeEnd()
-{
-  return rangeEnd;
-}
-
-float UltrasonicSensor::getAccuracy()
-{
-  return accuracy;
-}
-
-float UltrasonicSensor::getAngle()
-{
-  return angle;
-}
-
-int UltrasonicSensor::getTriggerPin()
-{
-  return triggerPin;
-}
-
-int UltrasonicSensor::getEchoPin()
-{
-  return echoPin;
+  return configuration;
 }
 
 }

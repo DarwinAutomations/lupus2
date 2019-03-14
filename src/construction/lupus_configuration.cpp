@@ -1,5 +1,6 @@
 #include <memory>
 #include "lupus_configuration.h"
+#include "distance_sensor_config.h"
 
 namespace lupus::construction
 {
@@ -32,31 +33,23 @@ LupusConfigurationRepository::fromFile(
     configFile.lookup("lupus.motorBackRight"),
     config->motorBackRight);
 
-  LupusConfigurationRepository::getDistanceSensor(
-    configFile.lookup("lupus.ultrasonicFrontLeft"),
-    config->ultrasonicFrontLeft);
-  LupusConfigurationRepository::getDistanceSensor(
-    configFile.lookup("lupus.ultrasonicFrontLeftCenter"),
-    config->ultrasonicFrontLeftCenter);
-  LupusConfigurationRepository::getDistanceSensor(
-    configFile.lookup("lupus.ultrasonicFrontRightCenter"),
-    config->ultrasonicFrontRightCenter);
-  LupusConfigurationRepository::getDistanceSensor(
-    configFile.lookup("lupus.ultrasonicFrontRight"),
-    config->ultrasonicFrontRight);
+  auto ultrasonicFrontLeft = std::move(distanceSensor::DistanceSensorConfiguration::fromSetting(configFile.lookup("lupus.ultrasonicFrontLeft")));
+  config->ultrasonicFrontLeft = &ultrasonicFrontLeft;
+  auto ultrasonicFrontLeftCenter = std::move(distanceSensor::DistanceSensorConfiguration::fromSetting(configFile.lookup("lupus.ultrasonicFrontLeftCenter")));
+  config->ultrasonicFrontLeftCenter = &ultrasonicFrontLeftCenter;
+  auto ultrasonicFrontRightCenter = std::move(distanceSensor::DistanceSensorConfiguration::fromSetting(configFile.lookup("lupus.ultrasonicFrontRightCenter")));
+  config->ultrasonicFrontRightCenter = &ultrasonicFrontRightCenter;
+  auto ultrasonicFrontRight = std::move(distanceSensor::DistanceSensorConfiguration::fromSetting(configFile.lookup("lupus.ultrasonicFrontRight")));
+  config->ultrasonicFrontRight = &ultrasonicFrontRight;
 
-  LupusConfigurationRepository::getDistanceSensor(
-    configFile.lookup("lupus.ultrasonicBackLeft"),
-    config->ultrasonicBackLeft);
-  LupusConfigurationRepository::getDistanceSensor(
-    configFile.lookup("lupus.ultrasonicBackLeftCenter"),
-    config->ultrasonicBackLeftCenter);
-  LupusConfigurationRepository::getDistanceSensor(
-    configFile.lookup("lupus.ultrasonicBackRightCenter"),
-    config->ultrasonicBackRightCenter);
-  LupusConfigurationRepository::getDistanceSensor(
-    configFile.lookup("lupus.ultrasonicBackRight"),
-    config->ultrasonicBackRight);
+  auto ultrasonicBackLeft = std::move(distanceSensor::DistanceSensorConfiguration::fromSetting(configFile.lookup("lupus.ultrasonicBackLeft")));
+  config->ultrasonicBackLeft = &ultrasonicBackLeft;
+  auto ultrasonicBackLeftCenter = std::move(distanceSensor::DistanceSensorConfiguration::fromSetting(configFile.lookup("lupus.ultrasonicBackLeftCenter")));
+  config->ultrasonicBackLeftCenter = &ultrasonicBackLeftCenter;
+  auto ultrasonicBackRightCenter = std::move(distanceSensor::DistanceSensorConfiguration::fromSetting(configFile.lookup("lupus.ultrasonicBackRightCenter")));
+  config->ultrasonicBackRightCenter = &ultrasonicBackRightCenter;
+  auto ultrasonicBackRight = std::move(distanceSensor::DistanceSensorConfiguration::fromSetting(configFile.lookup("lupus.ultrasonicBackRight")));
+  config->ultrasonicBackRight = &ultrasonicBackRight;
 
   return config;
 }
@@ -91,31 +84,39 @@ void LupusConfigurationRepository::toFile(
     construction.add("motorBackRight", libconfig::Setting::Type::TypeGroup),
     config->motorBackRight);
 
-  LupusConfigurationRepository::setDistanceSensor(
-    construction.add("ultrasonicFrontLeft", libconfig::Setting::Type::TypeGroup),
-    config->ultrasonicFrontLeft);
-  LupusConfigurationRepository::setDistanceSensor(
-    construction.add("ultrasonicFrontLeftCenter", libconfig::Setting::Type::TypeGroup),
-    config->ultrasonicFrontLeftCenter);
-  LupusConfigurationRepository::setDistanceSensor(
-    construction.add("ultrasonicFrontRightCenter", libconfig::Setting::Type::TypeGroup),
-    config->ultrasonicFrontRightCenter);
-  LupusConfigurationRepository::setDistanceSensor(
-    construction.add("ultrasonicFrontRight", libconfig::Setting::Type::TypeGroup),
-    config->ultrasonicFrontRight);
+  config->ultrasonicFrontLeft->intoSetting(
+    construction.add(
+      "ultrasonicFrontLeft",
+      libconfig::Setting::Type::TypeGroup));
+  config->ultrasonicFrontLeftCenter->intoSetting(
+    construction.add(
+      "ultrasonicFrontLeftCenter",
+      libconfig::Setting::Type::TypeGroup));
+  config->ultrasonicFrontRightCenter->intoSetting(
+    construction.add(
+      "ultrasonicFrontRightCenter",
+      libconfig::Setting::Type::TypeGroup));
+  config->ultrasonicFrontRight->intoSetting(
+    construction.add(
+      "ultrasonicFrontRight",
+      libconfig::Setting::Type::TypeGroup));
 
-  LupusConfigurationRepository::setDistanceSensor(
-    construction.add("ultrasonicBackLeft", libconfig::Setting::Type::TypeGroup),
-    config->ultrasonicBackLeft);
-  LupusConfigurationRepository::setDistanceSensor(
-    construction.add("ultrasonicBackLeftCenter", libconfig::Setting::Type::TypeGroup),
-    config->ultrasonicBackLeftCenter);
-  LupusConfigurationRepository::setDistanceSensor(
-    construction.add("ultrasonicBackRightCenter", libconfig::Setting::Type::TypeGroup),
-    config->ultrasonicBackRightCenter);
-  LupusConfigurationRepository::setDistanceSensor(
-    construction.add("ultrasonicBackRight", libconfig::Setting::Type::TypeGroup),
-    config->ultrasonicBackRight);
+  config->ultrasonicBackLeft->intoSetting(
+    construction.add(
+      "ultrasonicBackLeft",
+      libconfig::Setting::Type::TypeGroup));
+  config->ultrasonicBackLeftCenter->intoSetting(
+    construction.add(
+      "ultrasonicBackLeftCenter",
+      libconfig::Setting::Type::TypeGroup));
+  config->ultrasonicBackRightCenter->intoSetting(
+    construction.add(
+      "ultrasonicBackRightCenter",
+      libconfig::Setting::Type::TypeGroup));
+  config->ultrasonicBackRight->intoSetting(
+    construction.add(
+      "ultrasonicBackRight",
+      libconfig::Setting::Type::TypeGroup));
 
   configFile.writeFile(file);
 }
@@ -142,18 +143,6 @@ void LupusConfigurationRepository::getMotor(
   motor.hallSensor.pin = config.lookup("hallSensor.pin");
 }
 
-void LupusConfigurationRepository::getDistanceSensor(
-    libconfig::Setting& config,
-    UltrasonicSensorConfiguration& sensor)
-{
-  sensor.measurementRangeMin = config.lookup("measurementRangeMin");
-  sensor.measurementRangeMax = config.lookup("measurementRangeMax");
-  sensor.measurementAccuracy = config.lookup("measurementAccuracy");
-  sensor.measurementAngle = config.lookup("measurementAngle");
-  sensor.triggerPin = config.lookup("triggerPin");
-  sensor.echoPin = config.lookup("echoPin");
-}
-
 void LupusConfigurationRepository::setSteering(
     libconfig::Setting& config,
     SteeringConfiguration& steering)
@@ -176,18 +165,6 @@ void LupusConfigurationRepository::setMotor(
 
   libconfig::Setting& sensor = config.add("hallSensor", libconfig::Setting::Type::TypeGroup);
   sensor.add("pin", libconfig::Setting::Type::TypeInt) = motor.hallSensor.pin;
-}
-
-void LupusConfigurationRepository::setDistanceSensor(
-    libconfig::Setting& config,
-    UltrasonicSensorConfiguration& sensor)
-{
-  config.add("measurementRangeMin", libconfig::Setting::Type::TypeFloat) = sensor.measurementRangeMin;
-  config.add("measurementRangeMax", libconfig::Setting::Type::TypeFloat) = sensor.measurementRangeMax;
-  config.add("measurementAccuracy", libconfig::Setting::Type::TypeFloat) = sensor.measurementAccuracy;
-  config.add("measurementAngle", libconfig::Setting::Type::TypeFloat) = sensor.measurementAngle;
-  config.add("triggerPin", libconfig::Setting::Type::TypeInt) = sensor.triggerPin;
-  config.add("echoPin", libconfig::Setting::Type::TypeInt) = sensor.echoPin;
 }
 
 }

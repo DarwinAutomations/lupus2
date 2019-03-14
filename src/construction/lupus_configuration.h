@@ -4,6 +4,8 @@
 #include <libconfig.h++>
 #include <memory>
 
+#include "distance_sensor_config.h"
+
 namespace lupus::construction
 {
 
@@ -34,16 +36,6 @@ struct MotorConfiguration
   HallSensorConfiguration hallSensor;
 };
 
-struct UltrasonicSensorConfiguration
-{
-  float measurementRangeMin;
-  float measurementRangeMax;
-  float measurementAccuracy;
-  float measurementAngle;
-  int triggerPin;
-  int echoPin;
-};
-
 class LupusConfiguration
 {
 public:
@@ -55,14 +47,14 @@ public:
   MotorConfiguration motorBackLeft;
   MotorConfiguration motorBackRight;
 
-  UltrasonicSensorConfiguration ultrasonicFrontLeft;
-  UltrasonicSensorConfiguration ultrasonicFrontLeftCenter;
-  UltrasonicSensorConfiguration ultrasonicFrontRightCenter;
-  UltrasonicSensorConfiguration ultrasonicFrontRight;
-  UltrasonicSensorConfiguration ultrasonicBackLeft;
-  UltrasonicSensorConfiguration ultrasonicBackLeftCenter;
-  UltrasonicSensorConfiguration ultrasonicBackRightCenter;
-  UltrasonicSensorConfiguration ultrasonicBackRight;
+  distanceSensor::DistanceSensorConfiguration* ultrasonicFrontLeft;
+  distanceSensor::DistanceSensorConfiguration* ultrasonicFrontLeftCenter;
+  distanceSensor::DistanceSensorConfiguration* ultrasonicFrontRightCenter;
+  distanceSensor::DistanceSensorConfiguration* ultrasonicFrontRight;
+  distanceSensor::DistanceSensorConfiguration* ultrasonicBackLeft;
+  distanceSensor::DistanceSensorConfiguration* ultrasonicBackLeftCenter;
+  distanceSensor::DistanceSensorConfiguration* ultrasonicBackRightCenter;
+  distanceSensor::DistanceSensorConfiguration* ultrasonicBackRight;
 };
 
 class LupusConfigurationRepository
@@ -74,9 +66,6 @@ private:
   static void getMotor(
       libconfig::Setting& config,
       MotorConfiguration& motor);
-  static void getDistanceSensor(
-      libconfig::Setting& config,
-      UltrasonicSensorConfiguration& sensor);
 
   static void setSteering(
       libconfig::Setting& config,
@@ -84,9 +73,6 @@ private:
   static void setMotor(
       libconfig::Setting& config,
       MotorConfiguration& motor);
-  static void setDistanceSensor(
-      libconfig::Setting& config,
-      UltrasonicSensorConfiguration& sensor);
 public:
   static std::shared_ptr<LupusConfiguration> fromFile(
       const char* file);

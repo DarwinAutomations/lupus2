@@ -5,6 +5,7 @@
 
 #include "distance_sensor.h"
 #include "ultrasonic_service.h"
+#include "distance_sensor_config.h"
 
 
 namespace lupus::construction::distanceSensor
@@ -14,29 +15,13 @@ class UltrasonicSensor : public IDistanceSensor
 {
   private:
     float distance;
-    float rangeStart;
-    float rangeEnd;
-    float accuracy;
-    float angle;
-    int triggerPin;
-    int echoPin;
+    DistanceSensorConfiguration configuration;
 
   public:
-    UltrasonicSensor(
-      float rangeStart,
-      float rangeEnd,
-      float accuracy,
-      float angle,
-      int trigger,
-      int echo);
+    UltrasonicSensor(DistanceSensorConfiguration config);
     void setDistance(float newDistance) override;
     float getDistance() override;
-    float getAccuracy() override;
-    float getAngle() override;
-    float getRangeStart() override;
-    float getRangeEnd() override;
-    int getTriggerPin() override;
-    int getEchoPin() override;
+    DistanceSensorConfiguration getConfiguration();
 };
 
 }
