@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "distance_sensor_config.h"
+#include "hall_rps_sensor_config.h"
 
 namespace lupus::construction
 {
@@ -33,7 +34,7 @@ struct HallSensorConfiguration
 struct MotorConfiguration
 {
   PropulsionUnitConfiguration propulsionUnit;
-  HallSensorConfiguration hallSensor;
+  rpsSensor::HallRpsSensorConfiguration* hallSensor;
 };
 
 class LupusConfiguration

@@ -155,7 +155,7 @@ std::shared_ptr<construction::motor::IMotor> LupusFactory::createMotor(
       configuration.propulsionUnit.backwardMax),
     std::make_shared<construction::rpsSensor::HallRpsSensor>(
       gpioDriver,
-      configuration.hallSensor.pin));
+      *configuration.hallSensor));
 }
 
 std::shared_ptr<construction::distanceSensor::IDistanceSensor> LupusFactory::createUltrasonicSensor(

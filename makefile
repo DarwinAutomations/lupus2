@@ -32,6 +32,7 @@ src/construction/steering_unit/rc_steering.cpp\
 src/construction/motor/propulsion_unit.cpp\
 src/construction/motor/rc_motor.cpp\
 src/construction/rps_sensor/hall_rps_sensor.cpp\
+src/construction/rps_sensor/hall_rps_sensor_config.cpp\
 src/construction/distance_sensor/distance_sensor_config.cpp\
 src/construction/distance_sensor/ultrasonic_sensor.cpp\
 src/construction/distance_sensor/ultrasonic_service.cpp\

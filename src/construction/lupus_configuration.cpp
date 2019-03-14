@@ -1,6 +1,6 @@
 #include <memory>
+
 #include "lupus_configuration.h"
-#include "distance_sensor_config.h"
 
 namespace lupus::construction
 {
@@ -140,7 +140,8 @@ void LupusConfigurationRepository::getMotor(
   motor.propulsionUnit.forwardMax = config.lookup("propulsionUnit.forwardMax");
   motor.propulsionUnit.backwardMax = config.lookup("propulsionUnit.backwardMax");
 
-  motor.hallSensor.pin = config.lookup("hallSensor.pin");
+  auto sensor = rpsSensor::HallRpsSensorConfiguration::fromSetting(config.lookup("hallSensor"));
+  motor.hallSensor = &sensor;
 }
 
 void LupusConfigurationRepository::setSteering(
@@ -164,7 +165,7 @@ void LupusConfigurationRepository::setMotor(
   propulsionUnit.add("backwardMax", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.backwardMax;
 
   libconfig::Setting& sensor = config.add("hallSensor", libconfig::Setting::Type::TypeGroup);
-  sensor.add("pin", libconfig::Setting::Type::TypeInt) = motor.hallSensor.pin;
+  motor.hallSensor->intoSetting(sensor);
 }
 
 }

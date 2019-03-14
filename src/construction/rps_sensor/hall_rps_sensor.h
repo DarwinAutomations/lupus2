@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "gpio_driver.h"
+#include "hall_rps_sensor_config.h"
 
 namespace lupus::construction::rpsSensor
 {
@@ -19,12 +20,13 @@ class HallRpsSensor
 public:
   HallRpsSensor(
     std::shared_ptr<drivers::gpio::GpioDriver> gpio,
-    int sensorPin);
+    HallRpsSensorConfiguration config);
   virtual ~HallRpsSensor();
   float getRps();
 
 private:
   std::shared_ptr<drivers::gpio::GpioDriver> gpio;
+  HallRpsSensorConfiguration configuration;
   float rps;
   std::chrono::high_resolution_clock::time_point lastMeasurement;
   int callbackId;
