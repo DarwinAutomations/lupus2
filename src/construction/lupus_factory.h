@@ -21,7 +21,7 @@ class LupusFactory
 private:
   static std::shared_ptr<construction::steeringUnit::SteeringUnit> createSteering(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
-    SteeringConfiguration configuration);
+    steeringUnit::SteeringUnitConfiguration configuration);
   static std::shared_ptr<construction::motor::IMotor> createMotor(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     std::shared_ptr<drivers::gpio::GpioDriver> gpioDriver,

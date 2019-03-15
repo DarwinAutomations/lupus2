@@ -25,12 +25,12 @@ std::shared_ptr<Lupus> LupusFactory::create(
   // navigation unit left:
   auto steeringL = LupusFactory::createSteering(
     pwmDriver,
-    configuration.steeringLeft);
+    *configuration.steeringLeft);
 
   // navigation unit right:
   auto steeringR = LupusFactory::createSteering(
     pwmDriver,
-    configuration.steeringRight);
+    *configuration.steeringRight);
 
   // propulsion units:
   // propulsion unit front left:
@@ -129,13 +129,11 @@ std::shared_ptr<Lupus> LupusFactory::create(
 
 std::shared_ptr<construction::steeringUnit::SteeringUnit> LupusFactory::createSteering(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
-    SteeringConfiguration configuration)
+    steeringUnit::SteeringUnitConfiguration configuration)
 {
   return std::make_shared<construction::steeringUnit::SteeringUnit>(
       pwmDriver,
-      configuration.pin,
-      configuration.min,
-      configuration.max);
+      configuration);
 }
 
 std::shared_ptr<construction::motor::IMotor> LupusFactory::createMotor(

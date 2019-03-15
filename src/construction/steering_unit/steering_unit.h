@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "pwm_driver.h"
+#include "steering_unit_config.h"
 
 namespace lupus::construction::steeringUnit
 {
@@ -22,17 +23,14 @@ private:
   int value;
 
   // configuration
-  int channel;
-  float min;
-  float max;
+  SteeringUnitConfiguration configuration;
+
   void setPwm(float factor);
 
 public:
   SteeringUnit (
     std::shared_ptr<drivers::pwm::PwmDriver> driver,
-    int channel,
-    float min,
-    float max);
+    SteeringUnitConfiguration config);
   virtual ~SteeringUnit () = default;
 
   void setDirection(float direction);

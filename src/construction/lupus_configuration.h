@@ -6,16 +6,10 @@
 
 #include "distance_sensor_config.h"
 #include "hall_rps_sensor_config.h"
+#include "steering_unit_config.h"
 
 namespace lupus::construction
 {
-
-struct SteeringConfiguration
-{
-  int pin;
-  int min;
-  int max;
-};
 
 struct PropulsionUnitConfiguration
 {
@@ -24,11 +18,6 @@ struct PropulsionUnitConfiguration
   int forwardMax;
   int backwardMin;
   int backwardMax;
-};
-
-struct HallSensorConfiguration
-{
-  int pin;
 };
 
 struct MotorConfiguration
@@ -40,8 +29,8 @@ struct MotorConfiguration
 class LupusConfiguration
 {
 public:
-  SteeringConfiguration steeringLeft;
-  SteeringConfiguration steeringRight;
+  steeringUnit::SteeringUnitConfiguration* steeringLeft;
+  steeringUnit::SteeringUnitConfiguration* steeringRight;
 
   MotorConfiguration motorFrontLeft;
   MotorConfiguration motorFrontRight;
@@ -61,16 +50,9 @@ public:
 class LupusConfigurationRepository
 {
 private:
-  static void getSteering(
-      libconfig::Setting& config,
-      SteeringConfiguration& steering);
   static void getMotor(
       libconfig::Setting& config,
       MotorConfiguration& motor);
-
-  static void setSteering(
-      libconfig::Setting& config,
-      SteeringConfiguration& steering);
   static void setMotor(
       libconfig::Setting& config,
       MotorConfiguration& motor);

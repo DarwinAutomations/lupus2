@@ -8,9 +8,8 @@ namespace lupus::construction::steeringUnit
 
 SteeringUnit::SteeringUnit(
   std::shared_ptr<drivers::pwm::PwmDriver> driver,
-  int channel,
-  float min,
-  float max)
+  SteeringUnitConfiguration config)
+  : configuration(config)
 {
   if(!driver)
   {
@@ -18,11 +17,6 @@ SteeringUnit::SteeringUnit(
   }
 
   this->driver = std::move(driver);
-
-  // config
-  this->channel = channel;
-  this->min = min;
-  this->max = max;
 }
 
 void SteeringUnit::setDirection(float direction)
@@ -44,12 +38,12 @@ void SteeringUnit::setPwm(float factor)
     throw std::invalid_argument("factor not in range [0, 1]");
   }
 
-  int range = max - min;
-  int offset = min + range * factor;
+  int range = configuration.max - configuration.min;
+  int offset = configuration.min + range * factor;
 
   value = offset;
 
-  driver->setPwm(channel, 0, offset);
+  driver->setPwm(configuration.pin, 0, offset);
 }
 
 float SteeringUnit::getDirection()

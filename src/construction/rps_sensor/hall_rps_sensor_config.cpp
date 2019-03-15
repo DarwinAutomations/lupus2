@@ -1,4 +1,3 @@
-#include <memory>
 #include "hall_rps_sensor_config.h"
 
 namespace lupus::construction::rpsSensor

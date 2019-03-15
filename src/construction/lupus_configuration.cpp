@@ -13,12 +13,14 @@ LupusConfigurationRepository::fromFile(
   configFile.readFile(file);
   std::shared_ptr<LupusConfiguration> config = std::make_shared<LupusConfiguration>();
 
-  LupusConfigurationRepository::getSteering(
-    configFile.lookup("lupus.steeringLeft"),
-    config->steeringLeft);
-  LupusConfigurationRepository::getSteering(
-    configFile.lookup("lupus.steeringRight"),
-    config->steeringRight);
+  auto steeringUnitLeft = std::move(
+    steeringUnit::SteeringUnitConfiguration::fromSetting(
+      configFile.lookup("lupus.steeringUnitLeft")));
+  config->steeringLeft = &steeringUnitLeft;
+    auto steeringRUnitight = std::move(
+      steeringUnit::SteeringUnitConfiguration::fromSetting(
+        configFile.lookup("lupus.steeringUnitRight")));
+    config->steeringRight = &steeringRUnitight;
 
   LupusConfigurationRepository::getMotor(
     configFile.lookup("lupus.motorFrontLeft"),
@@ -64,12 +66,10 @@ void LupusConfigurationRepository::toFile(
     "construciton", libconfig::Setting::Type::TypeGroup);
 
 
-  LupusConfigurationRepository::setSteering(
-    construction.add("steeringLeft", libconfig::Setting::Type::TypeGroup),
-    config->steeringLeft);
-  LupusConfigurationRepository::setSteering(
-    construction.add("steeringRight", libconfig::Setting::Type::TypeGroup),
-    config->steeringRight);
+  config->steeringLeft->intoSetting(
+    construction.add("steeringLeft", libconfig::Setting::Type::TypeGroup));
+  config->steeringRight->intoSetting(
+    construction.add("steeringRight", libconfig::Setting::Type::TypeGroup));
 
   LupusConfigurationRepository::setMotor(
     construction.add("motorFrontLeft", libconfig::Setting::Type::TypeGroup),
@@ -121,15 +121,6 @@ void LupusConfigurationRepository::toFile(
   configFile.writeFile(file);
 }
 
-void LupusConfigurationRepository::getSteering(
-    libconfig::Setting& config,
-    SteeringConfiguration& steering)
-{
-  steering.pin = config.lookup("pin");
-  steering.min = config.lookup("min");
-  steering.max = config.lookup("max");
-}
-
 void LupusConfigurationRepository::getMotor(
     libconfig::Setting& config,
     MotorConfiguration& motor)
@@ -142,15 +133,6 @@ void LupusConfigurationRepository::getMotor(
 
   auto sensor = rpsSensor::HallRpsSensorConfiguration::fromSetting(config.lookup("hallSensor"));
   motor.hallSensor = &sensor;
-}
-
-void LupusConfigurationRepository::setSteering(
-    libconfig::Setting& config,
-    SteeringConfiguration& steering)
-{
-  config.add("pin", libconfig::Setting::Type::TypeInt) = steering.pin;
-  config.add("min", libconfig::Setting::Type::TypeInt) = steering.min;
-  config.add("max", libconfig::Setting::Type::TypeInt) = steering.max;
 }
 
 void LupusConfigurationRepository::setMotor(
