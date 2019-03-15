@@ -5,7 +5,7 @@
 
 #include "lupus.h"
 #include "steering_unit.h"
-#include "motor.h"
+#include "rc_motor.h"
 #include "distance_sensor.h"
 
 namespace lupus::construction
@@ -17,10 +17,10 @@ class Lupus
     std::shared_ptr<steeringUnit::SteeringUnit> steeringLeft;
     std::shared_ptr<steeringUnit::SteeringUnit> steeringRight;
 
-    std::shared_ptr<motor::IMotor> motorFrontLeft;
-    std::shared_ptr<motor::IMotor> motorFrontRight;
-    std::shared_ptr<motor::IMotor> motorBackLeft;
-    std::shared_ptr<motor::IMotor> motorBackRight;
+    std::shared_ptr<motor::RCMotor> motorFrontLeft;
+    std::shared_ptr<motor::RCMotor> motorFrontRight;
+    std::shared_ptr<motor::RCMotor> motorBackLeft;
+    std::shared_ptr<motor::RCMotor> motorBackRight;
 
     std::shared_ptr<distanceSensor::IDistanceSensor> distanceFrontLeft;
     std::shared_ptr<distanceSensor::IDistanceSensor> distanceFrontCenterLeft;
@@ -36,10 +36,10 @@ class Lupus
       std::shared_ptr<steeringUnit::SteeringUnit> steeringLeft,
       std::shared_ptr<steeringUnit::SteeringUnit> steeringRight,
 
-      std::shared_ptr<motor::IMotor> motorFrontLeft,
-      std::shared_ptr<motor::IMotor> motorFrontRight,
-      std::shared_ptr<motor::IMotor> motorBackLeft,
-      std::shared_ptr<motor::IMotor> motorBackRight,
+      std::shared_ptr<motor::RCMotor> motorFrontLeft,
+      std::shared_ptr<motor::RCMotor> motorFrontRight,
+      std::shared_ptr<motor::RCMotor> motorBackLeft,
+      std::shared_ptr<motor::RCMotor> motorBackRight,
 
       std::shared_ptr<distanceSensor::IDistanceSensor> distanceFrontLeft,
       std::shared_ptr<distanceSensor::IDistanceSensor> distanceFrontCenterLeft,
@@ -52,10 +52,10 @@ class Lupus
     );
     virtual ~Lupus () = default;
 
-    std::shared_ptr<motor::IMotor> getMotor(motor::Motor motor);
-    void setPower(motor::Motor motor, float power);
-    float getPower(motor::Motor motor);
-    float getRps(motor::Motor motor);
+    std::shared_ptr<motor::RCMotor> getMotor(motor::MotorPosition motor);
+    void setPower(motor::MotorPosition motor, float power);
+    float getPower(motor::MotorPosition motor);
+    float getRps(motor::MotorPosition motor);
 
     std::shared_ptr<steeringUnit::SteeringUnit> getSteeringUnit(steeringUnit::SteeringUnitPosition position);
     void setDirection(steeringUnit::SteeringUnitPosition position, float direction);

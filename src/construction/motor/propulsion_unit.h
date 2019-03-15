@@ -1,5 +1,5 @@
-#ifndef PROPULSION_PROPULSION_UNIT_H
-#define PROPULSION_PROPULSION_UNIT_H
+#ifndef CONSTRUCTION_MOTOR_PROPULSION_UNIT_H
+#define CONSTRUCTION_MOTOR_PROPULSION_UNIT_H
 
 #include <memory>
 
@@ -12,10 +12,11 @@ class PropulsionUnit
 {
 private:
   std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver;
-  int channel;
   float power;
   int rawPower;
 
+  // configuration
+  int channel;
   float forwardMin;
   float forwardMax;
   float backwardMin;
@@ -38,4 +39,4 @@ public:
 
 }
 
-#endif /* PROPULSION_PROPULSION_UNIT_H */
+#endif /* CONSTRUCTION_MOTOR_PROPULSION_UNIT_H */

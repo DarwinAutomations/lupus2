@@ -1,16 +1,23 @@
-#ifndef PROPULSION_RC_MOTOR_H
-#define PROPULSION_RC_MOTOR_H
+#ifndef CONSTRUCTION_MOTOR_RC_MOTOR_H
+#define CONSTRUCTION_MOTOR_RC_MOTOR_H
 
 #include <memory>
 
-#include "motor.h"
 #include "propulsion_unit.h"
 #include "hall_rps_sensor.h"
 
 namespace lupus::construction::motor
 {
 
-class RCMotor final: public IMotor
+enum MotorPosition
+{
+  FrontLeft,
+  FrontRight,
+  BackLeft,
+  BackRight
+};
+
+class RCMotor final
 {
 private:
   std::shared_ptr<PropulsionUnit> propulsionUnit;
@@ -30,4 +37,4 @@ public:
 
 }
 
-#endif /* PROPULSION_RC_MOTOR_H */
+#endif /* CONSTRUCTION_MOTOR_RC_MOTOR_H */

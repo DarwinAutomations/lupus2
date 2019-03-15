@@ -8,10 +8,10 @@ Lupus::Lupus(
   std::shared_ptr<construction::steeringUnit::SteeringUnit> steeringLeft,
   std::shared_ptr<construction::steeringUnit::SteeringUnit> steeringRight,
 
-  std::shared_ptr<construction::motor::IMotor> motorFrontLeft,
-  std::shared_ptr<construction::motor::IMotor> motorFrontRight,
-  std::shared_ptr<construction::motor::IMotor> motorBackLeft,
-  std::shared_ptr<construction::motor::IMotor> motorBackRight,
+  std::shared_ptr<construction::motor::RCMotor> motorFrontLeft,
+  std::shared_ptr<construction::motor::RCMotor> motorFrontRight,
+  std::shared_ptr<construction::motor::RCMotor> motorBackLeft,
+  std::shared_ptr<construction::motor::RCMotor> motorBackRight,
 
   std::shared_ptr<construction::distanceSensor::IDistanceSensor> distanceFrontLeft,
   std::shared_ptr<construction::distanceSensor::IDistanceSensor> distanceFrontCenterLeft,
@@ -45,25 +45,25 @@ Lupus::Lupus(
 }
 
 
-std::shared_ptr<construction::motor::IMotor>
-Lupus::getMotor(construction::motor::Motor motor)
+std::shared_ptr<construction::motor::RCMotor>
+Lupus::getMotor(construction::motor::MotorPosition motor)
 {
   switch (motor)
   {
-    case construction::motor::Motor::FrontLeft:
+    case construction::motor::MotorPosition::FrontLeft:
       return motorFrontLeft;
-    case construction::motor::Motor::FrontRight:
+    case construction::motor::MotorPosition::FrontRight:
       return motorFrontRight;
-    case construction::motor::Motor::BackLeft:
+    case construction::motor::MotorPosition::BackLeft:
       return motorBackLeft;
-    case construction::motor::Motor::BackRight:
+    case construction::motor::MotorPosition::BackRight:
       return motorBackRight;
     default:
       throw std::invalid_argument("unknown motor");
   }
 }
 
-void Lupus::setPower(construction::motor::Motor motor, float power)
+void Lupus::setPower(construction::motor::MotorPosition motor, float power)
 {
   if(power > 1 || power < -1)
   {
@@ -71,49 +71,49 @@ void Lupus::setPower(construction::motor::Motor motor, float power)
   }
   switch (motor)
   {
-    case construction::motor::Motor::FrontLeft:
+    case construction::motor::MotorPosition::FrontLeft:
       motorFrontLeft->setPower(power);
       break;
-    case construction::motor::Motor::FrontRight:
+    case construction::motor::MotorPosition::FrontRight:
       motorFrontRight->setPower(power);
       break;
-    case construction::motor::Motor::BackLeft:
+    case construction::motor::MotorPosition::BackLeft:
       motorBackLeft->setPower(power);
       break;
-    case construction::motor::Motor::BackRight:
+    case construction::motor::MotorPosition::BackRight:
       motorBackRight->setPower(power);
       break;
   }
 }
 
-float Lupus::getPower(construction::motor::Motor motor)
+float Lupus::getPower(construction::motor::MotorPosition motor)
 {
   switch (motor)
   {
-    case construction::motor::Motor::FrontLeft:
+    case construction::motor::MotorPosition::FrontLeft:
       return motorFrontLeft->getPower();
-    case construction::motor::Motor::FrontRight:
+    case construction::motor::MotorPosition::FrontRight:
       return motorFrontRight->getPower();
-    case construction::motor::Motor::BackLeft:
+    case construction::motor::MotorPosition::BackLeft:
       return motorBackLeft->getPower();
-    case construction::motor::Motor::BackRight:
+    case construction::motor::MotorPosition::BackRight:
       return motorBackRight->getPower();
     default:
       throw std::invalid_argument("unknown motor");
   }
 }
 
-float Lupus::getRps(construction::motor::Motor motor)
+float Lupus::getRps(construction::motor::MotorPosition motor)
 {
   switch (motor)
   {
-    case construction::motor::Motor::FrontLeft:
+    case construction::motor::MotorPosition::FrontLeft:
       return motorFrontLeft->getRps();
-    case construction::motor::Motor::FrontRight:
+    case construction::motor::MotorPosition::FrontRight:
       return motorFrontRight->getRps();
-    case construction::motor::Motor::BackLeft:
+    case construction::motor::MotorPosition::BackLeft:
       return motorBackLeft->getRps();
-    case construction::motor::Motor::BackRight:
+    case construction::motor::MotorPosition::BackRight:
       return motorBackRight->getRps();
     default:
       throw std::invalid_argument("unknown motor");

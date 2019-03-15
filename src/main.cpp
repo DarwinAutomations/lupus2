@@ -8,25 +8,25 @@
 #include <cstdlib>
 
 #include "gpio_driver.h"
+#include "pwm_driver.h"
+
 #include "lupus.h"
 #include "lupus_factory.h"
-#include "lupus_controller.h"
-#include "propulsion_unit.h"
-#include "distance_sensor.h"
-#include "ultrasonic_sensor.h"
-#include "ultrasonic_service.h"
-#include "profile.h"
-#include "granny_profile.h"
-#include "propulsion_service.h"
 #include "lupus_configuration.h"
 #include "controller.h"
-#include "controller.h"
+#include "lupus_controller.h"
+
+#include "ultrasonic_service.h"
+
+#include "profile.h"
+#include "granny_profile.h"
 
 using namespace lupus;
 
 void input_loop(
   bool& isActive,
-  std::shared_ptr<construction::LupusController> controller);
+  std::shared_ptr<construction::LupusController> controller,
+  std::shared_ptr<application::profiles::IProfile> profile);
 
 void output_loop(
   bool& isActive,
@@ -57,21 +57,17 @@ int main()
       ultrasonicService,
       *configuration);
 
-  lupus->setPower(construction::motor::Motor::FrontLeft, 0);
-  lupus->setPower(construction::motor::Motor::FrontRight, 0);
-  lupus->setPower(construction::motor::Motor::BackLeft, 0);
-  lupus->setPower(construction::motor::Motor::BackRight, 0);
+  lupus->setPower(construction::motor::MotorPosition::FrontLeft, 0);
+  lupus->setPower(construction::motor::MotorPosition::FrontRight, 0);
+  lupus->setPower(construction::motor::MotorPosition::BackLeft, 0);
+  lupus->setPower(construction::motor::MotorPosition::BackRight, 0);
   lupus->setDirection(construction::steeringUnit::SteeringUnitPosition::Left, 0);
   lupus->setDirection(construction::steeringUnit::SteeringUnitPosition::Right, 0);
 
   auto profile = std::make_shared<application::profiles::GrannyProfile>();
-  auto propulsionService =
-    std::make_shared<construction::motor::PropulsionService>(lupus, profile);
 
   auto controller =
-    std::make_shared<construction::LupusController>(
-      lupus,
-      propulsionService);
+    std::make_shared<construction::LupusController>(lupus);
 
   // start input and output thread
   bool isActive = true;
@@ -79,7 +75,8 @@ int main()
   auto input_thread = std::thread(
     input_loop,
     std::ref(isActive),
-    controller);
+    controller,
+    profile);
 
   auto output_thread = std::thread(
     output_loop,
@@ -98,7 +95,8 @@ int main()
 
 void input_loop(
   bool& isActive,
-  std::shared_ptr<construction::LupusController> controller)
+  std::shared_ptr<construction::LupusController> controller,
+  std::shared_ptr<application::profiles::IProfile> profile)
 {
   js_event* event = new js_event();
   int fd = open("/dev/input/js0", O_RDONLY | O_NONBLOCK);
@@ -113,13 +111,16 @@ void input_loop(
 
       if (event->type & JS_EVENT_AXIS)
       {
+        float input = event->value / magic_value;
+
         switch (event->number)
         {
           case 0:
-            controller->setDirection(event->value / magic_value);
+            controller->setDirection(input);
             break;
           case 5:
-            controller->setAcceleration(event->value / (magic_value*2) + 0.5f);
+            float acceleration = profile->computeAcceleration(input/2+0.5);
+            controller->setAcceleration(acceleration);
             break;
         }
       }
@@ -130,13 +131,13 @@ void input_loop(
             if(event->value == 1)
       	      controller->setAcceleration(-0.5);
             else
-	      controller->setAcceleration(0);
-	    break;
+              controller->setAcceleration(0);
+	           break;
           case 5:
             if(event->value == 1)
-	      controller->decelerate();
-	    else
-	      controller->setAcceleration(0);
+	           controller->decelerate();
+	          else
+	           controller->setAcceleration(0);
         }
       }
     }
@@ -154,18 +155,18 @@ void output_loop(
       controller->getDirection(),
     	lupus->getSteeringUnit(construction::steeringUnit::SteeringUnitPosition::Left)->getValue(),
     	lupus->getSteeringUnit(construction::steeringUnit::SteeringUnitPosition::Right)->getValue(),
-      lupus->getPower(construction::motor::Motor::FrontLeft) * 100,
-      lupus->getMotor(construction::motor::Motor::FrontLeft)->getRawPower(),
-      lupus->getRps(construction::motor::Motor::FrontLeft),
-      lupus->getPower(construction::motor::Motor::FrontRight) * 100,
-      lupus->getMotor(construction::motor::Motor::FrontRight)->getRawPower(),
-      lupus->getRps(construction::motor::Motor::FrontRight),
-      lupus->getPower(construction::motor::Motor::BackLeft) * 100,
-      lupus->getMotor(construction::motor::Motor::BackLeft)->getRawPower(),
-      lupus->getRps(construction::motor::Motor::BackLeft),
-      lupus->getPower(construction::motor::Motor::BackRight) * 100,
-      lupus->getMotor(construction::motor::Motor::BackRight)->getRawPower(),
-      lupus->getRps(construction::motor::Motor::BackRight),
+      lupus->getPower(construction::motor::MotorPosition::FrontLeft) * 100,
+      lupus->getMotor(construction::motor::MotorPosition::FrontLeft)->getRawPower(),
+      lupus->getRps(construction::motor::MotorPosition::FrontLeft),
+      lupus->getPower(construction::motor::MotorPosition::FrontRight) * 100,
+      lupus->getMotor(construction::motor::MotorPosition::FrontRight)->getRawPower(),
+      lupus->getRps(construction::motor::MotorPosition::FrontRight),
+      lupus->getPower(construction::motor::MotorPosition::BackLeft) * 100,
+      lupus->getMotor(construction::motor::MotorPosition::BackLeft)->getRawPower(),
+      lupus->getRps(construction::motor::MotorPosition::BackLeft),
+      lupus->getPower(construction::motor::MotorPosition::BackRight) * 100,
+      lupus->getMotor(construction::motor::MotorPosition::BackRight)->getRawPower(),
+      lupus->getRps(construction::motor::MotorPosition::BackRight),
       lupus->getDistance(construction::distanceSensor::DistanceSensor::FrontLeft),
       lupus->getDistance(construction::distanceSensor::DistanceSensor::FrontCenterLeft),
       lupus->getDistance(construction::distanceSensor::DistanceSensor::FrontCenterRight),

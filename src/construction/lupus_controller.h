@@ -6,7 +6,6 @@
 
 #include "controller.h"
 #include "lupus.h"
-#include "propulsion_service.h"
 
 namespace lupus::construction
 {
@@ -15,18 +14,21 @@ class LupusController : public IController
 {
   private:
     std::shared_ptr<construction::Lupus> lupus;
-    std::shared_ptr<construction::motor::PropulsionService> propulsionService;
     std::thread updateThread;
     bool isRunning = false;
+    float const MAGIC_MAX_PER_MILLISECOND = 0.0005;
+    bool isDecelerating = false;
+    float acceleration = 0;
+    float power = 0;
 
     void updateLoop();
+    void update(float deltatime);
     void setPower(float power);
     float getPower();
 
   public:
     LupusController(
-      std::shared_ptr<construction::Lupus> lupus,
-      std::shared_ptr<construction::motor::PropulsionService> propulsionService);
+      std::shared_ptr<construction::Lupus> lupus);
     ~LupusController ();
 
     void setAcceleration(float accleration);

@@ -20,7 +20,6 @@ CORE=\
 src/main.cpp\
 src/construction/lupus.cpp\
 src/construction/lupus_controller.cpp\
-src/construction/motor/propulsion_service.cpp\
 src/application/profiles/granny_profile.cpp\
 
 SRCS=$(CORE)\

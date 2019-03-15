@@ -13,8 +13,6 @@
 namespace lupus::construction
 {
 
-
-
 std::shared_ptr<Lupus> LupusFactory::create(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     std::shared_ptr<drivers::gpio::GpioDriver> gpioDriver,
@@ -136,7 +134,7 @@ std::shared_ptr<construction::steeringUnit::SteeringUnit> LupusFactory::createSt
       configuration);
 }
 
-std::shared_ptr<construction::motor::IMotor> LupusFactory::createMotor(
+std::shared_ptr<construction::motor::RCMotor> LupusFactory::createMotor(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     std::shared_ptr<drivers::gpio::GpioDriver> gpioDriver,
     MotorConfiguration configuration)
