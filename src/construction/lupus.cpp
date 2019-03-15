@@ -5,8 +5,8 @@ namespace lupus::construction
 {
 
 Lupus::Lupus(
-  std::shared_ptr<construction::steeringUnit::ISteering> steeringLeft,
-  std::shared_ptr<construction::steeringUnit::ISteering> steeringRight,
+  std::shared_ptr<construction::steeringUnit::SteeringUnit> steeringLeft,
+  std::shared_ptr<construction::steeringUnit::SteeringUnit> steeringRight,
 
   std::shared_ptr<construction::motor::IMotor> motorFrontLeft,
   std::shared_ptr<construction::motor::IMotor> motorFrontRight,
@@ -122,14 +122,14 @@ float Lupus::getRps(construction::motor::Motor motor)
 
 
 
-std::shared_ptr<construction::steeringUnit::ISteering>
-Lupus::getSteering(construction::steeringUnit::SteeringUnit steering)
+std::shared_ptr<construction::steeringUnit::SteeringUnit>
+Lupus::getSteeringUnit(construction::steeringUnit::SteeringUnitPosition position)
 {
-  switch (steering)
+  switch (position)
   {
-    case construction::steeringUnit::SteeringUnit::Left:
+    case construction::steeringUnit::SteeringUnitPosition::Left:
       return steeringLeft;
-    case construction::steeringUnit::SteeringUnit::Right:
+    case construction::steeringUnit::SteeringUnitPosition::Right:
       return steeringRight;
     default:
       throw std::invalid_argument("get steering: unknown steering");
@@ -137,7 +137,7 @@ Lupus::getSteering(construction::steeringUnit::SteeringUnit steering)
 }
 
 void Lupus::setDirection(
-  construction::steeringUnit::SteeringUnit steering,
+  construction::steeringUnit::SteeringUnitPosition position,
   float direction)
 {
   if(direction > 1 || direction < -1)
@@ -145,24 +145,24 @@ void Lupus::setDirection(
     throw std::invalid_argument("direction not in range -1, +1");
   }
 
-  switch (steering)
+  switch (position)
   {
-    case construction::steeringUnit::SteeringUnit::Left:
+    case construction::steeringUnit::SteeringUnitPosition::Left:
       steeringLeft->setDirection(direction);
       break;
-    case construction::steeringUnit::SteeringUnit::Right:
+    case construction::steeringUnit::SteeringUnitPosition::Right:
       steeringRight->setDirection(direction);
       break;
   }
 }
 
-float Lupus::getDirection(construction::steeringUnit::SteeringUnit steering)
+float Lupus::getDirection(construction::steeringUnit::SteeringUnitPosition position)
 {
-  switch (steering)
+  switch (position)
   {
-    case construction::steeringUnit::SteeringUnit::Left:
+    case construction::steeringUnit::SteeringUnitPosition::Left:
       return steeringLeft->getDirection();
-    case construction::steeringUnit::SteeringUnit::Right:
+    case construction::steeringUnit::SteeringUnitPosition::Right:
       return steeringRight->getDirection();
     default:
       throw std::invalid_argument("get direction: unknown steering");

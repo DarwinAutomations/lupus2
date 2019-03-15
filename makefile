@@ -27,8 +27,7 @@ SRCS=$(CORE)\
 src/drivers/pwm/pwm_driver.cpp\
 src/drivers/pwm/pwm_control_unit.cpp\
 src/drivers/gpio/gpio_driver.cpp\
-src/construction/steering_unit/servo.cpp\
-src/construction/steering_unit/rc_steering.cpp\
+src/construction/steering_unit/steering_unit.cpp\
 src/construction/motor/propulsion_unit.cpp\
 src/construction/motor/rc_motor.cpp\
 src/construction/rps_sensor/hall_rps_sensor.cpp\

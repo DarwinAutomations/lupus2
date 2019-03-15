@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "lupus.h"
-#include "steering.h"
+#include "steering_unit.h"
 #include "motor.h"
 #include "distance_sensor.h"
 
@@ -14,8 +14,8 @@ namespace lupus::construction
 class Lupus
 {
   private:
-    std::shared_ptr<steeringUnit::ISteering> steeringLeft;
-    std::shared_ptr<steeringUnit::ISteering> steeringRight;
+    std::shared_ptr<steeringUnit::SteeringUnit> steeringLeft;
+    std::shared_ptr<steeringUnit::SteeringUnit> steeringRight;
 
     std::shared_ptr<motor::IMotor> motorFrontLeft;
     std::shared_ptr<motor::IMotor> motorFrontRight;
@@ -33,8 +33,8 @@ class Lupus
 
   public:
     Lupus (
-      std::shared_ptr<steeringUnit::ISteering> steeringLeft,
-      std::shared_ptr<steeringUnit::ISteering> steeringRight,
+      std::shared_ptr<steeringUnit::SteeringUnit> steeringLeft,
+      std::shared_ptr<steeringUnit::SteeringUnit> steeringRight,
 
       std::shared_ptr<motor::IMotor> motorFrontLeft,
       std::shared_ptr<motor::IMotor> motorFrontRight,
@@ -57,9 +57,9 @@ class Lupus
     float getPower(motor::Motor motor);
     float getRps(motor::Motor motor);
 
-    std::shared_ptr<steeringUnit::ISteering> getSteering(steeringUnit::SteeringUnit);
-    void setDirection(steeringUnit::SteeringUnit steering, float direction);
-    float getDirection(steeringUnit::SteeringUnit steering);
+    std::shared_ptr<steeringUnit::SteeringUnit> getSteeringUnit(steeringUnit::SteeringUnitPosition position);
+    void setDirection(steeringUnit::SteeringUnitPosition position, float direction);
+    float getDirection(steeringUnit::SteeringUnitPosition position);
 
     std::shared_ptr<distanceSensor::IDistanceSensor> getDistanceSensor(distanceSensor::DistanceSensor);
     float getDistance(distanceSensor::DistanceSensor);

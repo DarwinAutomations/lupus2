@@ -59,15 +59,15 @@ void LupusController::setDirection(float direction)
     throw std::invalid_argument("direction not in range -1, +1");
   }
 
-  this->lupus->setDirection(construction::steeringUnit::SteeringUnit::Left, direction);
-  this->lupus->setDirection(construction::steeringUnit::SteeringUnit::Right, direction);
+  this->lupus->setDirection(construction::steeringUnit::SteeringUnitPosition::Left, direction);
+  this->lupus->setDirection(construction::steeringUnit::SteeringUnitPosition::Right, direction);
 }
 
 float LupusController::getDirection()
 {
   float direction = 0;
-  direction += this->lupus->getDirection(construction::steeringUnit::SteeringUnit::Left);
-  direction += this->lupus->getDirection(construction::steeringUnit::SteeringUnit::Right);
+  direction += this->lupus->getDirection(construction::steeringUnit::SteeringUnitPosition::Left);
+  direction += this->lupus->getDirection(construction::steeringUnit::SteeringUnitPosition::Right);
   direction /= 2;
   return direction;
 }

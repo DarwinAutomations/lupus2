@@ -2,8 +2,7 @@
 
 #include "lupus.h"
 #include "lupus_factory.h"
-#include "servo.h"
-#include "rc_steering.h"
+#include "steering_unit.h"
 #include "hall_rps_sensor.h"
 #include "propulsion_unit.h"
 #include "rc_motor.h"
@@ -128,16 +127,15 @@ std::shared_ptr<Lupus> LupusFactory::create(
   return lupus;
 }
 
-std::shared_ptr<construction::steeringUnit::ISteering> LupusFactory::createSteering(
+std::shared_ptr<construction::steeringUnit::SteeringUnit> LupusFactory::createSteering(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     SteeringConfiguration configuration)
 {
-  return std::make_shared<construction::steeringUnit::RCSteering>(
-    std::make_shared<construction::steeringUnit::Servo>(
+  return std::make_shared<construction::steeringUnit::SteeringUnit>(
       pwmDriver,
       configuration.pin,
       configuration.min,
-      configuration.max));
+      configuration.max);
 }
 
 std::shared_ptr<construction::motor::IMotor> LupusFactory::createMotor(

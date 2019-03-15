@@ -61,8 +61,8 @@ int main()
   lupus->setPower(construction::motor::Motor::FrontRight, 0);
   lupus->setPower(construction::motor::Motor::BackLeft, 0);
   lupus->setPower(construction::motor::Motor::BackRight, 0);
-  lupus->setDirection(construction::steeringUnit::SteeringUnit::Left, 0);
-  lupus->setDirection(construction::steeringUnit::SteeringUnit::Right, 0);
+  lupus->setDirection(construction::steeringUnit::SteeringUnitPosition::Left, 0);
+  lupus->setDirection(construction::steeringUnit::SteeringUnitPosition::Right, 0);
 
   auto profile = std::make_shared<application::profiles::GrannyProfile>();
   auto propulsionService =
@@ -150,10 +150,10 @@ void output_loop(
 {
   while (isActive)
   {
-    printf("%5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f\n",
+    printf("%5.1f %5i %5i %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f %5.1f\n",
       controller->getDirection(),
-    	lupus->getSteering(construction::steeringUnit::SteeringUnit::Left)->getRawDirection(),
-    	lupus->getSteering(construction::steeringUnit::SteeringUnit::Right)->getRawDirection(),
+    	lupus->getSteeringUnit(construction::steeringUnit::SteeringUnitPosition::Left)->getValue(),
+    	lupus->getSteeringUnit(construction::steeringUnit::SteeringUnitPosition::Right)->getValue(),
       lupus->getPower(construction::motor::Motor::FrontLeft) * 100,
       lupus->getMotor(construction::motor::Motor::FrontLeft)->getRawPower(),
       lupus->getRps(construction::motor::Motor::FrontLeft),

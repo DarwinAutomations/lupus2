@@ -21,16 +21,19 @@ namespace lupus::drivers::pwm
     this->max = max;
   }
 
-  void PwmControlUnit::setPower(float power)
+  void PwmControlUnit::setPower(float factor)
   {
-    if (power > 1 || power < 0)
+    if (factor > 1 || factor < 0)
     {
-      throw std::invalid_argument("power not in range 0, 1");
+      throw std::invalid_argument("factor not in range [0, 1]");
     }
 
-    int off = min + (max - min) * power;
-    pwmDriver->setPwm(this->channel, 0, off);
-    this->value = power;
+    int range = max - min;
+    int offset = min + range * factor;
+
+    this->value = offset;
+
+    pwmDriver->setPwm(this->channel, 0, offset);
   }
 
   float PwmControlUnit::getPower()

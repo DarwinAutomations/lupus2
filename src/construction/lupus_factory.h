@@ -8,7 +8,7 @@
 #include "pwm_driver.h"
 #include "gpio_driver.h"
 #include "ultrasonic_service.h"
-#include "steering.h"
+#include "steering_unit.h"
 #include "motor.h"
 #include "distance_sensor.h"
 #include "distance_sensor_config.h"
@@ -19,7 +19,7 @@ namespace lupus::construction
 class LupusFactory
 {
 private:
-  static std::shared_ptr<construction::steeringUnit::ISteering> createSteering(
+  static std::shared_ptr<construction::steeringUnit::SteeringUnit> createSteering(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     SteeringConfiguration configuration);
   static std::shared_ptr<construction::motor::IMotor> createMotor(
