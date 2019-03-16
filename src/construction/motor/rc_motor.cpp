@@ -7,8 +7,8 @@ namespace lupus::construction::motor
 {
 
 RCMotor::RCMotor(
-    std::shared_ptr<PropulsionUnit> propulsionUnit,
-    std::shared_ptr<construction::rpsSensor::HallRpsSensor> rpsSensor)
+    std::shared_ptr<motor::propulsionUnit::PropulsionUnit> propulsionUnit,
+    std::shared_ptr<rpsSensor::HallRpsSensor> rpsSensor)
 {
   if(!propulsionUnit)
   {

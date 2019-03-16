@@ -17,16 +17,16 @@ enum MotorPosition
   BackRight
 };
 
-class RCMotor final
+class RCMotor
 {
 private:
-  std::shared_ptr<PropulsionUnit> propulsionUnit;
-  std::shared_ptr<construction::rpsSensor::HallRpsSensor> rpsSensor;
+  std::shared_ptr<lupus::construction::motor::propulsionUnit::PropulsionUnit> propulsionUnit;
+  std::shared_ptr<rpsSensor::HallRpsSensor> rpsSensor;
 
 public:
   RCMotor (
-    std::shared_ptr<PropulsionUnit> propulsionUnit,
-    std::shared_ptr<construction::rpsSensor::HallRpsSensor> rpsSensor);
+    std::shared_ptr<lupus::construction::motor::propulsionUnit::PropulsionUnit> propulsionUnit,
+    std::shared_ptr<rpsSensor::HallRpsSensor> rpsSensor);
   virtual ~RCMotor () = default;
 
   void setPower(float power);

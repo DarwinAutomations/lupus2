@@ -1,6 +1,6 @@
 #include "hall_rps_sensor_config.h"
 
-namespace lupus::construction::rpsSensor
+namespace lupus::construction::motor::rpsSensor
 {
 
 HallRpsSensorConfiguration::HallRpsSensorConfiguration(int pin): pin(pin) {}

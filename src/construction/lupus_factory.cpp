@@ -16,7 +16,7 @@ namespace lupus::construction
 std::shared_ptr<Lupus> LupusFactory::create(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     std::shared_ptr<drivers::gpio::GpioDriver> gpioDriver,
-    std::shared_ptr<construction::distanceSensor::UltrasonicService> ultrasonicService,
+    std::shared_ptr<distanceSensor::UltrasonicService> ultrasonicService,
     LupusConfiguration configuration)
 {
   // navigation units:
@@ -105,7 +105,7 @@ std::shared_ptr<Lupus> LupusFactory::create(
       *configuration.ultrasonicBackRight);
 
   // consutruction:
-  auto lupus = std::make_shared<construction::Lupus>(
+  auto lupus = std::make_shared<Lupus>(
     steeringL,
     steeringR,
 
@@ -125,39 +125,39 @@ std::shared_ptr<Lupus> LupusFactory::create(
   return lupus;
 }
 
-std::shared_ptr<construction::steeringUnit::SteeringUnit> LupusFactory::createSteering(
+std::shared_ptr<steeringUnit::SteeringUnit> LupusFactory::createSteering(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     steeringUnit::SteeringUnitConfiguration configuration)
 {
-  return std::make_shared<construction::steeringUnit::SteeringUnit>(
+  return std::make_shared<steeringUnit::SteeringUnit>(
       pwmDriver,
       configuration);
 }
 
-std::shared_ptr<construction::motor::RCMotor> LupusFactory::createMotor(
+std::shared_ptr<motor::RCMotor> LupusFactory::createMotor(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     std::shared_ptr<drivers::gpio::GpioDriver> gpioDriver,
     MotorConfiguration configuration)
 {
-  return std::make_shared<construction::motor::RCMotor>(
-    std::make_shared<construction::motor::PropulsionUnit>(
+  return std::make_shared<motor::RCMotor>(
+    std::make_shared<motor::propulsionUnit::PropulsionUnit>(
       pwmDriver,
       configuration.propulsionUnit.pin,
       configuration.propulsionUnit.forwardMin,
       configuration.propulsionUnit.forwardMax,
       configuration.propulsionUnit.backwardMin,
       configuration.propulsionUnit.backwardMax),
-    std::make_shared<construction::rpsSensor::HallRpsSensor>(
+    std::make_shared<motor::rpsSensor::HallRpsSensor>(
       gpioDriver,
       *configuration.hallSensor));
 }
 
-std::shared_ptr<construction::distanceSensor::IDistanceSensor> LupusFactory::createUltrasonicSensor(
+std::shared_ptr<distanceSensor::IDistanceSensor> LupusFactory::createUltrasonicSensor(
     std::shared_ptr<drivers::gpio::GpioDriver> gpioDriver,
-    std::shared_ptr<construction::distanceSensor::UltrasonicService> ultrasonicService,
+    std::shared_ptr<distanceSensor::UltrasonicService> ultrasonicService,
     distanceSensor::DistanceSensorConfiguration configuration)
 {
-  auto sensor = std::make_shared<construction::distanceSensor::UltrasonicSensor>(
+  auto sensor = std::make_shared<distanceSensor::UltrasonicSensor>(
     configuration);
 
   ultrasonicService->registerSensor(sensor);

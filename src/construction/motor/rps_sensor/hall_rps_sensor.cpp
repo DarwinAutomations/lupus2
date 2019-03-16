@@ -5,7 +5,7 @@
 #include "hall_rps_sensor_config.h"
 #include "hall_rps_sensor.h"
 
-namespace lupus::construction::rpsSensor
+namespace lupus::construction::motor::rpsSensor
 {
 
 HallRpsSensor::HallRpsSensor(

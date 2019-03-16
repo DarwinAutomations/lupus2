@@ -1,5 +1,5 @@
-#ifndef SENSORS_HALL_RPS_SENSOR_H
-#define SENSORS_HALL_RPS_SENSOR_H
+#ifndef CONSTRUCTION_MOTOR_HALL_RPS_SENSOR_H
+#define CONSTRUCTION_MOTOR_HALL_RPS_SENSOR_H
 
 #include <memory>
 #include <chrono>
@@ -7,7 +7,7 @@
 #include "gpio_driver.h"
 #include "hall_rps_sensor_config.h"
 
-namespace lupus::construction::rpsSensor
+namespace lupus::construction::motor::rpsSensor
 {
   enum HallSensorState
   {
@@ -43,4 +43,4 @@ private:
 
 }
 
-#endif /* SENSORS_HALL_RPS_SENSOR_H */
+#endif /* CONSTRUCTION_MOTOR_HALL_RPS_SENSOR_H */

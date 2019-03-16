@@ -10,7 +10,8 @@ IS=\
 -Isrc/construction\
 -Isrc/construction/steering_unit\
 -Isrc/construction/motor\
--Isrc/construction/rps_sensor\
+-Isrc/construction/motor/rps_sensor\
+-Isrc/construction/motor/propulsion_unit\
 -Isrc/construction/distance_sensor\
 -Isrc/drivers/pwm\
 -Isrc/drivers/gpio\
@@ -28,10 +29,10 @@ src/drivers/pwm/pwm_control_unit.cpp\
 src/drivers/gpio/gpio_driver.cpp\
 src/construction/steering_unit/steering_unit.cpp\
 src/construction/steering_unit/steering_unit_config.cpp\
-src/construction/motor/propulsion_unit.cpp\
 src/construction/motor/rc_motor.cpp\
-src/construction/rps_sensor/hall_rps_sensor.cpp\
-src/construction/rps_sensor/hall_rps_sensor_config.cpp\
+src/construction/motor/propulsion_unit/propulsion_unit.cpp\
+src/construction/motor/rps_sensor/hall_rps_sensor.cpp\
+src/construction/motor/rps_sensor/hall_rps_sensor_config.cpp\
 src/construction/distance_sensor/distance_sensor_config.cpp\
 src/construction/distance_sensor/ultrasonic_sensor.cpp\
 src/construction/distance_sensor/ultrasonic_service.cpp\

@@ -1,9 +1,9 @@
-#ifndef LUPUS_CONSTRUCTION_HALL_RPS_SENSOR_CONFIGURATION_H
-#define LUPUS_CONSTRUCTION_HALL_RPS_SENSOR_CONFIGURATION_H
+#ifndef LUPUS_CONSTRUCTION_MOTOR_HALL_RPS_SENSOR_CONFIGURATION_H
+#define LUPUS_CONSTRUCTION_MOTOR_HALL_RPS_SENSOR_CONFIGURATION_H
 
 #include <libconfig.h++>
 
-namespace lupus::construction::rpsSensor
+namespace lupus::construction::motor::rpsSensor
 {
 
 class HallRpsSensorConfiguration
@@ -20,4 +20,4 @@ class HallRpsSensorConfiguration
 };
 }
 
-#endif /* LUPUS_CONSTRUCTION_HALL_RPS_SENSOR_CONFIGURATION_H */
+#endif /* LUPUS_CONSTRUCTION_MOTOR_HALL_RPS_SENSOR_CONFIGURATION_H */

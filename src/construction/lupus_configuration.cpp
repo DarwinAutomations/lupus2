@@ -131,7 +131,7 @@ void LupusConfigurationRepository::getMotor(
   motor.propulsionUnit.forwardMax = config.lookup("propulsionUnit.forwardMax");
   motor.propulsionUnit.backwardMax = config.lookup("propulsionUnit.backwardMax");
 
-  auto sensor = rpsSensor::HallRpsSensorConfiguration::fromSetting(config.lookup("hallSensor"));
+  auto sensor = motor::rpsSensor::HallRpsSensorConfiguration::fromSetting(config.lookup("hallSensor"));
   motor.hallSensor = &sensor;
 }
 

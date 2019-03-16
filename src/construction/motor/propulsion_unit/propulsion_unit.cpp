@@ -3,7 +3,7 @@
 
 #include "propulsion_unit.h"
 
-namespace lupus::construction::motor
+namespace lupus::construction::motor::propulsionUnit
 {
 
 PropulsionUnit::PropulsionUnit(

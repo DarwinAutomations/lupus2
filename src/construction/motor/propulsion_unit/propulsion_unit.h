@@ -1,11 +1,11 @@
-#ifndef CONSTRUCTION_MOTOR_PROPULSION_UNIT_H
-#define CONSTRUCTION_MOTOR_PROPULSION_UNIT_H
+#ifndef CONSTRUCTION_MOTOR_PROPULSION_UNIT_PROPULSION_UNIT_H
+#define CONSTRUCTION_MOTOR_PROPULSION_UNIT_PROPULSION_UNIT_H
 
 #include <memory>
 
 #include "pwm_driver.h"
 
-namespace lupus::construction::motor
+namespace lupus::construction::motor::propulsionUnit
 {
 
 class PropulsionUnit
@@ -39,4 +39,4 @@ public:
 
 }
 
-#endif /* CONSTRUCTION_MOTOR_PROPULSION_UNIT_H */
+#endif /* CONSTRUCTION_MOTOR_PROPULSION_UNIT_PROPULSION_UNIT_H */

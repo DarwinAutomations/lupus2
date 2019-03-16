@@ -23,7 +23,7 @@ struct PropulsionUnitConfiguration
 struct MotorConfiguration
 {
   PropulsionUnitConfiguration propulsionUnit;
-  rpsSensor::HallRpsSensorConfiguration* hallSensor;
+  motor::rpsSensor::HallRpsSensorConfiguration* hallSensor;
 };
 
 class LupusConfiguration
