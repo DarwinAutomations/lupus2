@@ -4,25 +4,17 @@
 #include <libconfig.h++>
 #include <memory>
 
-#include "distance_sensor_config.h"
 #include "hall_rps_sensor_config.h"
+#include "propulsion_unit_config.h"
+#include "distance_sensor_config.h"
 #include "steering_unit_config.h"
 
 namespace lupus::construction
 {
 
-struct PropulsionUnitConfiguration
-{
-  int pin;
-  int forwardMin;
-  int forwardMax;
-  int backwardMin;
-  int backwardMax;
-};
-
 struct MotorConfiguration
 {
-  PropulsionUnitConfiguration propulsionUnit;
+  motor::propulsionUnit::PropulsionUnitConfiguration* propulsionUnit;
   motor::rpsSensor::HallRpsSensorConfiguration* hallSensor;
 };
 

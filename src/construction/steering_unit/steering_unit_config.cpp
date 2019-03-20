@@ -20,8 +20,6 @@ SteeringUnitConfiguration
   int min = settings.lookup("min");
   int max = settings.lookup("max");
 
-  printf("%i-%i\n", min, max);
-
   return SteeringUnitConfiguration(pin, min, max);
 }
 

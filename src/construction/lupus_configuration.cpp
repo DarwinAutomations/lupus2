@@ -125,11 +125,8 @@ void LupusConfigurationRepository::getMotor(
     libconfig::Setting& config,
     MotorConfiguration& motor)
 {
-  motor.propulsionUnit.pin = config.lookup("propulsionUnit.pin");
-  motor.propulsionUnit.forwardMin = config.lookup("propulsionUnit.forwardMin");
-  motor.propulsionUnit.backwardMin = config.lookup("propulsionUnit.backwardMin");
-  motor.propulsionUnit.forwardMax = config.lookup("propulsionUnit.forwardMax");
-  motor.propulsionUnit.backwardMax = config.lookup("propulsionUnit.backwardMax");
+  auto propulsionUnit = motor::propulsionUnit::PropulsionUnitConfiguration::fromSetting(config.lookup("propulsionUnit"));
+  motor.propulsionUnit = &propulsionUnit;
 
   auto sensor = motor::rpsSensor::HallRpsSensorConfiguration::fromSetting(config.lookup("hallSensor"));
   motor.hallSensor = &sensor;
@@ -140,11 +137,7 @@ void LupusConfigurationRepository::setMotor(
     MotorConfiguration& motor)
 {
   libconfig::Setting& propulsionUnit = config.add("propulsionUnit", libconfig::Setting::Type::TypeGroup);
-  propulsionUnit.add("pin", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.pin;
-  propulsionUnit.add("forwardMin", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.forwardMin;
-  propulsionUnit.add("backwardMin", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.backwardMin;
-  propulsionUnit.add("forwardMax", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.forwardMax;
-  propulsionUnit.add("backwardMax", libconfig::Setting::Type::TypeInt) = motor.propulsionUnit.backwardMax;
+  motor.propulsionUnit->intoSetting(propulsionUnit);
 
   libconfig::Setting& sensor = config.add("hallSensor", libconfig::Setting::Type::TypeGroup);
   motor.hallSensor->intoSetting(sensor);
