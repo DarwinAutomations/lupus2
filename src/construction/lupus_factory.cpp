@@ -142,11 +142,7 @@ std::shared_ptr<motor::RCMotor> LupusFactory::createMotor(
   return std::make_shared<motor::RCMotor>(
     std::make_shared<motor::propulsionUnit::PropulsionUnit>(
       pwmDriver,
-      configuration.propulsionUnit->pin,
-      configuration.propulsionUnit->forwardMin,
-      configuration.propulsionUnit->forwardMax,
-      configuration.propulsionUnit->backwardMin,
-      configuration.propulsionUnit->backwardMax),
+      *configuration.propulsionUnit),
     std::make_shared<motor::rpsSensor::HallRpsSensor>(
       gpioDriver,
       *configuration.hallSensor));

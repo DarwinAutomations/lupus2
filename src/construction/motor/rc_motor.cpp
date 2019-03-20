@@ -38,9 +38,9 @@ float RCMotor::getPower()
   return this->propulsionUnit->getPower();
 }
 
-float RCMotor::getRawPower()
+float RCMotor::getValue()
 {
-  return this->propulsionUnit->getRawPower();
+  return this->propulsionUnit->getValue();
 }
 
 float RCMotor::getRps()

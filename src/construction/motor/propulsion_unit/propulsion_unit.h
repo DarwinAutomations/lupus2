@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "pwm_driver.h"
+#include "propulsion_unit_config.h"
 
 namespace lupus::construction::motor::propulsionUnit
 {
@@ -13,28 +14,18 @@ class PropulsionUnit
 private:
   std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver;
   float power;
-  int rawPower;
-
-  // configuration
-  int channel;
-  float forwardMin;
-  float forwardMax;
-  float backwardMin;
-  float backwardMax;
+  int value;
+  PropulsionUnitConfiguration configuration;
 
 public:
   PropulsionUnit (
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
-    int channel,
-    float forwardMin,
-    float forwardMax,
-    float backwardMin,
-    float backwardMax);
+    PropulsionUnitConfiguration config);
   virtual ~PropulsionUnit () = default;
 
   void setPower(float power);
   float getPower();
-  int getRawPower();
+  int getValue();
 };
 
 }

@@ -8,24 +8,16 @@ namespace lupus::construction::motor::propulsionUnit
 
 PropulsionUnit::PropulsionUnit(
   std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
-  int channel,
-  float forwardMin,
-  float forwardMax,
-  float backwardMin,
-  float backwardMax)
+  PropulsionUnitConfiguration config): configuration(config)
 {
   if(!pwmDriver)
   {
     throw std::invalid_argument("pwm_driver must not be null");
   }
 
-  this->pwmDriver = std::move(pwmDriver);
-  this->channel = channel;
-  this->forwardMin = forwardMin;
-  this->forwardMax = forwardMax;
-  this->backwardMin = backwardMin;
-  this->backwardMax = backwardMax;
+  this->pwmDriver = std::move(pwmDriver);;
   this->power = 0;
+  this->value = configuration.forwardMin;
 }
 
 void PropulsionUnit::setPower(float power)
@@ -36,27 +28,29 @@ void PropulsionUnit::setPower(float power)
   }
   this->power = power;
 
-  int off = forwardMin;
+  int offset;
   if(power < 0)
   {
-    off = backwardMin - (backwardMin - backwardMax) * -power;
+    int range = configuration.backwardMin - configuration.backwardMax;
+    offset = configuration.backwardMin - range * -power;
   }
   else
   {
-    off = forwardMin + (forwardMax - forwardMin) * power;
+    int range = configuration.forwardMax - configuration.forwardMin;
+    offset = configuration.forwardMin + range * power;
   }
-  this->rawPower = off;
-  pwmDriver->setPwm(this->channel, 0, off);
+  value = offset;
+  pwmDriver->setPwm(configuration.pin, 0, offset);
 }
 
 float PropulsionUnit::getPower()
 {
-  return this->power;
+  return power;
 }
 
-int PropulsionUnit::getRawPower()
+int PropulsionUnit::getValue()
 {
-  return this->rawPower;
+  return value;
 }
 
 }
