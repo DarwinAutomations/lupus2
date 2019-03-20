@@ -1,12 +1,12 @@
 #include <stdexcept>
 #include <memory>
 
-#include "rc_motor.h"
+#include "motor.h"
 
 namespace lupus::construction::motor
 {
 
-RCMotor::RCMotor(
+Motor::Motor(
     std::shared_ptr<motor::propulsionUnit::PropulsionUnit> propulsionUnit,
     std::shared_ptr<rpsSensor::HallRpsSensor> rpsSensor)
 {
@@ -24,7 +24,7 @@ RCMotor::RCMotor(
   this->rpsSensor = std::move(rpsSensor);
 }
 
-void RCMotor::setPower(float power)
+void Motor::setPower(float power)
 {
   if(power > 1 || power < -1)
   {
@@ -33,17 +33,17 @@ void RCMotor::setPower(float power)
   this->propulsionUnit->setPower(power);
 }
 
-float RCMotor::getPower()
+float Motor::getPower()
 {
   return this->propulsionUnit->getPower();
 }
 
-float RCMotor::getValue()
+float Motor::getValue()
 {
   return this->propulsionUnit->getValue();
 }
 
-float RCMotor::getRps()
+float Motor::getRps()
 {
   return this->rpsSensor->getRps();
 }

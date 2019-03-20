@@ -5,7 +5,7 @@
 #include "steering_unit.h"
 #include "hall_rps_sensor.h"
 #include "propulsion_unit.h"
-#include "rc_motor.h"
+#include "motor.h"
 #include "distance_sensor_config.h"
 #include "ultrasonic_sensor.h"
 #include "ultrasonic_service.h"
@@ -134,12 +134,12 @@ std::shared_ptr<steeringUnit::SteeringUnit> LupusFactory::createSteering(
       configuration);
 }
 
-std::shared_ptr<motor::RCMotor> LupusFactory::createMotor(
+std::shared_ptr<motor::Motor> LupusFactory::createMotor(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     std::shared_ptr<drivers::gpio::GpioDriver> gpioDriver,
     MotorConfiguration configuration)
 {
-  return std::make_shared<motor::RCMotor>(
+  return std::make_shared<motor::Motor>(
     std::make_shared<motor::propulsionUnit::PropulsionUnit>(
       pwmDriver,
       *configuration.propulsionUnit),

@@ -9,7 +9,7 @@
 #include "gpio_driver.h"
 #include "ultrasonic_service.h"
 #include "steering_unit.h"
-#include "rc_motor.h"
+#include "motor.h"
 #include "distance_sensor.h"
 #include "distance_sensor_config.h"
 
@@ -22,7 +22,7 @@ private:
   static std::shared_ptr<construction::steeringUnit::SteeringUnit> createSteering(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     steeringUnit::SteeringUnitConfiguration configuration);
-  static std::shared_ptr<construction::motor::RCMotor> createMotor(
+  static std::shared_ptr<construction::motor::Motor> createMotor(
     std::shared_ptr<drivers::pwm::PwmDriver> pwmDriver,
     std::shared_ptr<drivers::gpio::GpioDriver> gpioDriver,
     MotorConfiguration configuration);

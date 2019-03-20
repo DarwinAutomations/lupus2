@@ -8,10 +8,10 @@ Lupus::Lupus(
   std::shared_ptr<construction::steeringUnit::SteeringUnit> steeringLeft,
   std::shared_ptr<construction::steeringUnit::SteeringUnit> steeringRight,
 
-  std::shared_ptr<construction::motor::RCMotor> motorFrontLeft,
-  std::shared_ptr<construction::motor::RCMotor> motorFrontRight,
-  std::shared_ptr<construction::motor::RCMotor> motorBackLeft,
-  std::shared_ptr<construction::motor::RCMotor> motorBackRight,
+  std::shared_ptr<construction::motor::Motor> motorFrontLeft,
+  std::shared_ptr<construction::motor::Motor> motorFrontRight,
+  std::shared_ptr<construction::motor::Motor> motorBackLeft,
+  std::shared_ptr<construction::motor::Motor> motorBackRight,
 
   std::shared_ptr<construction::distanceSensor::IDistanceSensor> distanceFrontLeft,
   std::shared_ptr<construction::distanceSensor::IDistanceSensor> distanceFrontCenterLeft,
@@ -45,7 +45,7 @@ Lupus::Lupus(
 }
 
 
-std::shared_ptr<construction::motor::RCMotor>
+std::shared_ptr<construction::motor::Motor>
 Lupus::getMotor(construction::motor::MotorPosition motor)
 {
   switch (motor)
