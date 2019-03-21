@@ -17,16 +17,14 @@ IS=\
 -Isrc/drivers/gpio\
 -Isrc/application/profiles\
 
-CORE=\
+SRCS=\
 src/main.cpp\
-src/construction/lupus.cpp\
-src/construction/lupus_controller.cpp\
-src/application/profiles/granny_profile.cpp\
-
-SRCS=$(CORE)\
 src/drivers/pwm/pwm_driver.cpp\
 src/drivers/pwm/pwm_control_unit.cpp\
 src/drivers/gpio/gpio_driver.cpp\
+src/construction/lupus.cpp\
+src/construction/lupus_controller.cpp\
+src/construction/lupus_repository.cpp\
 src/construction/steering_unit/steering_unit.cpp\
 src/construction/steering_unit/steering_unit_config.cpp\
 src/construction/motor/motor.cpp\
@@ -37,8 +35,7 @@ src/construction/motor/rps_sensor/hall_rps_sensor_config.cpp\
 src/construction/distance_sensor/distance_sensor_config.cpp\
 src/construction/distance_sensor/ultrasonic_sensor.cpp\
 src/construction/distance_sensor/ultrasonic_service.cpp\
-src/construction/lupus_factory.cpp\
-src/construction/lupus_configuration.cpp\
+src/application/profiles/granny_profile.cpp\
 
 OBJS=$(subst .cpp,.o, $(SRCS))
 

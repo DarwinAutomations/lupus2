@@ -11,8 +11,7 @@
 #include "pwm_driver.h"
 
 #include "lupus.h"
-#include "lupus_factory.h"
-#include "lupus_configuration.h"
+#include "lupus_repository.h"
 #include "controller.h"
 #include "lupus_controller.h"
 
@@ -37,10 +36,7 @@ int main()
 {
   const int i2cAddress = 0x40;
   const int frequency = 60;
-  const char* configurationFile = "data/default.cfg";
-
-  auto configuration =
-    construction::LupusConfigurationRepository::fromFile(configurationFile);
+  const char* lupusConfigurationFile = "data/lupus.cfg";
 
   auto gpioDriver = std::make_shared<drivers::gpio::GpioDriver>(
     (char*)NULL,
@@ -51,18 +47,9 @@ int main()
   auto ultrasonicService = std::make_shared<construction::distanceSensor::UltrasonicService>(
       gpioDriver, 1);
 
-  auto lupus = construction::LupusFactory::create(
-      pwmDriver,
-      gpioDriver,
-      ultrasonicService,
-      *configuration);
+  auto repository = new construction::LupusRepository(gpioDriver, pwmDriver, ultrasonicService);
+  auto lupus = repository->readFromFile(lupusConfigurationFile);
 
-  lupus->setPower(construction::motor::MotorPosition::FrontLeft, 0);
-  lupus->setPower(construction::motor::MotorPosition::FrontRight, 0);
-  lupus->setPower(construction::motor::MotorPosition::BackLeft, 0);
-  lupus->setPower(construction::motor::MotorPosition::BackRight, 0);
-  lupus->setDirection(construction::steeringUnit::SteeringUnitPosition::Left, 0);
-  lupus->setDirection(construction::steeringUnit::SteeringUnitPosition::Right, 0);
 
   auto profile = std::make_shared<application::profiles::GrannyProfile>();
 
